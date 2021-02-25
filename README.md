@@ -5,6 +5,16 @@
 
 ## Project Description
 
+### The Problem
+Finding times to meet is difficult, even on small teams. Now more than ever, in the world of zoom university and work from home, students and professionals need services to help them navigate the labyrinth of classes, appointments and meetings. We want to target this audience of students in remote teams and professionals working in teams with a range of timezones.
+
+In particular, finding time for teams to meet is a big challenge. People have conflicting schedules and finding times that work for everyone can be a task, even with the existing market of scheduling apps. One of the most prevalent, for instance, When2meet is designed specifically to address this issue. However, the app lacks functionality that is crucial to actually planning meetings, like handling different time zones. The UI is also unintuitive, making it difficult to quickly see who is available when, or even just finding a time slot that is available for everyone. 
+
+### Our Solution
+We want to develop an app that will efficiently portray the current time for each member of the user’s team by the hour, so if the user would like to schedule a meeting or ping a member, they would know the current time of that member without having to look up their team members local time. The app will also list the availability of each member, and show available times for everyone to meet.
+
+As developers, we felt like a scheduling application that was easy and quick to use that also addressed teams with multiple time zones didn’t exist. That’s why we wanted to work on developing a solution that addressed all these issues and we felt like it would be interesting to work on from a technical standpoint.
+
 ## Technical Description
 ### Database Diagram
 
@@ -200,3 +210,13 @@
     | 404 | No team found for given ID |
     | 405 | Method type not allowed |
     | 500 | Internal error leaving team |
+
+#### /timezones
+
+#### /availability
+
+#### /sessions
+  ```POST /sessions:``` begins a new session for the given user
+  * 
+
+#### /sessions/mine
