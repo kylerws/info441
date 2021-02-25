@@ -16,8 +16,8 @@ We want to develop an app that will efficiently portray the current time for eac
 As developers, we felt like a scheduling application that was easy and quick to use that also addressed teams with multiple time zones didn’t exist. That’s why we wanted to work on developing a solution that addressed all these issues and we felt like it would be interesting to work on from a technical standpoint.
 
 ## Technical Description
-### Database Diagram
-
+### Architecture Diagram
+![Architecture Diagram](images/archdiagram.jpeg "a title")
 ### User Stories
 
 ### Endpoints
