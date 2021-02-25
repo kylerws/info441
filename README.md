@@ -6,8 +6,8 @@
 ## Project Description
 
 ## Technical Description
-### Database Diagram
-
+### Architecture Diagram
+![Architecture Diagram](images/archdiagram.jpeg "a title")
 ### User Stories
 
 ### Endpoints
