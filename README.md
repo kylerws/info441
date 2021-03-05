@@ -108,14 +108,9 @@ As developers, we felt like a scheduling application that was easy and quick to 
           "teamAvailability": [],
           "users": [{users}]
       },
-      ...
     ]
     ```
-
-```DELETE /teams/{team_id}:``` deletes the requested team
-
-**For Youssof / Mackenzie:** can any member delete team or should only the owner be allowed?
-
+    
 #### /users
 ```POST /users:``` creates a new user
   * Request Header
@@ -234,12 +229,8 @@ As developers, we felt like a scheduling application that was easy and quick to 
     | 405 | Method type not allowed |
     | 500 | Internal error leaving team |
 
-#### /timezones
-
-#### /availability
-
 #### /sessions
   ```POST /sessions:``` begins a new session for the given user
-  * 
 
 #### /sessions/mine
+ ```DELETE /sessions/mine:``` ends the current session
