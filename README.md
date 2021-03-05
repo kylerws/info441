@@ -103,10 +103,10 @@ As developers, we felt like a scheduling application that was easy and quick to 
     ```json
     [
       {
-          "userID": 1,
-          "userName": "User1",
-          "timeZone": "PST",
-          "availability": []
+          "teamID": 1,
+          "teamName": "Team Name",
+          "teamAvailability": [],
+          "users": [{users}]
       },
       ...
     ]
