@@ -3,6 +3,8 @@
 
 **Team Members:** Kyler Sakumoto, Mackenzie Hutchison, Youssof Kowdan & Shruti Kompella
 
+**Quick Links**: [Technical Description](#technical-description) | [User Stories](#user-stories) | [Endpoints](#endpoints)
+
 ## Project Description
 
 ### The Problem
@@ -17,7 +19,7 @@ As developers, we felt like a scheduling application that was easy and quick to 
 
 ## Technical Description
 ### Architecture Diagram
-![Architecture Diagram](images/archdiagram.jpeg "a title")
+![Architecture Diagram](./archdiagram.jpeg "Project ERD")
 ### User Stories
 | Story # | Priority  | User      | Description                                                                                                        |
 |---------|-----------|-----------|--------------------------------------------------------------------------------------------------------------------|
@@ -32,18 +34,43 @@ As developers, we felt like a scheduling application that was easy and quick to 
 | 9       | P0        | As a user | I want to be able to remove myself from a given team                                                               |
 | 10      | P0        | As a user | I want to be able to join a given team                                                                             |
 
-**Story 1:** After receiving a **POST** request to /users, the gateway will create a new user account and store it in the **MySQL** database \
-**Story 2:** After receiving a **POST** request to /teams, gateway will create a new team and store it in **MySQL** database and update user table to include teamID \
-**Story 3:** After receiving a **GET** request to /teams/{team_id}, gateway will retrieve users on the team with teamid in url and display on webpage. \
-**Story 4:** After receiving a **GET** request to /teams/{teamid}, gateway will retrieve team and associated user information from the **MySQL database \
-**Story 5:** After receiving a **GET** request to /teams/{teamid}, gateway will retrieve the timezones of each member in team (with info in story 4) \
-**Story 6:** After receiving a **GET** request to /timezone/{user_id}, gateway will retrieve the timezone of the user with user_id in url. Then when they set or update availability, a POST or PATCH request is sent to /timezone/{user_id} and the gateway will store this information in the MySQL database. \
-**Story 7:** After receiving **GET** request to /users/me or /users/{user_id}, gateway will display the timezone and availability of the authenticated user \
-**Story 8:** After receiving **GET** request to /users/me or /users/{user_id}, gateway will display user profile information (including info in story 7) \
-**Story 9:** After receiving a **DELETE** request to /users/me with the parameter ?team=id, gateway will remove you from the team with given teamid \
+**Story 1:** After receiving a **POST** request to /users, the gateway will create a new user account and store it in the **MySQL** database 
+
+**Story 2:** After receiving a **POST** request to /teams, gateway will create a new team and store it in **MySQL** database and update user table to include teamID 
+
+**Story 3:** After receiving a **GET** request to /teams/{team_id}, gateway will retrieve users on the team with teamid in url and display on webpage. 
+
+**Story 4:** After receiving a **GET** request to /teams/{teamid}, gateway will retrieve team and associated user information from the **MySQL database 
+
+**Story 5:** After receiving a **GET** request to /teams/{teamid}, gateway will retrieve the timezones of each member in team (with info in story 4) 
+
+**Story 6:** After receiving a **GET** request to /timezone/{user_id}, gateway will retrieve the timezone of the user with user_id in url. Then when they set or update availability, a POST or PATCH request is sent to /timezone/{user_id} and the gateway will store this information in the MySQL database. 
+
+**Story 7:** After receiving **GET** request to /users/me or /users/{user_id}, gateway will display the timezone and availability of the authenticated user 
+
+**Story 8:** After receiving **GET** request to /users/me or /users/{user_id}, gateway will display user profile information (including info in story 7) 
+
+**Story 9:** After receiving a **DELETE** request to /users/me with the parameter ?team=id, gateway will remove you from the team with given teamid 
+
 **Story 10:** After receiving a **POST** request to /users/me with the parameter ?team=id, gateway will add you to the team with given teamid
 
 ### Endpoints
+
+#### Cheatsheet
+
+Use this for quick reference! Each endpoint here will have its own handler.
+
+| Endpoint | Methods | Notes |
+| -------- | ------- | ----------- |
+| [/teams](#/teams) | POST | Create a new team |
+| [/teams/{team_id}](#/teams{team_id}) | GET | Get team info, member ids of team |
+| [/users](#/users) | POST | Create new user |
+| [/users/{user_id}](#/users/{user_id}) | GET, PATCH, POST, DELETE | Get user info / update info|
+| [/sessions](#/sessions) | POST | Begin new session |
+| [/sessions/mine](#/sessions/mine) | DELETE | End the current session
+
+Details on the exact request headers / body, response headers / body / status codes can be found below:
+
 #### /teams
 ```POST /teams:``` creates a new team
 
@@ -61,12 +88,14 @@ As developers, we felt like a scheduling application that was easy and quick to 
     }
     ```
     **Condition:** ownerID must match ID of the current session user
+    - If not, API will respond with 403 Unauthorized
   
   * Response Status
     | Code | Description |
     | ---- | ----------- |
     | 201 | Successfully created team |
-    | 400 | Content not JSON / badly formatted
+    | 400 | Request badly formatted |
+    | 415 | Request body must be JSON |
     | 401 | Must be logged in to create team |
     | 403 | Cannot create team for another user |
     | 405 | Method must be `POST` |
@@ -76,7 +105,7 @@ As developers, we felt like a scheduling application that was easy and quick to 
     ```json
     {
         "teamID": 1,
-        "teamName": "Team Name"
+        "teamName": "Team Name",
     }
     ```
 
@@ -106,7 +135,7 @@ As developers, we felt like a scheduling application that was easy and quick to 
           "teamID": 1,
           "teamName": "Team Name",
           "teamAvailability": [],
-          "users": [{users}]
+          "members": [{}]
       },
     ]
     ```
@@ -120,11 +149,12 @@ As developers, we felt like a scheduling application that was easy and quick to 
   * Request Body
     ```json
     {
-        "userName": "User1",
+        "email": "user1@test.com",
         "password": "password",
         "passwordConf": "password",
-        "firstName": "John",
-        "lastName": "Cena"
+        "userName": "the_legend",
+        "firstName": "Dr.",
+        "lastName": "Stearns"
     }
     ```
   
@@ -137,7 +167,8 @@ As developers, we felt like a scheduling application that was easy and quick to 
     | Code | Description |
     | ---- | ----------- |
     | 201 | Successfully created user |
-    | 400 | Content not JSON / badly formatted |
+    | 400 | Request badly formatted |
+    | 415 | Request body must be JSON |
     | 405 | Method must be `POST` |
     | 500 | Internal error creating team |
 
@@ -145,18 +176,23 @@ As developers, we felt like a scheduling application that was easy and quick to 
     ```json
     {
         "userID": 1,
-        "userName": "User1"
+        "userName": "the_legend"
     }
     ```
 
 #### /users/{user_id}
 
-```All requests:```
+Handles `GET`, `PATCH`, `POST` and `DELETE`
+* `GET` / `PATCH` function similar to A4
+* `POST` / `DELETE` will handle joining and leaving a team
+
+**All requests to this endpoint must have an `Authorization` header**:
+
   * Request Header
 
     * ```Authorization:``` bearer token with session ID
 
-  ```GET /users/{user_id} /users/me:``` returns the profile of the requested user
+```GET /users/{user_id} /users/me:``` returns the profile of the requested user
 
   * Response Status
 
@@ -171,11 +207,12 @@ As developers, we felt like a scheduling application that was easy and quick to 
   * Response Body
     ```json
       {
-          "userName": "User1",
+          "id": 2,
+          "userName": "the_goat",
+          "firstName": "William",
+          "lastName": "Kwok",
           "timeZone": "PST",
-          "availability": [],
-          "firstName": "John",
-          "lastName": "Cena"
+          "availability": []
       }
       ```
 
@@ -185,11 +222,12 @@ As developers, we felt like a scheduling application that was easy and quick to 
     * ```Content-Type:``` application/json
 
   * Request Body
+  
     ```json
       {
-        "newPassword": "password",
-        "newPasswordConf": "password",
-        "timezone": "PST",
+        "firstName": "",
+        "lastName": "",
+        "timezone": "EST",
         "availability": []
       }
     ```
@@ -198,7 +236,8 @@ As developers, we felt like a scheduling application that was easy and quick to 
     | Code | Description |
     | ---- | ----------- |
     | 200 | Successfully returned user |
-    | 400 | Content not JSON / badly formatted |
+    | 400 | Request badly formatted |
+    | 415 | Request body must be JSON |
     | 403 | Unauthorized, not the current user |
     | 405 | Method type not allowed |
     | 500 | Internal error updating user |
@@ -216,6 +255,9 @@ As developers, we felt like a scheduling application that was easy and quick to 
     | 405 | Method type not allowed |
     | 500 | Internal error joining team |
 
+  * Response Body
+    * `"Successfully joined team"`
+
 ```DELETE /users/me:``` removes the current user from requested team
   * Parameters
     * ```?team=id``` the team to leave
@@ -228,9 +270,54 @@ As developers, we felt like a scheduling application that was easy and quick to 
     | 404 | No team found for given ID |
     | 405 | Method type not allowed |
     | 500 | Internal error leaving team |
+  
+  * Response Body
+    * `"Successfully left team"`
 
 #### /sessions
   ```POST /sessions:``` begins a new session for the given user
 
+  * Request Header
+    * ```Content-Type:``` application/json
+
+  * Request Body
+    ```go
+      {
+        "email": "user1@test.com",
+        "password": "password"
+      }
+    ```
+
+  * Response Status
+    | Code | Description |
+    | ---- | ----------- |
+    | 201 | Successfully created session |
+    | 415 | Request body must be JSON |
+    | 403 | Unauthorized, incorrect user credentials |
+    | 404 | No team found for given ID |
+    | 405 | Method type must be POST |
+    | 500 | Internal error creating session |
+  
+  * Response Header
+    *  ```Content-Type:``` application/json
+
+  * Response Body
+    * JSON object of the user profile
+
 #### /sessions/mine
  ```DELETE /sessions/mine:``` ends the current session
+
+  * **Conditions**: request path must be `mine`
+
+  * Response Status
+    | Code | Description |
+    | ---- | ----------- |
+    | 204 | Successfully ended session |
+    | 403 | Unauthorized, incorrect user credentials |
+    | 405 | Method type must be DELETE |
+    | 500 | Internal error ending session |
+
+  * Response Body
+    * `"Signed out"`
+
+[Back to Top](#cheatsheet)
