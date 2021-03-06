@@ -1,0 +1,13 @@
+# Ignore bash scripts
+*.sh
+./scripts
+
+# Test files
+auth_test.go
+mock_user_store.go
+trie_test.go
+user_test.go
+memstore_test.go
+redisstore_test.go
+session_test.go
+sessionid_test.go

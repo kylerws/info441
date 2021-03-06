@@ -12,11 +12,6 @@ npm-debug.log
 # Certificates
 .pem
 
-# User Created
-# sessions-solutions
-# ./scripts
-# notes.md
-
 # misc
 .DS_Store
 .env.local

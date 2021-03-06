@@ -19,6 +19,29 @@ As developers, we felt like a scheduling application that was easy and quick to 
 ### Architecture Diagram
 ![Architecture Diagram](images/archdiagram.jpeg "a title")
 ### User Stories
+| Story # | Priority  | User      | Description                                                                                                        |
+|---------|-----------|-----------|--------------------------------------------------------------------------------------------------------------------|
+| 1       | P0        | As a user | I want to create a user profile                                                                                    |
+| 2       | P0        | As a user | I want to be able to create teams                                                                                  |
+| 3       | P0        | As a user | I want to be able to view teams I am part of                                                                       |
+| 4       | P0        | As a user | I want to be able to view the other team members on a team (that I am also on)                                     |
+| 5       | P0        | As a user | I want to be able to view the timezones of other team members                                                      |
+| 6       | P1        | As a user | I want to set and update the time ranges that I am available for during a week, my timezone, and my password       |
+| 7       | P1        | As a user | I want to view the time ranges my teammates are available (adjusted to be their availabilities during my timezone) |
+| 8       | P0        | As a user | I want to view my user information                                                                                 |
+| 9       | P0        | As a user | I want to be able to remove myself from a given team                                                               |
+| 10      | P0        | As a user | I want to be able to join a given team                                                                             |
+
+**Story 1:** After receiving a **POST** request to /users, the gateway will create a new user account and store it in the **MySQL** database \
+**Story 2:** After receiving a **POST** request to /teams, gateway will create a new team and store it in **MySQL** database and update user table to include teamID \
+**Story 3:** After receiving a **GET** request to /teams/{team_id}, gateway will retrieve users on the team with teamid in url and display on webpage. \
+**Story 4:** After receiving a **GET** request to /teams/{teamid}, gateway will retrieve team and associated user information from the **MySQL database \
+**Story 5:** After receiving a **GET** request to /teams/{teamid}, gateway will retrieve the timezones of each member in team (with info in story 4) \
+**Story 6:** After receiving a **GET** request to /timezone/{user_id}, gateway will retrieve the timezone of the user with user_id in url. Then when they set or update availability, a POST or PATCH request is sent to /timezone/{user_id} and the gateway will store this information in the MySQL database. \
+**Story 7:** After receiving **GET** request to /users/me or /users/{user_id}, gateway will display the timezone and availability of the authenticated user \
+**Story 8:** After receiving **GET** request to /users/me or /users/{user_id}, gateway will display user profile information (including info in story 7) \
+**Story 9:** After receiving a **DELETE** request to /users/me with the parameter ?team=id, gateway will remove you from the team with given teamid \
+**Story 10:** After receiving a **POST** request to /users/me with the parameter ?team=id, gateway will add you to the team with given teamid
 
 ### Endpoints
 #### /teams
@@ -80,19 +103,14 @@ As developers, we felt like a scheduling application that was easy and quick to 
     ```json
     [
       {
-          "userID": 1,
-          "userName": "User1",
-          "timeZone": "PST",
-          "availability": []
+          "teamID": 1,
+          "teamName": "Team Name",
+          "teamAvailability": [],
+          "users": [{users}]
       },
-      ...
     ]
     ```
-
-```DELETE /teams/{team_id}:``` deletes the requested team
-
-**For Youssof / Mackenzie:** can any member delete team or should only the owner be allowed?
-
+    
 #### /users
 ```POST /users:``` creates a new user
   * Request Header
@@ -211,12 +229,8 @@ As developers, we felt like a scheduling application that was easy and quick to 
     | 405 | Method type not allowed |
     | 500 | Internal error leaving team |
 
-#### /timezones
-
-#### /availability
-
 #### /sessions
   ```POST /sessions:``` begins a new session for the given user
-  * 
 
 #### /sessions/mine
+ ```DELETE /sessions/mine:``` ends the current session
