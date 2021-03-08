@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"os"
 	"time"
 
-	"info441/servers/gateway/directors"
 	"info441/servers/gateway/handlers"
 	"info441/servers/gateway/models/users"
 	"info441/servers/gateway/sessions"
@@ -24,8 +22,14 @@ func main() {
 	sessionKey := os.Getenv("SESSIONKEY")
 	redisAddr := os.Getenv("REDISADDR")
 	DSN := fmt.Sprintf("root:%s@tcp(mysqldb:3306)/mysqldb", os.Getenv("MYSQL_ROOT_PASSWORD"))
-	messagesAddr := os.Getenv("MESSAGESADDR")
-	summaryAddr := os.Getenv("SUMMARYADDR")
+
+	// Read comments for example microservices code
+	// Files are located in gateway/directors
+
+	// Read addr for microservice ("container-name:PORT, http://container-name:PORT")
+	// Example:
+	//
+	// messagesAddr := os.Getenv("MESSAGESADDR")
 
 	if len(addr) == 0 {
 		addr = ":443"
@@ -70,19 +74,18 @@ func main() {
 		UserStore:    userStore,
 	}
 
-	// Get reverse proxy targets
-	messageTargets := directors.GetTargets(messagesAddr)
-	summaryTargets := directors.GetTargets(summaryAddr)
+	// Get reverse proxy targets (pass addr env variable to GetTargets())
+	// Example:
+	//
+	// messageTargets := directors.GetTargets(messagesAddr)
 
-	// Set up proxies
-	summaryProxy := &httputil.ReverseProxy{Director: directors.CustomDirector(summaryTargets, ctx)}
-	messageProxy := &httputil.ReverseProxy{Director: directors.CustomDirector(messageTargets, ctx)}
+	// Set up reverse proxies (pass targets and context handler to CustomDirector())
+	// Example:
+	//
+	// messageProxy := &httputil.ReverseProxy{Director: directors.CustomDirector(messageTargets, ctx)}
 
 	// New mux
 	mux := http.NewServeMux()
-
-	log.Printf("Messaging server addresses: %s", messagesAddr)
-	log.Printf("Processed to: %v", messageTargets[0])
 
 	// Routes
 	mux.HandleFunc("/v1/users", ctx.UsersHandler)
@@ -90,11 +93,13 @@ func main() {
 	mux.HandleFunc("/v1/sessions", ctx.SessionsHandler)
 	mux.HandleFunc("/v1/sessions/", ctx.SpecificSessionsHandler)
 
-	// Proxy routes
-	mux.Handle("/v1/summary", summaryProxy)
-	mux.Handle("/v1/channels", messageProxy)
-	mux.Handle("/v1/channels/", messageProxy)
-	mux.Handle("/v1/messages/", messageProxy)
+	// Proxy routes (pass route and Proxy to mux.Handle())
+	// Example:
+	//
+	// mux.Handle("/v1/summary", summaryProxy)
+	// mux.Handle("/v1/channels", messageProxy)
+	// mux.Handle("/v1/channels/", messageProxy)
+	// mux.Handle("/v1/messages/", messageProxy)
 
 	// Wrap CORS and serve
 	wrappedMux := handlers.NewHeaderHandler(mux)

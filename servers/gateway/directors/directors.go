@@ -83,6 +83,6 @@ func CustomDirector(targets []*Target, ctx *handlers.HandlerContext) Director {
 		r.Host = targ.Host
 		r.URL.Host = targ.Host
 		r.URL.Scheme = targ.Scheme
-		// log.Printf("Request forwarded to host: %s", targ.Host)
+		log.Printf("Request forwarded to host: %s", targ.Host)
 	}
 }
