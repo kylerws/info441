@@ -8,8 +8,8 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"assignments-fixed-kylerws/servers/gateway/handlers"
-	"assignments-fixed-kylerws/servers/gateway/sessions"
+	"info441/servers/gateway/handlers"
+	"info441/servers/gateway/sessions"
 )
 
 // Target holds the url and scheme for the director

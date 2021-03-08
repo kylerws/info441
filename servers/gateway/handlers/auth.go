@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"assignments-fixed-kylerws/servers/gateway/models/users"
-	"assignments-fixed-kylerws/servers/gateway/sessions"
+	"info441/servers/gateway/models/users"
+	"info441/servers/gateway/sessions"
 )
 
 // UsersHandler comment

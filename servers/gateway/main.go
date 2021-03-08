@@ -1,11 +1,11 @@
 package main
 
 import (
-	"assignments-fixed-kylerws/servers/gateway/directors"
-	"assignments-fixed-kylerws/servers/gateway/handlers"
-	"assignments-fixed-kylerws/servers/gateway/models/users"
-	"assignments-fixed-kylerws/servers/gateway/sessions"
 	"fmt"
+	"info441/servers/gateway/directors"
+	"info441/servers/gateway/handlers"
+	"info441/servers/gateway/models/users"
+	"info441/servers/gateway/sessions"
 	"log"
 	"net/http"
 	"net/http/httputil"
