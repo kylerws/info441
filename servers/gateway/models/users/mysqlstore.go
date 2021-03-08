@@ -85,7 +85,7 @@ func (ms *MySQLStore) Insert(user *User) (*User, error) {
 	res, err := ms.Database.Exec(ins, user.Email, user.PassHash, user.UserName,
 		user.FirstName, user.LastName, user.PhotoURL)
 	if err != nil {
-		log.Printf("Error inserting: %s", err.Error())
+		log.Printf("Could not insert user\n%s", err.Error())
 		return nil, err
 	}
 

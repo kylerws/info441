@@ -15,20 +15,16 @@ import (
 	"assignments-fixed-kylerws/servers/gateway/sessions"
 )
 
-//TODO: define HTTP handler functions as described in the
-//assignment description. Remember to use your handler context
-//struct as the receiver on these functions so that you have
-//access to things like the session store and user store.
-
 // UsersHandler comment
 func (ctx *HandlerContext) UsersHandler(w http.ResponseWriter, r *http.Request) {
-	// MethodPost
 
+	// Only accept POST
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
+	// Force JSON
 	contentHeader := r.Header.Get("Content-Type")
 	if !strings.HasPrefix(contentHeader, "application/json") {
 		http.Error(w, "Content Type Not Supported", http.StatusUnsupportedMediaType)
@@ -43,22 +39,17 @@ func (ctx *HandlerContext) UsersHandler(w http.ResponseWriter, r *http.Request) 
 
 	// unmarshal json to fill in newUser struct
 	json.Unmarshal([]byte(body), newUser)
-
 	if err != nil {
-		log.Printf("error unmarshaling json: %v\n", err)
+		log.Printf("Error unmarshaling json: %v\n", err)
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
-	log.Printf("Successfully unmarshaled")
-
 	// Convert new user to a user
 	user := &users.User{}
 	user, err = newUser.ToUser()
-	log.Printf("ToUser() called")
-
 	if err != nil {
-		// log.Printf("error creating user")
+		log.Printf("Error creating user")
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
