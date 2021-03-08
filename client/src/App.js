@@ -3,7 +3,17 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
 import LandingPage from "./components/LandingPage"
 
-import './scss/App.scss'
+// import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"
+
+import "./styles/App.css"
+// import './custom.scss'
+
+// const font = "'Roboto', sans-serif"
+// const theme = createMuiTheme({
+//   typography: {
+//     fontFamily: font
+//   }
+// })
 
 export default function App() {
   return (
