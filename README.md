@@ -19,7 +19,7 @@ As developers, we felt like a scheduling application that was easy and quick to 
 
 ## Technical Description
 ### Architecture Diagram
-![Architecture Diagram](./archdiagram.jpeg "Project ERD")
+![Architecture Diagram](./img/archdiagram.jpeg "Project ERD")
 ### User Stories
 | Story # | Priority  | User      | Description                                                                                                        |
 |---------|-----------|-----------|--------------------------------------------------------------------------------------------------------------------|

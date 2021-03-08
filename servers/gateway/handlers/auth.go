@@ -11,24 +11,20 @@ import (
 	"strings"
 	"time"
 
-	"assignments-fixed-kylerws/servers/gateway/models/users"
-	"assignments-fixed-kylerws/servers/gateway/sessions"
+	"info441/servers/gateway/models/users"
+	"info441/servers/gateway/sessions"
 )
-
-//TODO: define HTTP handler functions as described in the
-//assignment description. Remember to use your handler context
-//struct as the receiver on these functions so that you have
-//access to things like the session store and user store.
 
 // UsersHandler comment
 func (ctx *HandlerContext) UsersHandler(w http.ResponseWriter, r *http.Request) {
-	// MethodPost
 
+	// Only accept POST
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
+	// Force JSON
 	contentHeader := r.Header.Get("Content-Type")
 	if !strings.HasPrefix(contentHeader, "application/json") {
 		http.Error(w, "Content Type Not Supported", http.StatusUnsupportedMediaType)
@@ -37,33 +33,26 @@ func (ctx *HandlerContext) UsersHandler(w http.ResponseWriter, r *http.Request) 
 
 	// Create new user
 	newUser := &users.NewUser{}
-
-	// convert json to a byte array
 	body, err := ioutil.ReadAll(r.Body)
 
-	// unmarshal json to fill in newUser struct
+	// TODO make this one line
 	json.Unmarshal([]byte(body), newUser)
-
 	if err != nil {
-		log.Printf("error unmarshaling json: %v\n", err)
+		log.Printf("Error unmarshaling json: %v\n", err)
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
-
-	log.Printf("Successfully unmarshaled")
 
 	// Convert new user to a user
 	user := &users.User{}
 	user, err = newUser.ToUser()
-	log.Printf("ToUser() called")
-
 	if err != nil {
-		// log.Printf("error creating user")
+		log.Printf("Error creating user")
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
-	// insert the user into the database
+	// Insert the user into the database
 	insertedUser, err := ctx.UserStore.Insert(user)
 	if err != nil {
 		log.Printf("Failed to insert")
@@ -71,7 +60,7 @@ func (ctx *HandlerContext) UsersHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// begin a new session for the user
+	// Begin a new session for the user
 	_, err = sessions.BeginSession(ctx.SigningKey, ctx.SessionStore, &SessionState{time.Now(), *insertedUser}, w)
 	if err != nil {
 		log.Printf("Error beginning session")
@@ -79,13 +68,9 @@ func (ctx *HandlerContext) UsersHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Write response to client
-	w.Header().Set("Content-Type", "application/json")
-
-	// write http status created
-	w.WriteHeader(http.StatusCreated)
-
-	// copy of user's profile in the response body, encoded as a json object
-	userJSON, _ := json.Marshal(insertedUser)
+	w.Header().Set("Content-Type", "application/json") // set header
+	w.WriteHeader(http.StatusCreated)                  // status 201
+	userJSON, _ := json.Marshal(insertedUser)          // return user to client
 	w.Write([]byte(userJSON))
 
 	log.Printf("Created new user at %s", time.Now())
@@ -101,17 +86,19 @@ func (ctx *HandlerContext) SpecificUsersHandler(w http.ResponseWriter, r *http.R
 	_, err := sessions.GetState(r, ctx.SigningKey, ctx.SessionStore, state)
 
 	if err != nil {
-		switch err {
-		case sessions.ErrInvalidID:
-			// Session key did not match => http.StatusUnauthorized
-			http.Error(w, "User not authenticated", http.StatusUnauthorized)
-		case sessions.ErrInvalidScheme:
-			// Wrong scheme, did not match bearer
-			http.Error(w, "Authorization scheme incorrectly formatted", http.StatusBadRequest)
-		default:
-			// Case: decode error, write error, store.Get() error
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		// switch err {
+		// case sessions.ErrInvalidID:
+		// 	// Session key did not match => http.StatusUnauthorized
+		// 	http.Error(w, "User not authenticated", http.StatusUnauthorized)
+		// case sessions.ErrInvalidScheme:
+		// 	// Wrong scheme, did not match bearer
+		// 	http.Error(w, "Authorization scheme incorrectly formatted", http.StatusBadRequest)
+		// default:
+		// 	// Case: decode error, write error, store.Get() error
+		// 	http.Error(w, err.Error(), http.StatusUnauthorized)
+		// }
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
 	}
 
 	switch r.Method {
@@ -143,6 +130,8 @@ func (ctx *HandlerContext) SpecificUsersHandler(w http.ResponseWriter, r *http.R
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		log.Printf("Retrieved user at %s", time.Now())
 
 	case http.MethodPatch:
 		// Get user ID from path
@@ -181,6 +170,8 @@ func (ctx *HandlerContext) SpecificUsersHandler(w http.ResponseWriter, r *http.R
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		log.Printf("Updated user at %s", time.Now())
 
 	default:
 		http.Error(w, "Method is not allowed", http.StatusMethodNotAllowed)
@@ -240,15 +231,12 @@ func (ctx *HandlerContext) SessionsHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// Set content type JSON
-	w.Header().Set("Content-Type", "application/json")
-
-	// write http status created
-	w.WriteHeader(http.StatusCreated)
-
-	// copy of user's profile in the response body, encoded as a json object
-	userJSON, _ := json.Marshal(user)
-	w.Write([]byte(userJSON))
+	// Write response
+	w.Header().Set("Content-Type", "application/json") // set header
+	w.WriteHeader(http.StatusCreated)                  // status 201
+	userJSON, _ := json.Marshal(user)                  // encode user profile
+	w.Write([]byte(userJSON))                          // write to client
+	log.Printf("Began session at %s", time.Now())
 }
 
 // SpecificSessionsHandler handles the path v1/sessions/mine
@@ -265,9 +253,10 @@ func (ctx *HandlerContext) SpecificSessionsHandler(w http.ResponseWriter, r *htt
 		sessions.EndSession(r, ctx.SigningKey, ctx.SessionStore)
 
 		// Write response
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "text/html")
 		w.Write([]byte("signed out"))
+		log.Printf("Signed out at %s", time.Now())
 
 	default:
 		http.Error(w, "Method is not allowed", http.StatusMethodNotAllowed)
