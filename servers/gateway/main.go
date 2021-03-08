@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"info441/servers/gateway/directors"
-	"info441/servers/gateway/handlers"
-	"info441/servers/gateway/models/users"
-	"info441/servers/gateway/sessions"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"os"
 	"time"
+
+	"info441/servers/gateway/directors"
+	"info441/servers/gateway/handlers"
+	"info441/servers/gateway/models/users"
+	"info441/servers/gateway/sessions"
 
 	"github.com/go-redis/redis"
 	_ "github.com/go-sql-driver/mysql"
