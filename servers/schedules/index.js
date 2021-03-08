@@ -4,7 +4,7 @@ const express = require('express')
 const {teamSchema, scheduleSchema} = require('./schemas')
 
 const { postTeamHandler } = require("./teamsHandler")
-const { postMembersHandler, getMembersHandler } = require("./specificTeamHandler")
+const { postMembersHandler, getMembersHandler, constTeamSchedule } = require("./specificTeamHandler")
 
 // create mongo endpoint, it will make the test database
 const mongoEndpoint = "mongodb://localhost:27017/test"

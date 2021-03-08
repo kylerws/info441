@@ -13,7 +13,6 @@ const teamSchema = new Schema({
 
 const scheduleSchema = new Schema({
     // id: {type: Schema.Types.ObjectId, required: true, unique: true},
-    teamID: {type: String, required: true, unique: true},
     userID: {type: {id: Number, email: String}},
     day: {type: String, required: true, unique: true},
     startTime: {type: Date, required: true, unique: false},
@@ -22,4 +21,12 @@ const scheduleSchema = new Schema({
     editedAt: Date
 })
 
-module.exports = {teamSchema, scheduleSchema};
+constTeamSchedule = new Schema ({
+    teamID: {type: String, required: true, unique: true},
+    day: {type: String, required: true, unique: true},
+    startTime: {type: Date, required: true, unique: false},
+    endTime: {type: Date, required: true, unique: false}
+}),
+
+
+module.exports = {teamSchema, scheduleSchema, constTeamSchedule};
