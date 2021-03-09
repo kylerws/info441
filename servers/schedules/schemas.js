@@ -6,27 +6,18 @@ const teamSchema = new Schema({
     description: String,
     private: {type: Boolean, required: true, unique: false},
     members: {type: [{id: Number, email: String}]},
+    schedule: {type: [{day: String, startTime: Date, endTime: Date}]},
     createdAt: {type: Date, required: true, unique: false},
     creator: {type: {id: Number, email: String}},
     editedAt: Date
 });
 
-const scheduleSchema = new Schema({
+const userScheduleSchema = new Schema({
     // id: {type: Schema.Types.ObjectId, required: true, unique: true},
     userID: {type: {id: Number, email: String}},
-    day: {type: String, required: true, unique: true},
-    startTime: {type: Date, required: true, unique: false},
-    endTime: {type: Date, required: true, unique: false},
-    createdAt: {type: Date, required: true, unique: false},
-    editedAt: Date
+    schedule: {type: [{day: String, startTime: Date, endTime: Date}]}
+    // createdAt: {type: Date, required: true, unique: false},
+    // editedAt: Date
 })
 
-constTeamSchedule = new Schema ({
-    teamID: {type: String, required: true, unique: true},
-    day: {type: String, required: true, unique: true},
-    startTime: {type: Date, required: true, unique: false},
-    endTime: {type: Date, required: true, unique: false}
-}),
-
-
-module.exports = {teamSchema, scheduleSchema, constTeamSchedule};
+module.exports = {teamSchema, userScheduleSchema};
