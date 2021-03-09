@@ -1,2 +1,4 @@
-docker build -t kylerws/441mysqldb .
-docker push kylerws/441mysqldb
+cd ~/go/src/info441/servers/gateway/db
+
+docker build -t kylerws/project-mysqldb .
+docker push kylerws/project-mysqldb
