@@ -12,6 +12,9 @@ npm-debug.log
 # Certificates
 .pem
 
+# Dev
+./testing
+
 # misc
 .DS_Store
 .env.local

@@ -29,21 +29,22 @@ kylerws/project-mysqldb
 docker run -d --name redis --network 441 redis
 
 # Set DSN, redis ADDR, signing key
-# export DSN=root:$MYSQL_DATABASE_PASSWORD@tcp\(mysqldb:3306\)/$MYSQL_DATABASE
 export REDISADDR=redis:6379
 export SESSIONKEY="441testkey"
 
 # Run API gateway
-docker run -d --name gateway -p 443:443 \
+docker run -d -p 443:443 \
 -v /etc/letsencrypt:/etc/letsencrypt:ro \
-# -e TLSCERT=/etc/letsencrypt/live/api.kylerws.me/fullchain.pem \
-# -e TLSKEY=/etc/letsencrypt/live/api.kylerws.me/privkey.pem \
+-e TLSCERT=/etc/letsencrypt/live/api.scheduleup.info/fullchain.pem \
+-e TLSKEY=/etc/letsencrypt/live/api.scheduleup.info/privkey.pem \
 -e SESSIONKEY=$SESSIONKEY \
 -e REDISADDR=$REDISADDR \
 -e MYSQL_ROOT_PASSWORD="info441" \
+--network 441 \
+--name gateway \
+kylerws/project-gateway
+
 # -e MESSAGESADDR="http://messaging:80" \
 # -e SUMMARYADDR="http://summary:80" \
---network 441 \
-kylerws/project-gateway
 
 exit
