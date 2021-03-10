@@ -27,7 +27,8 @@ class MainPageContent extends Component {
         super(props)
         this.state = {
             schedule: "",
-            showPostSchedule: false
+            showPostSchedule: false,
+            teamID: "6048d01ebc524b6f3958f9d9"
         }
 
         this.getSchedule()
@@ -123,35 +124,27 @@ class MainPageContent extends Component {
         console.log("clicked")
 
         // ---------------------------teamID needs to be added to state---------------
-        const resp = await fetch(api.base + api.handlers.teams + this.state.teamID, {
+        const resp = await fetch(api.base + api.handlers.teams + "/" + this.state.teamID, {
             headers: new Headers({
                 "Authorization": this.props.auth
             })
         })
-        // .then(resp => {
-        //     if (resp.status == 200) {
-        //         const scheduleArr = resp.json()
-        //         if (scheduleArr.length == 0) {
-        //             return "You haven't added your schedule yet"
-        //         }
-        //         process(scheduleArr)
-        //     }
-        // })
+
+        console.log(resp)
+        
         if (resp.status != 200) {
             return
         }
         
         const teamArr = await resp.json()
         if (teamArr.length == 0) {
-            this.setState({schedule: "No Team"})
+            this.setState({team: "No Team"})
             return
         }
 
         console.log(teamArr)
         const teamScheduleElements = teamArr[0].schedule.map(d => {
             console.log(d)
-            // console.log
-            // moment(d.startTime).local().format('HH:mm')
             return <div key={d.day + "test"}>
                 <h1>{toUpper(d.day)}</h1>
                 <h2>{moment(d.startTime).local().format('h:mm a')}</h2>
@@ -159,7 +152,8 @@ class MainPageContent extends Component {
             </div>
         })
 
-        this.setState({schedule: teamScheduleElements})
+        this.setState({teamName: teamArr[0].name})
+        this.setState({team: teamScheduleElements})
     }
 
 
@@ -175,6 +169,12 @@ class MainPageContent extends Component {
         return (
             <div>
                 <div>Welcome back, {this.props.user.firstName} {this.props.user.lastName}</div>
+                <div>
+                    <h1>Your Team</h1>
+                    <h2>{this.state.teamName}</h2>
+                    <button onClick={() => this.getTeamSchedule()}>Refresh</button>
+                    {this.state.team}
+                </div>
                 <div>
                     <h1>Your Schedule</h1>
                     <button onClick={() => this.getSchedule()}>Refresh</button>
@@ -219,16 +219,17 @@ const hourOptions = [
 
   
 
-class DayForm extends React.Component {
-    render() {
-        <form onSubmit={this.props.submit}>
-            <input type="text" value={this.state.value} onChange={this.handleChange} />
-            <TimeSelect options={hourOptions} default={"00:00"} onChange={() => }/>
-            <TimeSelect options={hourOptions} default={"00:00"} onChange={() => }/>
-            <input type="submit" value="Submit" />
-        </form>
-    }
-} 
+// class DayForm extends React.Component {
+//     render() {
+//         ret
+//         <form onSubmit={this.props.submit}>
+//             <input type="text" value={this.state.value} onChange={this.handleChange} />
+//             <TimeSelect options={hourOptions} default={"00:00"} onChange={() => console.log()}/>
+//             <TimeSelect options={hourOptions} default={"00:00"} onChange={() => console.log()}/>
+//             <input type="submit" value="Submit" />
+//         </form>
+//     }
+// } 
 
 class TimeSelect extends React.Component {
     render() {
