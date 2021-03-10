@@ -60,7 +60,15 @@ class MainPageContent extends Component {
             endTime: this.state.endTime
         }
 
-        // console.log(endTime)
+        // TODO: handle changing time format for mongoDB
+        // (hh:mm) => full UTC datetime
+
+        // startTime = normalizeDate(new Date(startTime))
+        // endTime = normalizeDate(new Date(endTime))
+        // let d = new Date(startTime)
+        // d.setFullYear(1998)
+        // d.setMonth(1)
+        // d.setDate(1)
 
         const sendData = {
             day,
@@ -85,7 +93,37 @@ class MainPageContent extends Component {
         this.setState({showPostSchedule: false})    // hide postSchedule form
     }
 
-    // Get teams/teamID
+    postTeam = async (e) => {
+        e.preventDefault()
+
+        // this.setState({showPostSchedule: true})
+
+        const { name, description, private } = 
+            {name: "New Team",
+            description: "description",
+            private: true
+        }
+
+        const sendData = { name, description, private }
+        const resp = await fetch(api.base + api.handlers.teams, {
+            method: "POST",
+            body: JSON.stringify(sendData),
+            headers: new Headers({
+                "Authorization": this.props.auth,
+                "Content-Type": "application/json"
+            })
+        })
+
+        if (resp.status != 201) {
+            alert("Failed to create team")
+        }
+        // resp body will contain an id field, set this in the stat
+        const teamID = resp.body.id
+        // this.setState({showPostSchedule: false})
+    }
+
+
+    // Get teams 
     getTeamSchedule = async () => {
         console.log("GET /teams/teamID")
 
