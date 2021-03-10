@@ -1,6 +1,7 @@
 // get specific team
 
 const getSpecificTeamHandler = async (req, res, { Team }) => {
+    console.log("REQUEST: getSpecifcTeam called")
     const teamID = req.params.teamID
     const team = await Team.find({_id: teamID});
 

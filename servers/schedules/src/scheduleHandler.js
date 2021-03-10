@@ -1,11 +1,12 @@
 // post user's schedule
 const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
+    console.log("REQUEST: postUserSchedule called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
     }
 
-    const user = req.get('X-User');
+    const user = JSON.parse(req.get('X-User'));
 
     const userID = user['id']
     const{ day, startTime, endTime } = req.body;
@@ -68,13 +69,14 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
 }
 
     // patch user's schedule
-const getUserScheduleHandler = async (req, res, { UserSchedule }) => {    
+const getUserScheduleHandler = async (req, res, { UserSchedule }) => {
+    console.log("REQUEST: getUserSchedule called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
     }
 
-    const user = req.get('X-User');
+    const user = JSON.parse(req.get('X-User'));
     const userID = user['id']
 
     const userSchedule = await UserSchedule.find({"userID": userID})

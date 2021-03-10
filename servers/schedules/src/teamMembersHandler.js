@@ -18,6 +18,7 @@ function updateTeamSched(currentSched, dayIndex, newTime, startTime) {
 
 
 const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
+    console.log("REQUEST: postMembers called")
     if (!req.get("X-User")) {
       res.status(401).send('User not authorized');
       return;
@@ -141,15 +142,17 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
                 res.status(400).send("message: " + data + " delete error: " + err);
                 return;
             }
+            res.setHeader("Content-Type", "application/json");
+            res.status(201).json(newMembers)
         })
     } catch(e) {
         res.status(500).send('not working')
     }
-    res.setHeader("Content-Type", "application/json");
-    res.status(201).send(newMembers)
+    
 }
 
 const getMembersHandler = async (req, res, { Team }) => {
+    console.log("REQUEST: getMembers called")
     const teamID = req.params.teamID
     const team = await Team.findOne({_id: teamID});
 
@@ -157,6 +160,7 @@ const getMembersHandler = async (req, res, { Team }) => {
         res.status(404).send('team not found')
         return;
     }
+
     res.setHeader("Content-Type", "application/json");
     res.status(200).send(team['members'])
 }
@@ -166,6 +170,7 @@ const getMembersHandler = async (req, res, { Team }) => {
 
 
 const deleteMembersHandler = async(req, res, {Team}) => {
+    console.log("REQUEST: deleteMembers called")
     const teamID = req.params.teamID
     const memberID = JSON.parse(req.body['id']);
 

@@ -2,6 +2,7 @@
 
 // ALSO INITIALIZE TEAM SCHEDULE TO BE EQUAL TO CREATOR SCHEDULE
 const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
+    console.log("REQUEST: postTeam called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
@@ -67,14 +68,14 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     });
 };
 
-const getUserCred = async (req, res, { Team, UserSchedule }) => { = async (req, res, { Team, UserSchedule }) => {
+const getUserCred = async (req, res, {}) => {
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
     }
 
     const user = JSON.parse(req.get('X-User'));
-    res.send(user)
+    res.status(200).send(user)
 }
 
 module.exports = {postTeamHandler, getUserCred}
