@@ -215,4 +215,4 @@ const deleteMembersHandler = async(req, res, {Team}) => {
     });
 }
 
-module.exports = {postMembersHandler, getMembersHandler};
+module.exports = {postMembersHandler, getMembersHandler, deleteMembersHandler};
