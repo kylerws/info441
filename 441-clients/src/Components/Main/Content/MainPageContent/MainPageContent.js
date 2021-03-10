@@ -102,9 +102,9 @@ class MainPageContent extends Component {
         // this.setState({showPostSchedule: true})
 
         const { name, description, privateTeam } = 
-            {name: "New Team",
-            description: "description",
-            privateTeam: true
+            {name: this.state.teamname,
+            description: this.state.members,
+            privateTeam: this.state.teampriv
         }
 
         const sendData = { name, description, privateTeam }
@@ -180,8 +180,12 @@ class MainPageContent extends Component {
 
         let makeTeamView = (
             <div>
-                <TeamForm />
-                <button onClick={() => this.setState({showPostSchedule: false})}>Cancel</button>
+                <TeamForm submit={e => this.postTeam(e)}
+                    setTeamName={(v) => this.setState({teamname: v})}
+                    setTeamMembers={(v) => this.setState({members: v})}
+                    setTeamPrivacy={(v) => this.setState({teampriv: v})}
+                />
+                <button onClick={() => this.setState({makingTeam: false})}>Cancel</button>
             </div>
         )
 
@@ -229,18 +233,21 @@ class DayForm extends React.Component {
     }
 }
 
-const TeamForm = ({ setField, submitForm, values, fields }) => {
-    return <>
-        <form key="teamform" onSubmit={submitForm} id="maketeamform">
-            <div>
-                <label for="teamname">Team name:</label>
-                <input type="text" />
-                <label for="teammembers">Team members:</label>
-                <input type="text" />
+class TeamForm extends React.Component { //= ({ setField, submitForm, values, fields }) => {
+    render() {
+        return(
+            <form key="teamform" onSubmit={this.props.submit} id="maketeamform">
+                <div>
+                    <label for="teamname">Team name: </label>
+                    <input type="text" onChange={(v) => this.props.setTeamName(v)}/>
+                    <label for="teammembers">Team members: </label>
+                    <input type="text" onChange={(v) => this.props.setTeamMembers(v)}/>
+                    <Select options={teamPrivacyOptions} default={"Private team"} onChange={(v) => this.props.setTeamPrivacy(v)}/>
                 </div>
-            <input type="submit" value="Submit" />
-        </form>
-    </> 
+                <input type="submit" value="Submit" />
+            </form>
+        )
+    }
 } 
 
 // Select input that lifts selected value up
@@ -288,6 +295,17 @@ function normalizeDate(d) {
     return d
 }
 
+const teamPrivacyOptions = [
+    {
+        label: "Private team",
+        value: true,
+    },
+    {
+    label: "Public team",
+    value: false,
+    }
+];
+
 const dayOptions = [
     {
         label: "Monday",
@@ -309,7 +327,7 @@ const dayOptions = [
         label: "Friday",
         value: "friday",
     },
-]
+];
 
 const hourOptions = [
     { label: "12", value: "00:00" },
