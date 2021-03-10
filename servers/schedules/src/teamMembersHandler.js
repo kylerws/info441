@@ -1,21 +1,28 @@
 // post members to team
 // get teams availability
 
-function needsUpdate(userStartTime, teamStartTime) {
+function needsUpdate(userTime, teamTime, startTime) {
     // if team start is before (less than user start), needs update
 
     // return teamStartTime < userStartTime
     // console.log("team start " + teamStartTime + " user start: " + userStartTime)
-    return teamStartTime < userStartTime;
+    if (startTime) {
+        return teamTime < userTime;
+    }
+    return teamTime > userTime;
 }
 
-// function updateTeamSched(currentSched, dayIndex) {
-//     console.log('update needed')
-//     console.log(currentSched[0]['schedule'][dayIndex]['startTime'] + " was the start time")
-//     currentSched[0]['schedule'][dayIndex]['startTime'] = userStart
-//     console.log(currentSched[0]['schedule'][dayIndex]['startTime'] + " is the new start time")
-//     // return newSched;
-// }
+function updateTeamSched(currentSched, dayIndex, newTime, startTime) {
+    if (startTime) {
+        currentSched[dayIndex]['startTime'] = newTime
+    }
+
+    currentSched[dayIndex]['endTime'] = newTime
+    // return currentSched
+    // return newSched;
+}
+
+
 
 const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     // if (!req.get("X-User")) {
@@ -25,7 +32,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
   
     // const user = JSON.parse(req.get('X-User'));
 
-    const user = {id: 10, email: 'mackenzie@msn.com'}
+    const user = {id: 20, email: 'mackenzie@msn.com'}
 
     const userID = user['id']
   
@@ -72,10 +79,20 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     // console.log('started')
     const addedMemberSched = await UserSchedule.find({"userID": addedMember['id']})
     // console.log('schedule found')
+    const teamObj = await Team.find({_id : teamID})
+
+    // schedule we keep for updating outside of the for loop
+    const updatedTeamSched = teamObj[0]['schedule']
+
 
     if (addedMemberSched.length > 0) {
         const schedArray = addedMemberSched[0]['schedule']
-        const updatedTeamSched = await Team.find({_id : teamID})
+
+        // res.send(updatedTeamSched)
+
+        // res.send(updatedTeamSched)--FULL TEAM OBJECT
+        // return;
+
         for (i = 0; i < schedArray.length; i++) {
             const curr = schedArray[i]
             const currDay = curr['day']
@@ -95,29 +112,47 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
                 const teamStart = teamDayEntry['startTime']
                 const userStart = curr['startTime']
 
-                console.log('Schedule to compare for ' + currDay + " update needed = " + needsUpdate(userStart, teamStart))
-                if (needsUpdate(userStart, teamStart)) {
-                    // Teams.findAndUpdate({_id : teamID}, {$set : {//start time where day = currday}})
-                    console.log('update needed')
-                    console.log(updatedTeamSched[0]['schedule'][index]['startTime'] + " was the start time")
-                    updatedTeamSched[0]['schedule'][index]['startTime'] = userStart
-                    console.log(updatedTeamSched[0]['schedule'][index]['startTime'] + " is the new start time")
-                    // updateTeamSched(updatedTeamSched, index)
-                    // console.log(updateTeamSched)
+                const teamEnd = teamDayEntry['endTime']
+                const userEnd = curr['endTime']
+
+                // console.log('Schedule to compare for ' + currDay + " update needed = " + needsUpdate(userStart, teamStart, true))
+                if (needsUpdate(userStart, teamStart, true)) {
+                    console.log('update start needed')
+                    console.log(updatedTeamSched[index]['startTime'] + ' is the old start time, outside function for ' + currDay)
+                    updateTeamSched(updatedTeamSched, index, userStart, true)
+                    console.log(updatedTeamSched['startTime'] + ' is the new start time, outside function for ' + currDay)
                 }
+
+                if (needsUpdate(userEnd, teamEnd, false)) {
+                    console.log('update end needed')
+                    console.log(updatedTeamSched[index]['endTime'] + ' is the old endTime, outside function for ' + currDay)
+                    updateTeamSched(updatedTeamSched, index, userEnd, false)
+                    console.log(updatedTeamSched[index]['endTime'] + ' is the new endTime, outside function for ' + currDay)
+                
+                }
+
             } else {
                 console.log('there is NOT a schedule to compare for ' + currDay)
             }
-            // // check if length of current day exists (teamSched.length > 0) in team schedule
-            // // if it does, see if it should be updated
 
-            // res.send(teamSched)
-            // return;
         }
+
+        // const updatedTeamSched = await Team.find({_id : teamID})
+
+        Team.findOneAndUpdate({_id: teamID}, {$set:{"schedule": updatedTeamSched}}, { new: true }, function(err, data) {
+            if (err) {
+                res.status(400).send("Data: " + data + "\nError: " + err);
+                return;
+            }
+            console.log("updated schedule for new emmeber")
+            // res.status(201).send('Member added to channel, schedule updated');
+        });
     }
 
-    res.send('finished')
-    return;
+    
+
+    // res.send('finished')
+    // return;
 
     // test('this is', 'a test')
 
@@ -140,84 +175,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     // console.log(len(newMembers))
     res.send(newMembers)
     res.send('reached')
-    //     if (err) {
-    //         res.status(400).send("message: " + data + " delete error: " + err);
-    //         return;
-    //     }
-    //     res.setHeader("Content-Type", "application/json");
-    //     res.status(201).send('Member added to team');
-    //     return;
-    //   });
-    // } catch(e) {
-    //   res.status(400).send("Incorrect JSON format")
-    //   return;
-    // }
-
-    // console.log(team['name'])
-    // console.log(channel)
-  
-    // THIS CODE BREAKS
-    // Check channel creator
-
-    // res.json(team[0]['creator']['id'])
-
-    // if (team[0]['creator']['id'] != userID) {
-    //   res.status(403).send("User is not channel creator");
-    //   return;
-    // }
-  
-    // const { id, email } = req.body
-    // res.send('user is creator')
-  
-    // OLD CODE, also breaks
-  
-    // // Check that user is allowed to access channel
-    // // const hasAccess = await Channel.find({_id : channelID, "creator.id": user['id']});
-    // // if (!hasAccess) {
-    // //     res.status(403).send("User is not channel creator");
-    // //     return;
-    // // }
-  
-    // // const channel = await Channel.findOne({_id: channelID});
-    // // const test = channel['creator']['id']
-    // // console.log(test == userID)
-  
-    // // if (test != userID) {
-    // //   res.status(403).send("User is not channel creator");
-    // //   return;
-    // // }
-  
-  
-  
-    // SHOULD WORK, commented out for testing
-  
-    // const addedMember = {
-    //   "id": id,
-    //   "email": email
-    // }
-  
-    // // Check that user is not already member
-    // const currMember = await Channel.find({_id : channelID, "members.id": addedMember['id']});
-    // if (currMember.length > 0) {
-    //   res.status(409).send('User is already a member')
-    //   return;
-    // }
-  
-    // // Try add member to channel
-    // try {
-    //   const newMembers = channel[0]['members'].push(addedMember);
-    //   Channel.findOneAndUpdate({_id: channelID},{$set:{"members": newMembers}}, { new: true }, function(err, data) {
-    //     if (err) {
-    //         res.status(400).send("message: " + data + " delete error: " + err);
-    //         return;
-    //     }
-    //     res.setHeader("Content-Type", "application/json");
-    //     res.status(201).send('Member added to channel');
-    //   });
-    // } catch(e) {
-    //   res.status(400).send("Incorrect JSON format")
-    // }
-    // res.send("End test")
 }
 
 const getMembersHandler = async (req, res, { Team }) => {
@@ -237,4 +194,25 @@ const getMembersHandler = async (req, res, { Team }) => {
 
 // delete members from team
 
-module.exports = {postMembersHandler, getMembersHandler};
+
+const deleteMembersHandler = async(req, res, {Team}) => {
+    const teamID = req.params.teamID
+    const memberID = JSON.parse(req.body['id']);
+
+    const currteam = await Team.find({_id: teamID});
+
+    currteam['members'] = currteam['members'].filter(el => el['id'] != memberID);
+
+    Team.findOneAndUpdate(
+        {"id": teamID}, {$set:{"members": currteam['members']}},
+        { new: true },
+        function(err, data) {
+        if (err) {
+            res.status(400).send("message: " + data + " delete error: " + err);
+            return;
+        }
+        res.json(data);
+    });
+}
+
+module.exports = {postMembersHandler, getMembersHandler, deleteMembersHandler};

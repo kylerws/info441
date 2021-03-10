@@ -8,7 +8,7 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     // }
 
     // const user = JSON.parse(req.get('X-User'));
-    const user = {id: 10, email: 'mackenzie@msn.com'}
+    const user = {id: 20, email: 'mackenzie@msn.com'}
     const userID = user['id']
     const{ name, description, private } = req.body;
 
