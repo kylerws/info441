@@ -5,22 +5,6 @@ import './Styles/MainPageContent.css';
 import api from '../../../../Constants/APIEndpoints/APIEndpoints';
 import moment from 'moment'
 
-// const MainPageContent = ({ user, setPage }) => {
-
-//     return <>
-//         <div>Welcome to my application, {user.firstName} {user.lastName}</div>
-
-//         {/* {avatar && <img className={"avatar"} src={avatar} alt={`${user.firstName}'s avatar`} />} */}
-//         {/* <div><button>My Teams</button></div> */}
-//         <div><button>POST /schedule</button></div>
-//         <div><button onClick={(e) => { setPage(e, PageTypes.signedInUpdateName) }}>My Profile</button></div>
-//         {/* <nav id="aboutLinks">
-//             <ul className="list-unstyled">
-//                 <li><a to="/teams" activeClassName="activeLink">Your Teams</a></li>
-//             </ul>
-//         </nav> */}
-//     </>
-// }
 
 class MainPageContent extends Component {
     constructor(props) {
@@ -28,32 +12,22 @@ class MainPageContent extends Component {
         this.state = {
             schedule: "",
             showPostSchedule: false,
-            teamID: "6048d01ebc524b6f3958f9d9"
+            teamID: "6048ee62bc524b5c2d58f9f4"
         }
 
         this.getSchedule()
+        this.getTeamSchedule()
     }
 
-    process(data) {
-        
-    }
 
     getSchedule = async () => {
-        console.log("clicked")
+        console.log("GET /schedule")
         const resp = await fetch(api.base + api.handlers.schedule, {
             headers: new Headers({
                 "Authorization": this.props.auth
             })
         })
-        // .then(resp => {
-        //     if (resp.status == 200) {
-        //         const scheduleArr = resp.json()
-        //         if (scheduleArr.length == 0) {
-        //             return "You haven't added your schedule yet"
-        //         }
-        //         process(scheduleArr)
-        //     }
-        // })
+
         if (resp.status != 200) {
             return
         }
@@ -64,15 +38,11 @@ class MainPageContent extends Component {
             return
         }
 
-        console.log(scheduleArr)
         const scheduleElements = scheduleArr[0].schedule.map(d => {
-            console.log(d)
-            // console.log
-            // moment(d.startTime).local().format('HH:mm')
-            return <div key={d.day + "test"}>
-                <h1>{toUpper(d.day)}</h1>
-                <h2>{moment(d.startTime).local().format('h:mm a')}</h2>
-                <h2>{moment(d.endTime).local().format('h:mm a')}</h2>
+            return <div key={d.day}>
+                <h3>{toUpper(d.day)}</h3>
+                <h4>{toClientDate(d.startTime)}</h4>
+                <h4>{toClientDate(d.endTime)}</h4>
             </div>
         })
 
@@ -81,27 +51,23 @@ class MainPageContent extends Component {
 
     postSchedule = async (e) => {
         e.preventDefault()
-        // this.setState({showPostSchedule: true})
-
-        // t = moment()
-
-        const { day, startTime, endTime } = 
-            {day: "test2",
-            startTime:  normalizeDate(new Date("2018-03-29T08:00:00.000")),
-            endTime: normalizeDate(new Date("2018-03-29T10:00:00.000"))
+        console.log("POST /schedule")
+        
+        // Get form values from state
+        const { day, startTime, endTime } = {
+            day: this.state.day,
+            startTime: this.state.startTime,
+            endTime: this.state.endTime
         }
 
-        console.log(endTime)
-        // startTime = normalizeDate(new Date(startTime))
-        // endTime = normalizeDate(new Date(endTime))
-        // let d = new Date(startTime)
-        // d.setFullYear(1998)
-        // // d.setMonth(0)
-        // d.setMonth(1)
-        // d.setDate(1)
-        // console.log(d)
+        // console.log(endTime)
 
-        const sendData = { day, startTime, endTime }
+        const sendData = {
+            day,
+            startTime,
+            endTime 
+        }
+
         const resp = await fetch(api.base + api.handlers.schedule, {
             method: "POST",
             body: JSON.stringify(sendData),
@@ -115,13 +81,13 @@ class MainPageContent extends Component {
             alert("Failed to update schedule")
         }
 
-        this.getSchedule()
-        this.setState({showPostSchedule: false})
+        this.getSchedule()  // update displayed schedule
+        this.setState({showPostSchedule: false})    // hide postSchedule form
     }
 
-    // Get teams 
+    // Get teams/teamID
     getTeamSchedule = async () => {
-        console.log("clicked")
+        console.log("GET /teams/teamID")
 
         // ---------------------------teamID needs to be added to state---------------
         const resp = await fetch(api.base + api.handlers.teams + "/" + this.state.teamID, {
@@ -129,8 +95,6 @@ class MainPageContent extends Component {
                 "Authorization": this.props.auth
             })
         })
-
-        console.log(resp)
         
         if (resp.status != 200) {
             return
@@ -138,29 +102,34 @@ class MainPageContent extends Component {
         
         const teamArr = await resp.json()
         if (teamArr.length == 0) {
-            this.setState({team: "No Team"})
+            this.setState({team: ""})
             return
         }
 
         console.log(teamArr)
         const teamScheduleElements = teamArr[0].schedule.map(d => {
             console.log(d)
-            return <div key={d.day + "test"}>
-                <h1>{toUpper(d.day)}</h1>
-                <h2>{moment(d.startTime).local().format('h:mm a')}</h2>
-                <h2>{moment(d.endTime).local().format('h:mm a')}</h2>
+            return <div key={d.day}>
+                <h3>{toUpper(d.day)}</h3>
+                <h4>{toClientDate(d.startTime)}</h4>
+                <h4>{toClientDate(d.endTime)}</h4>
             </div>
         })
 
+        // teamID hardcoded for now
         this.setState({teamName: teamArr[0].name})
         this.setState({team: teamScheduleElements})
     }
 
 
     render() {
+        // Contains form for updating user own schedule
         let postScheduleView = (
             <div>
-               
+                <DayForm submit={e => this.postSchedule(e)}
+                    setDay={(v) => this.setState({day: v})}
+                    setStart={(v) => this.setState({startTime: v})}
+                    setEnd={(v) => this.setState({endTime: v})} />
                 <button onClick={() => this.setState({showPostSchedule: false})}>Cancel</button>
                 <button onClick={e => this.postSchedule(e)}>Post Schedules</button>
             </div>
@@ -170,14 +139,14 @@ class MainPageContent extends Component {
             <div>
                 <div>Welcome back, {this.props.user.firstName} {this.props.user.lastName}</div>
                 <div>
-                    <h1>Your Team</h1>
-                    <h2>{this.state.teamName}</h2>
-                    <button onClick={() => this.getTeamSchedule()}>Refresh</button>
+                    <h1>Team Schedule</h1>
+                    <h2>Team {this.state.teamName}</h2>
+                    {/* <button onClick={() => this.getTeamSchedule()}>Refresh</button> */}
                     {this.state.team}
                 </div>
                 <div>
                     <h1>Your Schedule</h1>
-                    <button onClick={() => this.getSchedule()}>Refresh</button>
+                    {/* <button onClick={() => this.getSchedule()}>Refresh</button> */}
                 </div>
                 <div>
                     {this.state.schedule}
@@ -194,169 +163,54 @@ class MainPageContent extends Component {
     }
 }
 
-const hourOptions = [
-    {
-      label: "12",
-      value: "00:00",
-    },
-    {
-      label: "1",
-      value: "01:00",
-    },
-    {
-      label: "2",
-      value: "02:00",
-    },
-    {
-      label: "3",
-      value: "03:00",
-    },
-    {
-      label: "4",
-      value: "04:00",
-    },
-  ];
+// Form for adding Day to schedule
+class DayForm extends React.Component {
+    render() {
+        return (
+            <form onSubmit={this.props.submit}>
+                <Select options={dayOptions} default={"monday"} onChange={(v) => this.props.setDay(v)}/>
+                <Select options={hourOptions} default={"00:00"} onChange={(v) => this.props.setStart(v)}/>
+                <Select options={hourOptions} default={"00:00"} onChange={(v) => this.props.setEnd(v)}/>
+                <input type="submit" value="Submit" />
+            </form>
+        )
+    }
+} 
 
-  
+// Select input that lifts selected value up
+class Select extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = { selected: this.props.default }
+    }
 
-// class DayForm extends React.Component {
-//     render() {
-//         ret
-//         <form onSubmit={this.props.submit}>
-//             <input type="text" value={this.state.value} onChange={this.handleChange} />
-//             <TimeSelect options={hourOptions} default={"00:00"} onChange={() => console.log()}/>
-//             <TimeSelect options={hourOptions} default={"00:00"} onChange={() => console.log()}/>
-//             <input type="submit" value="Submit" />
-//         </form>
-//     }
-// } 
+    handleChange = (e) => {
+        this.setState({selected: e.target.value})
+        this.props.onChange(e.target.value)
+    }
 
-class TimeSelect extends React.Component {
     render() {
         let options = this.props.options.map(o => (
-            <option value={o.value}>{o.label}</option>))
+            <option key={o.value} value={o.value}>{o.label}</option>))
         return (
-            <select value={this.props.default} onChange={() => this.props.handle()}>
+            <select value={this.state.selected} onChange={(e) => this.handleChange(e)}>
                 {options}
             </select>
         );
     }
 }
-
-// PostSchedule
-// class PostScheduleForm extends Component {
-//     // static propTypes = {
-//     //     setPage: PropTypes.func,
-//     //     setAuthToken: PropTypes.func
-//     // }
-
-//     constructor(props) {
-//         super(props);
-
-//         this.state = {
-//             day: "",
-//             startTime: "",
-//             endTime: "",
-//             error: ""
-//         };
-
-//         this.fields = [
-//             {
-//                 name: "Day of Week",
-//                 key: "day"
-//             },
-//             {
-//                 name: "Start Time",
-//                 key: "startTime"
-//             },
-//             {
-//                 name: "End Time",
-//                 key: "endTime"
-//             }
-//         ];
-//     }
-
-//     /**
-//      * @description setField will set the field for the provided argument
-//      */
-//     setField = (e) => {
-//         this.setState({ [e.target.name]: e.target.value });
-//     }
-
-//     /**
-//      * @description setError sets the error message
-//      */
-//     setError = (error) => {
-//         this.setState({ error })
-//     }
-
-//     /**
-//      * @description submitForm handles the form submission
-//      */
-//     submitForm = async (e) => {
-//         e.preventDefault();
-//         const { email, password } = this.state;
-//         const sendData = { email, password };
-//         const response = await fetch(api.base + api.handlers.sessions, {
-//             method: "POST",
-//             body: JSON.stringify(sendData),
-//             headers: new Headers({
-//                 "Content-Type": "application/json"
-//             })
-//         });
-//         if (response.status >= 300) {
-//             const error = await response.text();
-//             this.setError(error);
-//             return;
-//         }
-//         const authToken = response.headers.get("Authorization")
-//         localStorage.setItem("Authorization", authToken);
-//         this.setError("");
-//         this.props.setAuthToken(authToken);
-//         const user = await response.json();
-//         this.props.setUser(user);
-//     }
-
-//     render() {
-//         const values = this.state;
-//         const { error } = this.state;
-//         return <>
-//             <Errors error={error} setError={this.setError} />
-//             <SignForm
-//                 setField={this.setField}
-//                 submitForm={this.submitForm}
-//                 values={values}
-//                 fields={this.fields} />
-//             <button onClick={(e) => this.props.setPage(e, PageTypes.signUp)}>Sign up instead</button>
-//             <button onClick={(e) => this.props.setPage(e, PageTypes.forgotPassword)}>Forgot password</button>
-//         </>
-//     }
-// }
-
-// const SignForm = ({ setField, submitForm, values, fields }) => {
-//     return <>
-//<form onSubmit={submitForm}>
-//             {fields.map(d => {
-//                 const { key, name } = d;
-//                 return <div key={key}>
-//                     <span>{name}: </span>
-//                     <input         
-//                         value={values[key]}
-//                         name={key}
-//                         onChange={setField}
-//                         type={key === "password" || key === "passwordConf" ? "password" : ''}
-//                     />
-//                 </div>
-//             })}
-//             <input type="submit" value="Submit" />
-//         </form>
-//     </>
-// }
-
+ 
+// Returns capitalized version of string
 function toUpper(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+// Takes DateTime returned by mongoDB and parses to a readable format
+function toClientDate(datetime) {
+    return moment(datetime).local().format('h:mm a')
+}
+
+// 
 function normalizeDate(d) {
     console.log(d)
     d.setFullYear(1998)
@@ -367,5 +221,36 @@ function normalizeDate(d) {
     console.log(d)
     return d
 }
+
+const dayOptions = [
+    {
+        label: "Monday",
+        value: "monday",
+    },
+    {
+    label: "Tuesday",
+    value: "tuesday",
+    },
+    {
+    label: "Wednesday",
+    value: "wednesday",
+    },
+    {
+    label: "Thursday",
+    value: "thursday",
+    },
+    {
+        label: "Friday",
+        value: "friday",
+    },
+]
+
+const hourOptions = [
+    { label: "12", value: "00:00" },
+    { label: "1", value: "01:00" },
+    { label: "2", value: "02:00" },
+    { label: "3", value: "03:00" },
+    { label: "4", value: "04:00" },
+  ];
 
 export default MainPageContent;

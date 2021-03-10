@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import api from '../../../../Constants/APIEndpoints/APIEndpoints';
 import Errors from '../../../Errors/Errors';
+import PageTypes from '../../../../Constants/PageTypes/PageTypes';
 
 class UpdateName extends Component {
     constructor(props) {
@@ -33,6 +34,7 @@ class UpdateName extends Component {
         alert("Name changed") // TODO make this better by refactoring errors
         const user = await response.json();
         this.props.setUser(user);
+        this.props.setPage(e, PageTypes.signedInMain)
     }
 
     setValue = (e) => {
@@ -47,7 +49,8 @@ class UpdateName extends Component {
         const { firstName, lastName, error } = this.state;
         return <>
             <Errors error={error} setError={this.setError} />
-            <div>Enter a new name</div>
+            <h2>Profile</h2>
+            <h3>Edit name</h3>
             <form onSubmit={this.sendRequest}>
                 <div>
                     <span>First name: </span>
@@ -57,7 +60,7 @@ class UpdateName extends Component {
                     <span>Last name: </span>
                     <input name={"lastName"} value={lastName} onChange={this.setValue} />
                 </div>
-                <input type="submit" value="Change name" />
+                <input type="submit" value="Update" />
             </form>
         </>
     }
