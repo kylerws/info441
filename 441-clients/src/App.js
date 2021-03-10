@@ -83,6 +83,14 @@ class App extends Component {
         const { page, user } = this.state;
         return (
             <div>
+                <header className="jumbotron jumbotron-fluid bg-dark text-white" aria-label="fall leaves trail image">
+                    <div className="container">
+                        <h1>Schedule Up</h1>
+                        <p className="lead">Use our website
+                            to conveniently schedule meetings with your teams!
+                        </p>
+                    </div>
+                </header>
                 {user ?
                     <Main 
                         auth={this.state.authToken}

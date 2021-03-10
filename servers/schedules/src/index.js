@@ -43,12 +43,12 @@ mongoose.connection.on('error', console.error)
     .on('disconnected', connect)
     .once('open', main);
 
-// app.post("/v1/teams", RequestWrapper(postTeamHandler, { Team, UserSchedule }));
-// app.post("/v1/teams/:teamID/members", RequestWrapper(postMembersHandler, { Team, UserSchedule }));
-// app.get("/v1/teams/:teamID/members", RequestWrapper(getMembersHandler, { Team }));
+app.post("/v1/teams", RequestWrapper(postTeamHandler, { Team, UserSchedule }));
+app.post("/v1/teams/:teamID/members", RequestWrapper(postMembersHandler, { Team, UserSchedule }));
+app.get("/v1/teams/:teamID/members", RequestWrapper(getMembersHandler, { Team }));
 app.post("/v1/schedule", RequestWrapper(postUserScheduleHandler, { UserSchedule }));
 app.get("/v1/schedule", RequestWrapper(getUserScheduleHandler, { UserSchedule }));
-// app.get("/v1/teams/:teamID", RequestWrapper(getSpecificTeamHandler, { Team }));
+app.get("/v1/teams/:teamID", RequestWrapper(getSpecificTeamHandler, { Team }));
 
 async function main() {
     app.listen(port, () => {

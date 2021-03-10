@@ -1,3 +1,13 @@
 body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: white;
+    font-family: "Helvetica Neue", sans-serif;
+}
+header {
+    background-image: url('/network.jpg');
+    background-position: center;
+    background-size: cover;
+    color: white;
+    font-family: Impact, Charcoal, sans-serif;
+    height: max-content;
 }
