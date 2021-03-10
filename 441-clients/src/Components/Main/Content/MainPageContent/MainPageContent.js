@@ -239,6 +239,26 @@ class MainPageContent extends Component {
 //     }
 // }
 
+// const SignForm = ({ setField, submitForm, values, fields }) => {
+//     return <>
+//         <form onSubmit={submitForm}>
+//             {fields.map(d => {
+//                 const { key, name } = d;
+//                 return <div key={key}>
+//                     <span>{name}: </span>
+//                     <input
+//                         value={values[key]}
+//                         name={key}
+//                         onChange={setField}
+//                         type={key === "password" || key === "passwordConf" ? "password" : ''}
+//                     />
+//                 </div>
+//             })}
+//             <input type="submit" value="Submit" />
+//         </form>
+//     </>
+// }
+
 function toUpper(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
