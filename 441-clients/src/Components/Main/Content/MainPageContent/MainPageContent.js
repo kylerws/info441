@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import{NavLink} from 'react-router-dom';
-import PageTypes from '../../../../Constants/PageTypes/PageTypes';
+//import{NavLink} from 'react-router-dom';
+//import PageTypes from '../../../../Constants/PageTypes/PageTypes';
 import './Styles/MainPageContent.css';
 import api from '../../../../Constants/APIEndpoints/APIEndpoints';
-import moment from 'moment'
+//import moment from 'moment'
+import * as moment from 'moment';
+//const moment= require('moment') 
 
 
 class MainPageContent extends Component {
@@ -28,12 +30,12 @@ class MainPageContent extends Component {
             })
         })
 
-        if (resp.status != 200) {
+        if (resp.status !== 200) {
             return
         }
         
         const scheduleArr = await resp.json()
-        if (scheduleArr.length == 0) {
+        if (scheduleArr.length === 0) {
             this.setState({schedule: "You haven't add your schedule yet"})
             return
         }
@@ -85,7 +87,7 @@ class MainPageContent extends Component {
             })
         })
 
-        if (resp.status != 201) {
+        if (resp.status !== 201) {
             alert("Failed to update schedule")
         }
 
@@ -98,13 +100,13 @@ class MainPageContent extends Component {
 
         // this.setState({showPostSchedule: true})
 
-        const { name, description, private } = 
+        const { name, description, privateTeam } = 
             {name: "New Team",
             description: "description",
-            private: true
+            privateTeam: true
         }
 
-        const sendData = { name, description, private }
+        const sendData = { name, description, privateTeam }
         const resp = await fetch(api.base + api.handlers.teams, {
             method: "POST",
             body: JSON.stringify(sendData),
@@ -114,7 +116,7 @@ class MainPageContent extends Component {
             })
         })
 
-        if (resp.status != 201) {
+        if (resp.status !== 201) {
             alert("Failed to create team")
         }
         // resp body will contain an id field, set this in the stat
@@ -134,12 +136,12 @@ class MainPageContent extends Component {
             })
         })
         
-        if (resp.status != 200) {
+        if (resp.status !== 200) {
             return
         }
         
         const teamArr = await resp.json()
-        if (teamArr.length == 0) {
+        if (teamArr.length === 0) {
             this.setState({team: ""})
             return
         }
@@ -147,11 +149,13 @@ class MainPageContent extends Component {
         console.log(teamArr)
         const teamScheduleElements = teamArr[0].schedule.map(d => {
             console.log(d)
-            return <div key={d.day}>
-                <h3>{toUpper(d.day)}</h3>
-                <h4>{toClientDate(d.startTime)}</h4>
-                <h4>{toClientDate(d.endTime)}</h4>
-            </div>
+            return <div class="container"><div class="row">
+                <div className="row" id="oneDayAvailability" key={d.day}>
+                    <div className="col-xl"><h3>{toUpper(d.day)}</h3></div>
+                    <div className="col-xl"><h4>{toClientDate(d.startTime)}</h4></div>
+                    <div className="col-xl"><h4>{toClientDate(d.endTime)}</h4></div>
+                </div>
+            </div></div>
         })
 
         // teamID hardcoded for now
