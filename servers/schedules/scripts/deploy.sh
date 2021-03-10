@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Working directory and build
-cd ~/go/src/assignments-fixed-kylerws/servers/schedules
+cd ~/go/src/info441/servers/schedules
 ./scripts/build.sh
 
 # Push API docker image to kylerws

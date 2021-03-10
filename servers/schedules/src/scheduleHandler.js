@@ -1,14 +1,11 @@
 // post user's schedule
 const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
-    // if (!req.get("X-User")) {
-    //     res.status(401).send('User not authorized');
-    //     return;
-    // }
+    if (!req.get("X-User")) {
+        res.status(401).send('User not authorized');
+        return;
+    }
 
-    // const user = req.get('X-User');
-
-
-    const user = {id: 1, email: 'mackenzie@msn.com'}
+    const user = req.get('X-User');
 
     const userID = user['id']
     const{ day, startTime, endTime } = req.body;
@@ -34,7 +31,6 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
                 return;
             }
             
-            // res.send(newChannel._id)
             res.setHeader("Content-Type", "application/json");
             res.status(201).json(userSchedule['schedule']);
             return;
@@ -73,8 +69,14 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
 
     // patch user's schedule
 const getUserScheduleHandler = async (req, res, { UserSchedule }) => {    
-    const user = {id: 1, email: 'mackenzie@msn.com'}
+    if (!req.get("X-User")) {
+        res.status(401).send('User not authorized');
+        return;
+    }
+
+    const user = req.get('X-User');
     const userID = user['id']
+
     const userSchedule = await UserSchedule.find({"userID": userID})
     console.log(userSchedule.length)
     const days = [];
@@ -83,7 +85,7 @@ const getUserScheduleHandler = async (req, res, { UserSchedule }) => {
     }
     console.log(days)
     res.setHeader("Content-Type", "application/json");
-    res.send(days)
+    res.status(200).send(days)
 }
 
 module.exports = {postUserScheduleHandler, getUserScheduleHandler};

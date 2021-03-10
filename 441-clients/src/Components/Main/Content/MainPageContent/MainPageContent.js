@@ -1,45 +1,85 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import{NavLink} from 'react-router-dom';
 import PageTypes from '../../../../Constants/PageTypes/PageTypes';
 import './Styles/MainPageContent.css';
 import api from '../../../../Constants/APIEndpoints/APIEndpoints';
 
-const MainPageContent = ({ user, setPage }) => {
-    const [avatar, setAvatar] = useState(null)
+// const MainPageContent = ({ user, setPage }) => {
 
-    async function fetchAvatar() {
-        const response = await fetch(api.base + api.handlers.myuserAvatar, {
-            method: "GET",
-            headers: new Headers({
-                "Authorization": localStorage.getItem("Authorization")
-            })
-        });
-        if (response.status >= 300) {
-            // const error = await response.text();
-            setAvatar(user.photoURL)
-            return;
+//     return <>
+//         <div>Welcome to my application, {user.firstName} {user.lastName}</div>
+
+//         {/* {avatar && <img className={"avatar"} src={avatar} alt={`${user.firstName}'s avatar`} />} */}
+//         {/* <div><button>My Teams</button></div> */}
+//         <div><button>POST /schedule</button></div>
+//         <div><button onClick={(e) => { setPage(e, PageTypes.signedInUpdateName) }}>My Profile</button></div>
+//         {/* <nav id="aboutLinks">
+//             <ul className="list-unstyled">
+//                 <li><a to="/teams" activeClassName="activeLink">Your Teams</a></li>
+//             </ul>
+//         </nav> */}
+//     </>
+// }
+
+class MainPageContent extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            schedule: "You haven't add your schedule yet"
         }
-        const imgBlob = await response.blob();
-        setAvatar(URL.createObjectURL(imgBlob));
+        this.getSchedule()
     }
 
-    useEffect(() => {
-        fetchAvatar();
-        return;
-    }, []);
+    process(data) {
+        
+    }
 
-    return <>
-        <div>Welcome to my application, {user.firstName} {user.lastName}</div>
+    getSchedule = async () => {
+        const resp = await fetch(api.base + api.handlers.schedule, {
+            headers: new Headers({
+                "Authorization": this.props.auth
+            })
+        })
+        // .then(resp => {
+        //     if (resp.status == 200) {
+        //         const scheduleArr = resp.json()
+        //         if (scheduleArr.length == 0) {
+        //             return "You haven't added your schedule yet"
+        //         }
+        //         process(scheduleArr)
+        //     }
+        // })
+        if (resp.status != 200) {
+            return
+        }
+        
+        const scheduleArr = await resp.json()
+        if (scheduleArr.length == 0) {
+            this.setState({schedule: "You haven't add your schedule yet"})
+            return
+        }
 
-        {avatar && <img className={"avatar"} src={avatar} alt={`${user.firstName}'s avatar`} />}
-        <div><button onClick={(e) => { setPage(e, PageTypes.signedInUpdateName) }}>Update name</button></div>
-        <div><button onClick={(e) => { setPage(e, PageTypes.signedInUpdateAvatar) }}>Update avatar</button></div>
-        <nav id="aboutLinks">
-            <ul className="list-unstyled">
-                <li><NavLink to="/teams" activeClassName="activeLink">Your Teams</NavLink></li>
-            </ul>
-        </nav>
-    </>
+        const scheduleElements = scheduleArr.map(d => {
+            return <div>
+                <h1>{d.day}</h1>
+                <h2>{d.startTime}</h2>
+                <h2>{d.endTime}</h2>
+            </div>
+        })
+
+        this.setState({schedule: scheduleElements})
+    }
+
+    render() {
+        return (
+            <div>
+                <div>Welcome to my application, {this.props.user.firstName} {this.props.user.lastName}</div>
+                <div>
+                    {this.state.schedule}
+                </div>
+            </div>
+        );
+    }
 }
 
 export default MainPageContent;

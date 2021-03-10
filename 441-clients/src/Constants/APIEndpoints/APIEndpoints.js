@@ -1,12 +1,13 @@
 export default {
-    base: "https://api.schedule.info",
-    testbase: "https://api.schedule.info",
+    base: "https://api.scheduleup.info",
+    testbase: "https://api.scheduleup.info",
     handlers: {
         users: "/users",
         myuser: "/users/me",
-        teams: "/teams",
-        thisteam: "/teams/{team_id}",
-        sessions: "/v1/sessions",
-        sessionsMine: "/v1/sessions/mine"
+        schedule: "/v1/schedule",
+        teams: "/v1/teams",
+        thisteam: "/v1/teams/{team_id}",
+        sessions: "/sessions",
+        sessionsMine: "/sessions/mine"
     }
 }

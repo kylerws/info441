@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"time"
 
+	"info441/servers/gateway/directors"
 	"info441/servers/gateway/handlers"
 	"info441/servers/gateway/models/users"
 	"info441/servers/gateway/sessions"
@@ -44,10 +46,10 @@ func main() {
 	}
 
 	// Get addr for schedules
-	// schedulesAddr := os.Getenv("SCHEDULESADDR")
-	// if len(schedulesAddr) == 0 {
-	// 	schedulesAddr = "schedules:80"
-	// }
+	schedulesAddr := os.Getenv("SCHEDULESADDR")
+	if len(schedulesAddr) == 0 {
+		schedulesAddr = "schedules:80"
+	}
 
 	// Create session store
 	redisDB := redis.NewClient(&redis.Options{
@@ -69,20 +71,20 @@ func main() {
 	}
 
 	// Set up proxies
-	// schedulesTargs := directors.GetTargets(schedulesAddr)
-	// schedulesProxy := &httputil.ReverseProxy{Director: directors.CustomDirector(schedulesTargs, ctx)}
+	schedulesTargs := directors.GetTargets(schedulesAddr)
+	schedulesProxy := &httputil.ReverseProxy{Director: directors.CustomDirector(schedulesTargs, ctx)}
 
 	// New mux
 	mux := http.NewServeMux()
 
 	// Routes
-	mux.HandleFunc("/v1/users", ctx.UsersHandler)
-	mux.HandleFunc("/v1/users/", ctx.SpecificUsersHandler)
-	mux.HandleFunc("/v1/sessions", ctx.SessionsHandler)
-	mux.HandleFunc("/v1/sessions/", ctx.SpecificSessionsHandler)
+	mux.HandleFunc("/users", ctx.UsersHandler)
+	mux.HandleFunc("/users/", ctx.SpecificUsersHandler)
+	mux.HandleFunc("/sessions", ctx.SessionsHandler)
+	mux.HandleFunc("/sessions/", ctx.SpecificSessionsHandler)
 
 	// Proxy routes
-	// mux.Handle("/v1/teams", schedulesProxy)
+	mux.Handle("/v1/schedule", schedulesProxy)
 	// mux.Handle("/v1/teams/", schedulesProxy)
 
 	// Wrap CORS and serve

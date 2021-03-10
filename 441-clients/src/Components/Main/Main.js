@@ -5,19 +5,19 @@ import SignOutButton from './Components/SignOutButton/SignOutButton';
 import UpdateName from './Components/UpdateName/UpdateName';
 import UpdateAvatar from './Components/UpdateAvatar/UpdateAvatar';
 
-const Main = ({ page, setPage, setAuthToken, setUser, user }) => {
+const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
     let content = <></>
     let contentPage = true;
     switch (page) {
         case PageTypes.signedInMain:
-            content = <MainPageContent user={user} setPage={setPage} />;
+            content = <MainPageContent auth={auth} user={user} setPage={setPage} />;
             break;
         case PageTypes.signedInUpdateName:
             content = <UpdateName user={user} setUser={setUser} />;
             break;
-        case PageTypes.signedInUpdateAvatar:
-            content = <UpdateAvatar user={user} setUser={setUser} />;
-            break;
+        // case PageTypes.signedInUpdateAvatar:
+        //     content = <UpdateAvatar user={user} setUser={setUser} />;
+        //     break;
         default:
             content = <>Error, invalid path reached</>;
             contentPage = false;

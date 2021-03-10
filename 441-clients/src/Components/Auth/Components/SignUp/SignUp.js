@@ -25,7 +25,6 @@ class SignUp extends Component {
             lastName: "",
             password: "",
             passwordConf: "",
-            availability:"",
             error: ""
         };
 
@@ -45,10 +44,6 @@ class SignUp extends Component {
             {
                 name: "Last name",
                 key: "lastName"
-            },
-            {
-                name: "Availability",
-                key: "availability"
             },
             {
                 name: "Password",
@@ -83,7 +78,6 @@ class SignUp extends Component {
             userName,
             firstName,
             lastName,
-            availability,
             password,
             passwordConf } = this.state;
         const sendData = {
@@ -91,7 +85,6 @@ class SignUp extends Component {
             userName,
             firstName,
             lastName,
-            availability,
             password,
             passwordConf
         };

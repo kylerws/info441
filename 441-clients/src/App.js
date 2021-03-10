@@ -25,6 +25,8 @@ class App extends Component {
         if (!this.state.authToken) {
             return;
         }
+        console.log(api.base)
+        console.log(api.handlers.myuser)
         const response = await fetch(api.base + api.handlers.myuser, {
             headers: new Headers({
                 "Authorization": this.state.authToken
@@ -82,7 +84,9 @@ class App extends Component {
         return (
             <div>
                 {user ?
-                    <Main page={page}
+                    <Main 
+                        auth={this.state.authToken}
+                        page={page}
                         setPage={this.setPage}
                         setAuthToken={this.setAuthToken}
                         user={user}
