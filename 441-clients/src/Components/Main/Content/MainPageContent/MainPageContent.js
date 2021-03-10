@@ -149,6 +149,54 @@ class MainPageContent extends Component {
     }
 }
 
+const hourOptions = [
+    {
+      label: "12",
+      value: "00:00",
+    },
+    {
+      label: "1",
+      value: "01:00",
+    },
+    {
+      label: "2",
+      value: "02:00",
+    },
+    {
+      label: "3",
+      value: "03:00",
+    },
+    {
+      label: "4",
+      value: "04:00",
+    },
+  ];
+
+  
+
+class DayForm extends React.Component {
+    render() {
+        <form onSubmit={this.props.submit}>
+            <input type="text" value={this.state.value} onChange={this.handleChange} />
+            <TimeSelect options={hourOptions} default={"00:00"} onChange={() => }/>
+            <TimeSelect options={hourOptions} default={"00:00"} onChange={() => }/>
+            <input type="submit" value="Submit" />
+        </form>
+    }
+} 
+
+class TimeSelect extends React.Component {
+    render() {
+        let options = this.props.options.map(o => (
+            <option value={o.value}>{o.label}</option>))
+        return (
+            <select value={this.props.default} onChange={() => this.props.handle()}>
+                {options}
+            </select>
+        );
+    }
+}
+
 // PostSchedule
 // class PostScheduleForm extends Component {
 //     // static propTypes = {
@@ -241,12 +289,12 @@ class MainPageContent extends Component {
 
 // const SignForm = ({ setField, submitForm, values, fields }) => {
 //     return <>
-//         <form onSubmit={submitForm}>
+//<form onSubmit={submitForm}>
 //             {fields.map(d => {
 //                 const { key, name } = d;
 //                 return <div key={key}>
 //                     <span>{name}: </span>
-//                     <input
+//                     <input         
 //                         value={values[key]}
 //                         name={key}
 //                         onChange={setField}
