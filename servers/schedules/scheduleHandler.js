@@ -1,14 +1,14 @@
 // post user's schedule
 const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
-    // if (!req.get("X-User")) {
-    //     res.status(401).send('User not authorized');
-    //     return;
-    // }
+    if (!req.get("X-User")) {
+        res.status(401).send('User not authorized');
+        return;
+    }
 
-    // const user = req.get('X-User');
+    const user = req.get('X-User');
 
 
-    const user = {id: 1, email: 'mackenzie@msn.com'}
+    // const user = {id: 1, email: 'mackenzie@msn.com'}
 
     const userID = user['id']
     const{ day, startTime, endTime } = req.body;
@@ -73,7 +73,13 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
 
     // patch user's schedule
 const getUserScheduleHandler = async (req, res, { UserSchedule }) => {    
-    const user = {id: 1, email: 'mackenzie@msn.com'}
+    if (!req.get("X-User")) {
+        res.status(401).send('User not authorized');
+        return;
+    }
+
+    const user = req.get('X-User');
+    // const user = {id: 1, email: 'mackenzie@msn.com'}
     const userID = user['id']
     const userSchedule = await UserSchedule.find({"userID": userID})
     console.log(userSchedule.length)

@@ -1,11 +1,4 @@
-// post members to team
-// get teams availability
-
 function needsUpdate(userTime, teamTime, startTime) {
-    // if team start is before (less than user start), needs update
-
-    // return teamStartTime < userStartTime
-    // console.log("team start " + teamStartTime + " user start: " + userStartTime)
     if (startTime) {
         return teamTime < userTime;
     }
@@ -25,14 +18,14 @@ function updateTeamSched(currentSched, dayIndex, newTime, startTime) {
 
 
 const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
-    // if (!req.get("X-User")) {
-    //   res.status(401).send('User not authorized');
-    //   return;
-    // }
+    if (!req.get("X-User")) {
+      res.status(401).send('User not authorized');
+      return;
+    }
   
-    // const user = JSON.parse(req.get('X-User'));
+    const user = JSON.parse(req.get('X-User'));
 
-    const user = {id: 1, email: 'mackenzie@msn.com'}
+    // const user = {id: 1, email: 'mackenzie@msn.com'}
 
     const userID = user['id']
   
@@ -40,8 +33,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     const teamID = req.params.teamID
     const team = await Team.find({_id: teamID});
 
-
-    // res.send(team)
     if (team == null ) {
         res.status(404).send('team not found')
         return;
@@ -68,17 +59,12 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     // try {
     const currMember = await Team.find({_id : teamID, "members.id": addedMember['id']});
     
-    // UNCOMMENT THIS WHEN DONE TESTING BELOW
-
     if (currMember.length > 0) {
         res.status(409).send('user is already a member of this channel')
         return;
     }
 
-    // get the current member's scheduleExists
-    // console.log('started')
     const addedMemberSched = await UserSchedule.find({"userID": addedMember['id']})
-    // console.log('schedule found')
 
     if (addedMemberSched.length == 0) {
         res.status(401).send('Added members must have posted availability to be added to a team.')
@@ -97,10 +83,8 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
         for (i = 0; i < schedArray.length; i++) {
             const curr = schedArray[i]
             const currDay = curr['day']
-            // const teamSched = await Team.find({_id : teamID, "schedule.day": currDay})
             const userSched = await UserSchedule.find({"userID" : addedMember['id'], "schedule.day": currDay})
-            // res.send(userSched)
-            // return;
+
             if (userSched.length > 0) {
                 const userSchedToCompare = userSched[0]['schedule']
                 const index = userSchedToCompare.findIndex(d => d.day == currDay)
@@ -148,16 +132,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
         });
     }
 
-    
-
-    // res.send('finished')
-    // return;
-
-    // test('this is', 'a test')
-
-    // check if the added user's start time for each day is earlier / later than the curren start time
-    // check if the added user's start time for each day is earlier / later than the curren start time
-
+    // Add members to team
     try {
         const newMembers = team[0]['members'];
         newMembers.push(addedMember)
@@ -170,7 +145,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     } catch(e) {
         res.status(500).send('not working')
     }
-    // console.log(len(newMembers))
     res.setHeader("Content-Type", "application/json");
     res.status(201).send(newMembers)
 }
@@ -179,8 +153,6 @@ const getMembersHandler = async (req, res, { Team }) => {
     const teamID = req.params.teamID
     const team = await Team.findOne({_id: teamID});
 
-
-    // res.send(team)
     if (team == null ) {
         res.status(404).send('team not found')
         return;
