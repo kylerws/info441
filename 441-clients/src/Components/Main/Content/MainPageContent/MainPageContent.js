@@ -14,7 +14,8 @@ class MainPageContent extends Component {
         this.state = {
             schedule: "",
             showPostSchedule: false,
-            teamID: "6048ee62bc524b5c2d58f9f4"
+            teamID: "6048ee62bc524b5c2d58f9f4",
+            teamList: []
         }
 
         this.getSchedule()
@@ -177,6 +178,13 @@ class MainPageContent extends Component {
             </div>
         )
 
+        let makeTeamView = (
+            <div>
+                <TeamForm />
+                <button onClick={() => this.setState({showPostSchedule: false})}>Cancel</button>
+            </div>
+        )
+
         return (
             <div>
                 <div>Welcome back, {this.props.user.firstName} {this.props.user.lastName}</div>
@@ -195,10 +203,12 @@ class MainPageContent extends Component {
                 </div>
                 <div>
                     <button onClick={() => this.setState({showPostSchedule: true})}>Add availability</button>
+                    <button onClick={() => this.setState({makingTeam: true})}>Make a team</button>
                 </div>
 
                 <div>
                     {this.state.showPostSchedule ? postScheduleView : ""}
+                    {this.state.makingTeam ? makeTeamView : ""}
                 </div>
             </div>
         );
@@ -217,6 +227,20 @@ class DayForm extends React.Component {
             </form>
         )
     }
+}
+
+const TeamForm = ({ setField, submitForm, values, fields }) => {
+    return <>
+        <form key="teamform" onSubmit={submitForm} id="maketeamform">
+            <div>
+                <label for="teamname">Team name:</label>
+                <input type="text" />
+                <label for="teammembers">Team members:</label>
+                <input type="text" />
+                </div>
+            <input type="submit" value="Submit" />
+        </form>
+    </> 
 } 
 
 // Select input that lifts selected value up
