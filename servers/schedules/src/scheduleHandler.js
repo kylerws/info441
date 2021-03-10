@@ -1,13 +1,14 @@
 // post user's schedule
 const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
-        // if (!req.get("X-User")) {
+    // if (!req.get("X-User")) {
     //     res.status(401).send('User not authorized');
     //     return;
     // }
 
-    // const user = JSON.parse(req.get('X-User'));
+    // const user = req.get('X-User');
 
-    const user = {id: 20, email: 'mackenzie@msn.com'}
+
+    const user = {id: 1, email: 'mackenzie@msn.com'}
 
     const userID = user['id']
     const{ day, startTime, endTime } = req.body;
@@ -35,7 +36,7 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
             
             // res.send(newChannel._id)
             res.setHeader("Content-Type", "application/json");
-            res.status(201).json(userSchedule);
+            res.status(201).json(userSchedule['schedule']);
             return;
         });
     } else {
@@ -43,7 +44,7 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
         // check if they have a schedule posted for this day
         const dayExists = await UserSchedule.find({"schedule.day": day, "userID": userID})
         if (dayExists.length > 0) {
-            res.send('availability already created for this day / user')
+            res.status(409).send('availability already created for this day / user')
             return;
         }
 
@@ -57,7 +58,8 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
                 return;
             }
 
-            res.status(201).send('availability for ' + day + " posted to schedule");
+            res.setHeader("Content-Type", "application/json");
+            res.status(201).json(userSchedulePosted[0]['schedule']);
             return;
           });
         // res.send('ok')
@@ -71,7 +73,7 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
 
     // patch user's schedule
 const getUserScheduleHandler = async (req, res, { UserSchedule }) => {    
-    const user = {id: 20, email: 'mackenzie@msn.com'}
+    const user = {id: 1, email: 'mackenzie@msn.com'}
     const userID = user['id']
     const userSchedule = await UserSchedule.find({"userID": userID})
     console.log(userSchedule.length)
@@ -80,6 +82,7 @@ const getUserScheduleHandler = async (req, res, { UserSchedule }) => {
         days.push(userSchedule[i])
     }
     console.log(days)
+    res.setHeader("Content-Type", "application/json");
     res.send(days)
 }
 

@@ -8,7 +8,7 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     // }
 
     // const user = JSON.parse(req.get('X-User'));
-    const user = {id: 20, email: 'mackenzie@msn.com'}
+    const user = {id: 1, email: 'mackenzie@msn.com'}
     const userID = user['id']
     const{ name, description, private } = req.body;
 
@@ -20,7 +20,7 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     const teamExists = await Team.find({"name": name})
 
     if (teamExists.length > 0) {
-        res.send('team already created with that name')
+        res.status(409).send('team already created with that name')
         return;
     }
 
@@ -56,7 +56,6 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
         // res.send(newChannel._id)
 
         res.setHeader("Content-Type", "application/json");
-
         res.status(201).json(newTeam);
         return;
     });
