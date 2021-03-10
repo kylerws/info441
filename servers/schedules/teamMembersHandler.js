@@ -32,7 +32,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
   
     // const user = JSON.parse(req.get('X-User'));
 
-    const user = {id: 20, email: 'mackenzie@msn.com'}
+    const user = {id: 1, email: 'mackenzie@msn.com'}
 
     const userID = user['id']
   
@@ -43,13 +43,13 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
 
     // res.send(team)
     if (team == null ) {
-        res.send('team not found')
+        res.status(404).send('team not found')
         return;
     }
 
     const creator = team[0]['creator']
     if (creator == null) {
-        res.send('creator not found')
+        res.status(404).send('creator not found')
         return;
     }
 
@@ -168,12 +168,12 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
                 return;
             }
         })
-        res.send(newMembers)
     } catch(e) {
         res.send('not working')
     }
     // console.log(len(newMembers))
-    res.send(newMembers)
+    res.setHeader("Content-Type", "application/json");
+    res.status(201).send(newMembers)
     res.send('reached')
 }
 
@@ -184,10 +184,10 @@ const getMembersHandler = async (req, res, { Team }) => {
 
     // res.send(team)
     if (team == null ) {
-        res.send('team not found')
+        res.status(404).send('team not found')
         return;
     }
-
+    res.setHeader("Content-Type", "application/json");
     res.send(team)
 }
 
