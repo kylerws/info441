@@ -6,6 +6,7 @@ const {teamSchema, userScheduleSchema} = require('./schemas')
 const { postTeamHandler } = require("./teamsHandler")
 const { postMembersHandler, getMembersHandler } = require("./teamMembersHandler")
 const { postUserScheduleHandler, getUserScheduleHandler } = require("./scheduleHandler")
+const { getSpecificTeamHandler } = require("./specificTeamHandler")
 
 // create mongo endpoint, it will make the test database
 const mongoEndpoint = "mongodb://localhost:27017/test"
@@ -45,6 +46,8 @@ app.post("/v1/teams/:teamID/members", RequestWrapper(postMembersHandler, { Team,
 app.get("/v1/teams/:teamID/members", RequestWrapper(getMembersHandler, { Team }));
 app.post("/v1/schedule/", RequestWrapper(postUserScheduleHandler, { UserSchedule }));
 app.get("/v1/schedule/", RequestWrapper(getUserScheduleHandler, { UserSchedule }));
+app.get("/v1/teams/:teamID", RequestWrapper(getSpecificTeamHandler, { Team }));
+
 
 
 

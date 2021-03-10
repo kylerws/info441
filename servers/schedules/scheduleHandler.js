@@ -17,16 +17,7 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
         return;
     }
 
-    // const teamExists = await Team.find({"name": name})
 
-    // if (teamExists.length > 0) {
-    //     res.send('team already created with that name')
-    //     return;
-    // }
-
-    // const createdAt = new Date();
-
-    // check if this is the first schedule posting for this user
     const userSchedulePosted = await UserSchedule.find({"userID": userID})
     console.log(userSchedulePosted.length)
     if (userSchedulePosted.length == 0) {
