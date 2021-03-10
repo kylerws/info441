@@ -237,4 +237,25 @@ const getMembersHandler = async (req, res, { Team }) => {
 
 // delete members from team
 
+
+const deleteMembersHandler = async(req, res, {Team}) => {
+    const teamID = req.params.teamID
+    const memberID = JSON.parse(req.body['id']);
+
+    const currteam = await Team.find({_id: teamID});
+
+    currteam['members'] = currteam['members'].filter(el => el['id'] != memberID);
+
+    Team.findOneAndUpdate(
+        {"id": teamID}, {$set:{"members": currteam['members']}},
+        { new: true },
+        function(err, data) {
+        if (err) {
+            res.status(400).send("message: " + data + " delete error: " + err);
+            return;
+        }
+        res.json(data);
+    });
+}
+
 module.exports = {postMembersHandler, getMembersHandler};
