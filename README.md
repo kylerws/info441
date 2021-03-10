@@ -226,9 +226,7 @@ Handles `GET`, `PATCH`, `POST` and `DELETE`
     ```json
       {
         "firstName": "",
-        "lastName": "",
-        "timezone": "EST",
-        "availability": []
+        "lastName": ""
       }
     ```
   
@@ -241,38 +239,18 @@ Handles `GET`, `PATCH`, `POST` and `DELETE`
     | 403 | Unauthorized, not the current user |
     | 405 | Method type not allowed |
     | 500 | Internal error updating user |
+   
+   * Response Body
+   ```
+    Successfully updated user"
+   ```
 
-```POST /users/me:``` adds current user to a team
-  * Parameters
-    * ```?team=id``` the team to join
+#### /v1/schedule
+```POST /v1/schedule:``` Adds availability for day to schedule for current user
 
-  * Response Status
-    | Code | Description |
-    | ---- | ----------- |
-    | 200 | Successfully joined team |
-    | 403 | Unauthorized, must be logged in |
-    | 404 | No team found for given ID |
-    | 405 | Method type not allowed |
-    | 500 | Internal error joining team |
+```GET /v1/schedule:``` Returns the availability of the current user
 
-  * Response Body
-    * `"Successfully joined team"`
 
-```DELETE /users/me:``` removes the current user from requested team
-  * Parameters
-    * ```?team=id``` the team to leave
-
-  * Response Status
-    | Code | Description |
-    | ---- | ----------- |
-    | 204 | Successfully left team |
-    | 403 | Unauthorized, must be logged in |
-    | 404 | No team found for given ID |
-    | 405 | Method type not allowed |
-    | 500 | Internal error leaving team |
-  
-  * Response Body
-    * `"Successfully left team"`
 
 #### /sessions
   ```POST /sessions:``` begins a new session for the given user
