@@ -119,6 +119,47 @@ class MainPageContent extends Component {
         this.setState({showPostSchedule: false})
     }
 
+    postTeam = async (e) => {
+        e.preventDefault()
+        // this.setState({showPostSchedule: true})
+
+        // t = moment()
+
+        const { name, description, private } = 
+            {name: "New Team",
+            description: "description",
+            private: true
+        }
+
+        console.log(name)
+        // startTime = normalizeDate(new Date(startTime))
+        // endTime = normalizeDate(new Date(endTime))
+        // let d = new Date(startTime)
+        // d.setFullYear(1998)
+        // // d.setMonth(0)
+        // d.setMonth(1)
+        // d.setDate(1)
+        // console.log(d)
+
+        const sendData = { name, description, private }
+        const resp = await fetch(api.base + api.handlers.teams, {
+            method: "POST",
+            body: JSON.stringify(sendData),
+            headers: new Headers({
+                "Authorization": this.props.auth,
+                "Content-Type": "application/json"
+            })
+        })
+
+        if (resp.status != 201) {
+            alert("Failed to create team")
+        }
+        // resp body will contain an id field, set this in the stat
+        const teamID = resp.body.id
+        // this.setState({showPostSchedule: false})
+    }
+
+
     // Get teams 
     getTeamSchedule = async () => {
         console.log("clicked")
