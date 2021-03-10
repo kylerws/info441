@@ -67,4 +67,14 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     });
 };
 
-module.exports = {postTeamHandler};
+const getUserCred = async (req, res, { Team, UserSchedule }) => { = async (req, res, { Team, UserSchedule }) => {
+    if (!req.get("X-User")) {
+        res.status(401).send('User not authorized');
+        return;
+    }
+
+    const user = JSON.parse(req.get('X-User'));
+    res.send(user)
+}
+
+module.exports = {postTeamHandler, getUserCred}
