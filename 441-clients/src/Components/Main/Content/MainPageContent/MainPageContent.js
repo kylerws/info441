@@ -118,6 +118,51 @@ class MainPageContent extends Component {
         this.setState({showPostSchedule: false})
     }
 
+    // Get teams 
+    getTeamSchedule = async () => {
+        console.log("clicked")
+
+        // ---------------------------teamID needs to be added to state---------------
+        const resp = await fetch(api.base + api.handlers.teams + this.state.teamID, {
+            headers: new Headers({
+                "Authorization": this.props.auth
+            })
+        })
+        // .then(resp => {
+        //     if (resp.status == 200) {
+        //         const scheduleArr = resp.json()
+        //         if (scheduleArr.length == 0) {
+        //             return "You haven't added your schedule yet"
+        //         }
+        //         process(scheduleArr)
+        //     }
+        // })
+        if (resp.status != 200) {
+            return
+        }
+        
+        const teamArr = await resp.json()
+        if (teamArr.length == 0) {
+            this.setState({schedule: "No Team"})
+            return
+        }
+
+        console.log(teamArr)
+        const teamScheduleElements = teamArr[0].schedule.map(d => {
+            console.log(d)
+            // console.log
+            // moment(d.startTime).local().format('HH:mm')
+            return <div key={d.day + "test"}>
+                <h1>{toUpper(d.day)}</h1>
+                <h2>{moment(d.startTime).local().format('h:mm a')}</h2>
+                <h2>{moment(d.endTime).local().format('h:mm a')}</h2>
+            </div>
+        })
+
+        this.setState({schedule: teamScheduleElements})
+    }
+
+
     render() {
         let postScheduleView = (
             <div>
