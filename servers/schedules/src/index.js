@@ -9,10 +9,10 @@ const { postUserScheduleHandler, getUserScheduleHandler } = require("./scheduleH
 const { getSpecificTeamHandler } = require("./specificTeamHandler")
 
 // create mongo endpoint, it will make the test database
-// const mongoEndpoint = "mongodb://localhost:27017/test"
-// const port = 4000
-const mongoEndpoint = process.env.MONGOADDR
-const port = process.env.PORT
+const mongoEndpoint = "mongodb://localhost:27017/test"
+const port = 4000
+// const mongoEndpoint = process.env.MONGOADDR
+// const port = process.env.PORT
 
 // Create the model
 const Team = mongoose.model("Team", teamSchema)
