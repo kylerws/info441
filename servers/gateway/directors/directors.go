@@ -63,8 +63,11 @@ func CustomDirector(targets []*Target, ctx *handlers.HandlerContext) Director {
 
 		// If successful auth
 		if err == nil {
+			log.Printf("No error, converting to X-User")
 			// User from store
 			user, err := ctx.UserStore.GetByID(state.User.ID)
+			log.Printf("Got user: %v", user)
+			log.Printf("USER ID=%v", user.ID)
 			if err != nil {
 				log.Printf("Could not retrieve authenticated user:\n%s", err.Error())
 			}
@@ -76,6 +79,7 @@ func CustomDirector(targets []*Target, ctx *handlers.HandlerContext) Director {
 				log.Printf("Could not convert auth user to X-User\n%s", err.Error())
 			} else {
 				r.Header.Add("X-User", string(userJSON))
+				log.Printf("Added xUser%v %v", xUser.ID, xUser.Email)
 			}
 		}
 

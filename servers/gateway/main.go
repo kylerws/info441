@@ -85,6 +85,8 @@ func main() {
 
 	// Proxy routes
 	mux.Handle("/v1/schedule", schedulesProxy)
+	mux.Handle("/v1/teams", schedulesProxy)
+	mux.Handle("/v1/teams/", schedulesProxy)
 	// mux.Handle("/v1/teams/", schedulesProxy)
 
 	// Wrap CORS and serve

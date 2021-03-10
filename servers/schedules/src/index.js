@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const express = require('express')
 const {teamSchema, userScheduleSchema} = require('./schemas')
 
-const { postTeamHandler } = require("./teamsHandler")
+const { postTeamHandler, getUserCred } = require("./teamsHandler")
 const { postMembersHandler, getMembersHandler } = require("./teamMembersHandler")
 const { postUserScheduleHandler, getUserScheduleHandler } = require("./scheduleHandler")
 const { getSpecificTeamHandler } = require("./specificTeamHandler")
@@ -44,6 +44,8 @@ mongoose.connection.on('error', console.error)
     .once('open', main);
 
 app.post("/v1/teams", RequestWrapper(postTeamHandler, { Team, UserSchedule }));
+app.get("/v1/teams", RequestWrapper(getUserCred, {}))
+
 app.post("/v1/teams/:teamID/members", RequestWrapper(postMembersHandler, { Team, UserSchedule }));
 app.get("/v1/teams/:teamID/members", RequestWrapper(getMembersHandler, { Team }));
 app.post("/v1/schedule", RequestWrapper(postUserScheduleHandler, { UserSchedule }));
