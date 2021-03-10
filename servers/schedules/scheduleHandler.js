@@ -83,7 +83,7 @@ const getUserScheduleHandler = async (req, res, { UserSchedule }) => {
     }
     console.log(days)
     res.setHeader("Content-Type", "application/json");
-    res.send(days)
+    res.status(200).send(days)
 }
 
 module.exports = {postUserScheduleHandler, getUserScheduleHandler};

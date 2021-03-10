@@ -70,52 +70,48 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     
     // UNCOMMENT THIS WHEN DONE TESTING BELOW
 
-    // if (currMember.length > 0) {
-    //     res.send('user is already a member of this channel')
-    //     return;
-    // }
+    if (currMember.length > 0) {
+        res.status(409).send('user is already a member of this channel')
+        return;
+    }
 
     // get the current member's scheduleExists
     // console.log('started')
     const addedMemberSched = await UserSchedule.find({"userID": addedMember['id']})
     // console.log('schedule found')
+
+    if (addedMemberSched.length == 0) {
+        res.status(401).send('Added members must have posted availability to be added to a team.')
+        return;
+    }
+
     const teamObj = await Team.find({_id : teamID})
 
-    // schedule we keep for updating outside of the for loop
     const updatedTeamSched = teamObj[0]['schedule']
 
+    if (teamObj.length > 0) {
 
-    if (addedMemberSched.length > 0) {
-        const schedArray = addedMemberSched[0]['schedule']
-
-        // res.send(updatedTeamSched)
-
-        // res.send(updatedTeamSched)--FULL TEAM OBJECT
-        // return;
+        const schedArray = teamObj[0]['schedule']
+        console.log('loop entered, num iters: ' + schedArray.length)
 
         for (i = 0; i < schedArray.length; i++) {
             const curr = schedArray[i]
             const currDay = curr['day']
-            const teamSched = await Team.find({_id : teamID, "schedule.day": currDay})
-            if (teamSched.length > 0) {
-                // console.log('there is a schedule to compare for ' + currDay)
+            // const teamSched = await Team.find({_id : teamID, "schedule.day": currDay})
+            const userSched = await UserSchedule.find({"userID" : addedMember['id'], "schedule.day": currDay})
+            // res.send(userSched)
+            // return;
+            if (userSched.length > 0) {
+                const userSchedToCompare = userSched[0]['schedule']
+                const index = userSchedToCompare.findIndex(d => d.day == currDay)
+                const userDayEntry = userSchedToCompare[index]
 
-                // gets full schedule
-                const teamSchedToCompare = teamSched[0]['schedule']
+                const userStart = userDayEntry['startTime']
+                const teamStart = curr['startTime']
 
-                // console.log(entry)
-                // const teamDayEntry = teamSchedToCompare.filter(d => d.day == currDay)
-                const index = teamSchedToCompare.findIndex(d => d.day == currDay)
-                const teamDayEntry = teamSchedToCompare[index]
+                const userEnd = userDayEntry['endTime']
+                const teamEnd = curr['endTime']
 
-                // Compare user start to team start
-                const teamStart = teamDayEntry['startTime']
-                const userStart = curr['startTime']
-
-                const teamEnd = teamDayEntry['endTime']
-                const userEnd = curr['endTime']
-
-                // console.log('Schedule to compare for ' + currDay + " update needed = " + needsUpdate(userStart, teamStart, true))
                 if (needsUpdate(userStart, teamStart, true)) {
                     console.log('update start needed')
                     console.log(updatedTeamSched[index]['startTime'] + ' is the old start time, outside function for ' + currDay)
@@ -133,11 +129,14 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
 
             } else {
                 console.log('there is NOT a schedule to compare for ' + currDay)
+                console.log('started resetting time')
+                const newTime = updatedTeamSched[i]['startTime']
+                console.log('got new time time')
+                updatedTeamSched[i]['endTime'] = newTime
             }
 
         }
 
-        // const updatedTeamSched = await Team.find({_id : teamID})
 
         Team.findOneAndUpdate({_id: teamID}, {$set:{"schedule": updatedTeamSched}}, { new: true }, function(err, data) {
             if (err) {
@@ -145,7 +144,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
                 return;
             }
             console.log("updated schedule for new emmeber")
-            // res.status(201).send('Member added to channel, schedule updated');
+            res.status(201).send('Member added to channel, schedule updated');
         });
     }
 
@@ -169,17 +168,16 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
             }
         })
     } catch(e) {
-        res.send('not working')
+        res.status(500).send('not working')
     }
     // console.log(len(newMembers))
     res.setHeader("Content-Type", "application/json");
     res.status(201).send(newMembers)
-    res.send('reached')
 }
 
 const getMembersHandler = async (req, res, { Team }) => {
     const teamID = req.params.teamID
-    const team = await Team.find({_id: teamID});
+    const team = await Team.findOne({_id: teamID});
 
 
     // res.send(team)
@@ -188,7 +186,7 @@ const getMembersHandler = async (req, res, { Team }) => {
         return;
     }
     res.setHeader("Content-Type", "application/json");
-    res.send(team)
+    res.status(200).send(team['members'])
 }
 
 

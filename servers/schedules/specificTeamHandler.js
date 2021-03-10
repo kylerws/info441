@@ -7,11 +7,11 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
 
     // res.send(team)
     if (team == null ) {
-        res.send('team not found')
+        res.status(404).send('team not found')
         return;
     }
     res.setHeader("Content-Type", "application/json");
-    res.send(team)
+    res.status(200).send(team)
 }
 
 
