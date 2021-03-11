@@ -13,7 +13,7 @@ const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
             content = <MainPageContent auth={auth} user={user} setPage={setPage} />;
             break;
         case PageTypes.signedInUpdateName:
-            content = <UpdateName user={user} setUser={setUser} />;
+            content = <UpdateName user={user} setUser={setUser} setPage={setPage}/>;
             break;
         // case PageTypes.signedInUpdateAvatar:
         //     content = <UpdateAvatar user={user} setUser={setUser} />;
@@ -25,7 +25,8 @@ const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
     }
     return <>
         {content}
-        {contentPage && <button onClick={(e) => setPage(e, PageTypes.signedInMain)}>Back to main</button>}
+        {/* {contentPage && <button onClick={(e) => setPage(e, PageTypes.signedInMain)}>Back to main</button>} */}
+        <button onClick={(e) => setPage(e, PageTypes.signedInUpdateName)}>Edit Profile</button>
         <SignOutButton setUser={setUser} setAuthToken={setAuthToken} />
     </>
 }
