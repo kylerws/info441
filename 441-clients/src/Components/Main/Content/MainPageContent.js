@@ -92,7 +92,7 @@ class MainPageContent extends Component {
         // this.setState({showPostSchedule: true})
 
         const { name, description } = {
-            name: this.state.teamname,
+            name: this.state.teamName,
             description: this.state.members
         }
 
@@ -114,6 +114,18 @@ class MainPageContent extends Component {
         // this.setState({showPostSchedule: false})
     }
 
+    // Get teamID by team name
+    getTeamIDByName = async () => {
+        console.log("GET /teams")
+
+        const resp = await fetch(api.base + api.handlers.teams, {
+            headers: new Headers({
+                "Authorization": this.props.auth
+            })
+        })
+
+        this.setState({teamID})
+    }
 
     // Get teams 
     getTeamSchedule = async () => {
@@ -150,18 +162,20 @@ class MainPageContent extends Component {
 
         // teamID hardcoded for now
         this.setState({teamName: teamArr[0].name})
-        this.setState({team: teamScheduleElements})
+        this.setState({teamSchedule: teamScheduleElements})
     }
 
 
     render() {
+        // Expand button for postScheduleView
         let openPostScheduleBtn = <Button size="sm" variant="success"
             onClick={() => this.setState({showPostSchedule: true})}>Add availability</Button>
 
+        // Close button for postScheduleView
         let closePostScheduleBtn = <Button size="sm" variant="dark"
             onClick={() => this.setState({showPostSchedule: false})}>Hide</Button>
 
-        // Contains form for updating user own schedule
+        // Form for updating user own schedule
         let postScheduleView = (
             <div>
                 
@@ -174,10 +188,11 @@ class MainPageContent extends Component {
             </div>
         )
 
+        // Form for creating team
         let makeTeamView = (
             <div>
                 <TeamForm submit={e => this.postTeam(e)}
-                    setTeamName={(v) => this.setState({teamname: v})}
+                    setTeamName={(v) => this.setState({teamName: v})}
                     setTeamMembers={(v) => this.setState({members: v})}
                     setTeamPrivacy={(v) => this.setState({teampriv: v})}
                 />
@@ -207,14 +222,14 @@ class MainPageContent extends Component {
                     <Row>
                         <Col>
                             <h1>Team Schedule</h1>
-                            <h3>Team {this.state.teamname}</h3>
+                            <h3>Team {this.state.teamName}</h3>
                         </Col>
                         {/* <button onClick={() => this.getTeamSchedule()}>Refresh</button> */}
-                        {this.state.team}
+                        {this.state.teamSchedule}
                     </Row>
                     <Row>
                         <Button size="sm" variant="success"
-                            onClick={() => this.setState({makingTeam: true})}>Make a team</Button>
+                            onClick={() => this.setState({makingTeam: true})}>Create a Team</Button>
                     </Row>
                     <Row>
                         {this.state.makingTeam ? makeTeamView : ""}
@@ -224,6 +239,9 @@ class MainPageContent extends Component {
         );
     }
 }
+
+
+////// Extra Components //////
 
 // Form for adding Day to schedule
 class DayForm extends React.Component {
