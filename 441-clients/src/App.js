@@ -108,25 +108,9 @@ class App extends Component {
                         setAuthToken={this.setAuthToken}
                         setUser={this.setUser} />
                 }
-                <footer>
-                    
-                </footer>
             </div>
         );
     }
 }
-
-// class ProfileButtons extends Component {
-//     render() {
-//         return(
-//             <Container fluid={true}>
-//                 <Row className="justify-content-end">test
-//                     <button onClick={(e) => this.props.setPage(e, PageTypes.signedInUpdateName)}>Edit Profile</button>
-//                     <SignOutButton setUser={this.props.setUser} setAuthToken={this.props.setAuthToken} />
-//                 </Row>
-//             </Container>
-//         )
-//     }
-// }
 
 export default App;

@@ -83,6 +83,12 @@ class MainPageContent extends Component {
         this.setState({showPostSchedule: false})    // hide postSchedule form
     }
 
+    getTeamID() {
+        // get id
+        
+        getSpecificTeam(id)
+    }
+
     postTeam = async (e) => {
         e.preventDefault()
 
