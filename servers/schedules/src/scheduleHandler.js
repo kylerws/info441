@@ -1,6 +1,5 @@
 // post user's schedule
 const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
-    console.log("REQUEST: postUserSchedule called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
@@ -8,20 +7,30 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
 
     const user = JSON.parse(req.get('X-User'));
 
+
+    // const user = {id: 4, email: 'user4'}
+
     const userID = user['id']
+    const userEmail = user['email']
+
     const{ day, startTime, endTime } = req.body;
 
-    if (!startTime || !endTime) {
+    if (!startTime || !endTime || !day) {
         res.status(400).send("Must provide start and end time");
         return;
     }
 
+    if (startTime >= endTime) {
+        res.status(400).send('start time must be before end time')
+        return;
+    }
 
     const userSchedulePosted = await UserSchedule.find({"userID": userID})
     console.log(userSchedulePosted.length)
     if (userSchedulePosted.length == 0) {
         const userSchedule = {
             "userID": userID,
+            "userEmail": userEmail,
             "schedule": [{"day": day, "startTime": startTime, "endTime": endTime}]
         };
 
@@ -32,8 +41,10 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
                 return;
             }
             
+            // res.send(newChannel._id)
             res.setHeader("Content-Type", "application/json");
-            res.status(201).json(userSchedule['schedule']);
+            res.status(201).json(userSchedule)
+            // res.status(201).json(userSchedule['schedule']);
             return;
         });
     } else {
@@ -56,7 +67,8 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
             }
 
             res.setHeader("Content-Type", "application/json");
-            res.status(201).json(userSchedulePosted[0]['schedule']);
+            res.status(201).json(userSchedulePosted);
+            // res.status(201).json(userSchedulePosted[0]['schedule']);
             return;
           });
         // res.send('ok')
@@ -69,25 +81,20 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
 }
 
     // patch user's schedule
-const getUserScheduleHandler = async (req, res, { UserSchedule }) => {
-    console.log("REQUEST: getUserSchedule called")
+const getUserScheduleHandler = async (req, res, { UserSchedule }) => {    
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
     }
 
     const user = JSON.parse(req.get('X-User'));
+    // const user = {id: 2, email: 'user2'}
     const userID = user['id']
+    const userEmail = user['email']
+    const userSchedule = await UserSchedule.findOne({"userEmail": userEmail})
 
-    const userSchedule = await UserSchedule.find({"userID": userID})
-    console.log(userSchedule.length)
-    const days = [];
-    for (var i=0; i< userSchedule.length; i++) {
-        days.push(userSchedule[i])
-    }
-    console.log(days)
     res.setHeader("Content-Type", "application/json");
-    res.status(200).send(days)
+    res.status(200).send(userSchedule['schedule'])
 }
 
 module.exports = {postUserScheduleHandler, getUserScheduleHandler};

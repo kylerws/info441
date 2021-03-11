@@ -3,17 +3,17 @@ const mongoose = require('mongoose')
 const express = require('express')
 const {teamSchema, userScheduleSchema} = require('./schemas')
 
-const { postTeamHandler, getUserCred } = require("./teamsHandler")
+const { postTeamHandler, getTeamIdByName } = require("./teamsHandler")
 const { postMembersHandler, getMembersHandler } = require("./teamMembersHandler")
 const { postUserScheduleHandler, getUserScheduleHandler } = require("./scheduleHandler")
 const { getSpecificTeamHandler } = require("./specificTeamHandler")
 
 // create mongo endpoint, it will make the test database
-// const mongoEndpoint = "mongodb://localhost:27017/test"
-// const port = 4000
+const mongoEndpoint = "mongodb://localhost:27017/test"
+const port = 4000
 
-const mongoEndpoint = process.env.MONGOADDR
-const port = process.env.PORT
+// const mongoEndpoint = process.env.MONGOADDR
+// const port = process.env.PORT
 
 // Create the model
 const Team = mongoose.model("Team", teamSchema)
@@ -44,7 +44,7 @@ mongoose.connection.on('error', console.error)
     .once('open', main);
 
 app.post("/v1/teams", RequestWrapper(postTeamHandler, { Team, UserSchedule }));
-app.get("/v1/teams", RequestWrapper(getUserCred, {}))
+app.get("/v1/teams", RequestWrapper(getTeamIdByName, { Team }))
 
 app.post("/v1/teams/:teamID/members", RequestWrapper(postMembersHandler, { Team, UserSchedule }));
 app.get("/v1/teams/:teamID/members", RequestWrapper(getMembersHandler, { Team }));
