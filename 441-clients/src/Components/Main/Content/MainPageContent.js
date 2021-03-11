@@ -187,15 +187,15 @@ class MainPageContent extends Component {
 
         return (
             <div>
-                <div>Welcome back, {this.props.user.firstName} {this.props.user.lastName}</div>
-                <Container fluid={true}>
+                <Container>
+                    <div>Welcome back, {this.props.user.firstName} {this.props.user.lastName}</div>
                     <h1>Your Schedule</h1>
                     {/* <button onClick={() => this.getSchedule()}>Refresh</button> */}
                     <Row>
-                    {this.state.schedule}
+                        {this.state.schedule}
                     </Row>
                 </Container>
-                <Container fluid={true}>
+                <Container>
                     <Row className="">
                         {this.state.showPostSchedule ? closePostScheduleBtn : openPostScheduleBtn}
                     </Row>
@@ -203,18 +203,23 @@ class MainPageContent extends Component {
                         {this.state.showPostSchedule ? postScheduleView : ""}
                     </Row>
                 </Container>
-                <div>
-                    <h1>Team Schedule</h1>
-                    <h2>Team {this.state.teamname}</h2>
-                    {/* <button onClick={() => this.getTeamSchedule()}>Refresh</button> */}
-                    {this.state.team}
-                </div>
-                <div>
-                    <button onClick={() => this.setState({makingTeam: true})}>Make a team</button>
-                </div>
-                <div>
-                    {this.state.makingTeam ? makeTeamView : ""}
-                </div>
+                <Container>
+                    <Row>
+                        <Col>
+                            <h1>Team Schedule</h1>
+                            <h3>Team {this.state.teamname}</h3>
+                        </Col>
+                        {/* <button onClick={() => this.getTeamSchedule()}>Refresh</button> */}
+                        {this.state.team}
+                    </Row>
+                    <Row>
+                        <Button size="sm" variant="success"
+                            onClick={() => this.setState({makingTeam: true})}>Make a team</Button>
+                    </Row>
+                    <Row>
+                        {this.state.makingTeam ? makeTeamView : ""}
+                    </Row>
+                </Container>
             </div>
         );
     }
