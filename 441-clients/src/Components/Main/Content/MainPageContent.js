@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Col, Container, Row, Form } from 'react-bootstrap'
+import { Button, Col, Container, Row, Jumbotron, Form } from 'react-bootstrap'
 import moment from 'moment'
 
 import api from '../../../Constants/APIEndpoints/APIEndpoints';
@@ -250,31 +250,28 @@ class MainPageContent extends Component {
 
         return (
             <div>
-                <Container fluid={true} className="px-5">
-                    <div>Welcome back, {welcomeName} </div>
-                    <Row className="justify-content-between">
-                    <Col xs={3}><h1>Your Schedule</h1></Col>
-                    <Col xs={1} className="mt-2">
-                    
-                    {this.state.showPostSchedule ?
-                            closePostScheduleBtn : openPostScheduleBtn}
+                <Jumbotron>
+                    <Container fluid={true} className="px-5">
+                        <div>Welcome back, {welcomeName} </div>
+                        <Row className="justify-content-between">
+                            <Col xs={3}><h1>Your Schedule</h1></Col>
+                            {/* <button onClick={() => this.getSchedule()}>Refresh</button> */}
+                        </Row>
+                        <Row className="px-3 my-4 justify-content-around">
+                            {this.state.schedule}
+                        </Row>
+
+                        <Row className="justify-content-between">
+                            {/* <Col xs={3}><h1>Your Schedule</h1></Col> */}
+                            <Col xs={1} className="mt-2">
+                                {this.state.showPostSchedule ? closePostScheduleBtn : openPostScheduleBtn}
                             </Col>
                             <Col>
-                            {this.state.showPostSchedule ? postScheduleView : ""}
+                                {this.state.showPostSchedule ? postScheduleView : ""}
                             </Col>
-                    </Row>
-                    {/* <button onClick={() => this.getSchedule()}>Refresh</button> */}
-                    <Row className="px-3 my-4 justify-content-around">
-                        {this.state.schedule}
-                    </Row>
-                    {/* <Row className="justify-content-end px-5">
-                        {this.state.showPostSchedule ?
-                            closePostScheduleBtn : openPostScheduleBtn}
-                    </Row>
-                    <Row className="justify-content-center pb-5">
-                        {this.state.showPostSchedule ? postScheduleView : ""}
-                    </Row> */}
-                </Container>
+                        </Row>
+                    </Container>
+                </Jumbotron>
                 <Container fluid={true} className="px-5">
                     <Row className="">
                         <Col>
@@ -291,6 +288,8 @@ class MainPageContent extends Component {
                     <Row className="px-3 my-4">
                         {this.state.teamSchedule}
                     </Row>
+
+
                     <Row className="justify-content-end px-5">
                         <Button size="sm" variant="success"
                             onClick={() => this.setState({makingTeam: true})}>Create a Team</Button>
