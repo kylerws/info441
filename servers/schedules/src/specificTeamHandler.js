@@ -10,6 +10,18 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
     const user = JSON.parse(req.get('X-User'));
     const userID = user['id']
     const teamID = req.params.teamID
+    // console.log(userID)
+    // console.log(teamID)
+    // console.log(!teamID)
+
+    // res.status(200).send("Test passed")
+    // return
+
+    if(!teamID || teamID === '') {
+        res.status(400).send("Must send a team id")
+        return
+    }
+
     const team = await Team.findOne({_id: teamID, "members.id": userID});
 
     // res.send(team)

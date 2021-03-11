@@ -4,19 +4,22 @@ import moment from 'moment'
 
 import api from '../../../Constants/APIEndpoints/APIEndpoints';
 
+const defaultTeamOption = { label: "Select a team", value: "" }
+
 class MainPageContent extends Component {
     constructor(props) {
         super(props)
         this.state = {
             schedule: "",
             showPostSchedule: false,
-            teamID: "6048ee62bc524b5c2d58f9f4",
-            teamName: 
-            teamList: []
+            teamOptions: [defaultTeamOption],
+            teamID: "",
+            teamName: "" 
         }
 
         this.getSchedule()
-        this.getTeamSchedule()
+        this.getTeams()
+        // this.getTeamSchedule()
     }
 
     getSchedule = async () => {
@@ -31,14 +34,14 @@ class MainPageContent extends Component {
             return
         }
         
-        const scheduleArr = await resp.json()
-        if (scheduleArr.length == 0) {
+        const schedules = await resp.json()
+        if (schedules.length == 0) {
             this.setState({schedule: (<h3>When are you free?</h3>)})
             return
         }
 
-        console.log("User schedule: " + scheduleArr[0].schedule)
-        const scheduleElements = scheduleArr[0].schedule.map(d => {
+        console.log(schedules[0])
+        const scheduleElements = schedules.map(d => {
             return <div key={d.day}>
                 <h3>{toUpper(d.day)}</h3>
                 <h4>{toClientDate(d.startTime)}</h4>
@@ -82,12 +85,6 @@ class MainPageContent extends Component {
         this.setState({showPostSchedule: false})    // hide postSchedule form
     }
 
-    // getTeamID() {
-    //     // get id
-        
-    //     getSpecificTeam(id)
-    // }
-
     postTeam = async (e) => {
         e.preventDefault()
 
@@ -121,76 +118,99 @@ class MainPageContent extends Component {
 
     ////// WORKING HERE //////
 
-    // Get teamID by team name
-    getTeamIDByName = async () => {
+    // Gets all teams for user
+    getTeams = async () => {
         console.log("GET /teams")
 
         const resp = await fetch(api.base + api.handlers.teams, {
             headers: new Headers({
                 "Authorization": this.props.auth
             }),
-            param: JSON.stringify({name: this.state.teamName})
         })
 
-        // if (resp.status !== 200) {
-        //     alert("Failed to get team with that name")
-                // return
-        // }
-
-        const parsed = await resp.json()
-        if (parsed.length == 0) {
-            this.setState({schedule: (<h3>When are you free?</h3>)})
+        if (resp.status !== 200) {
+            alert("No teams found for user")
             return
         }
 
-        console.log(parsed)
-        // const scheduleElements = scheduleArr[0].schedule.map(d => {
-        //     return <div key={d.day}>
-        //         <h3>{toUpper(d.day)}</h3>
-        //         <h4>{toClientDate(d.startTime)}</h4>
-        //         <h4>{toClientDate(d.endTime)}</h4>
-        //     </div>
-        // })
+        const teams = await resp.json()
+        if (teams.length == 0) {
+            this.setState({teams})
+            return
+        }
 
-        // this.setState({teamID})
+        console.log(teams)
+        const teamOptions = teams.map(d => {
+            return { label: d.teamName, value: d.id }
+        })
+
+        teamOptions.unshift(defaultTeamOption)
+
+        this.setState({teamOptions})
     }
 
     // Get teams 
-    getTeamSchedule = async () => {
+    getTeamSchedule = async (teamID) => {
         console.log("GET /teams/teamID")
+        if (teamID === "") {
+            this.setState({teamSchedule: ""})
+            return
+        }
 
-        // ---------------------------teamID needs to be added to state---------------
-        const resp = await fetch(api.base + api.handlers.teams + "/" + this.state.teamID, {
+        const path = api.base + api.handlers.teams + "/" + teamID
+        console.log(this.state.teamID)
+        console.log(typeof teamID)
+        console.log(typeof path)
+
+        const resp = await fetch(path, {
             headers: new Headers({
                 "Authorization": this.props.auth
             })
         })
+
+        console.log("resp recieved")
         
         if (resp.status !== 200) {
             return
         }
         
-        const teamArr = await resp.json()
-        if (teamArr.length === 0) {
-            this.setState({team: ""})
+        const teamSchedules = await resp.json()
+        if (teamSchedules.length === 0) {
+            this.setState({teamSchedule: ""})
             return
         }
 
-        console.log(teamArr)
-        const teamScheduleElements = teamArr[0].schedule.map(d => {
+        console.log(teamSchedules)
+        const teamScheduleElements = teamSchedules.map(d => {
             console.log(d)
-            return <div class="container"><div class="row">
-                <div className="row" id="oneDayAvailability" key={d.day}>
+            return (
+                <Row key={d.day}>
                     <div className="col-xl"><h3>{toUpper(d.day)}</h3></div>
                     <div className="col-xl"><h4>{toClientDate(d.startTime)}</h4></div>
                     <div className="col-xl"><h4>{toClientDate(d.endTime)}</h4></div>
-                </div>
-            </div></div>
+                </Row>
+            )
         })
 
         // teamID hardcoded for now
-        this.setState({teamName: teamArr[0].name})
+        
         this.setState({teamSchedule: teamScheduleElements})
+    }
+
+    // Handles a new selection of team from the TeamSelect
+    onTeamChange = (team) => {
+        console.log("teamChangeCalled")
+        console.log(team)
+        
+        // TODO: handle unselect team
+        if (!team) {
+            console.log("default blocked")
+            return
+        }
+
+        this.setState({teamID: team.id})
+        this.setState({teamName: team.teamName})
+        this.getTeamSchedule(team.id)
     }
 
 
@@ -206,13 +226,10 @@ class MainPageContent extends Component {
         // Form for updating user own schedule
         let postScheduleView = (
             <div>
-                
                 <DayForm submit={e => this.postSchedule(e)}
                     setDay={(v) => this.setState({day: v})}
                     setStart={(v) => this.setState({startTime: v})}
                     setEnd={(v) => this.setState({endTime: v})} />
-                
-                {/* <button onClick={e => this.postSchedule(e)}>Post Schedules</button> */}
             </div>
         )
 
@@ -230,32 +247,38 @@ class MainPageContent extends Component {
 
         return (
             <div>
-                <Container>
+                <Container fluid={true} className="px-5">
                     <div>Welcome back, {this.props.user.firstName} {this.props.user.lastName}</div>
                     <h1>Your Schedule</h1>
                     {/* <button onClick={() => this.getSchedule()}>Refresh</button> */}
-                    <Row>
+                    <Row className="px-3 my-4">
                         {this.state.schedule}
                     </Row>
-                </Container>
-                <Container>
-                    <Row className="">
-                        {this.state.showPostSchedule ? closePostScheduleBtn : openPostScheduleBtn}
+                    <Row className="justify-content-end px-5">
+                        {this.state.showPostSchedule ?
+                            closePostScheduleBtn : openPostScheduleBtn}
                     </Row>
-                    <Row className="p-5">
+                    <Row className="justify-content-center px-5 pb-5">
                         {this.state.showPostSchedule ? postScheduleView : ""}
                     </Row>
                 </Container>
-                <Container>
-                    <Row>
+                <Container fluid={true} className="px-5">
+                    <Row className="">
                         <Col>
                             <h1>Team Schedule</h1>
-                            <h3>Team {this.state.teamName}</h3>
+                        </Col>
+                        {/* <h3>Team {this.state.teamName}</h3> */}
+                        <Col xs={3}>
+                            <TeamSelect options={this.state.teamOptions} default={""}
+                                update={(t) => this.onTeamChange(t)} />
+                                {/* <Select options={hourOptions} default={"2"} update={(v) => this.props.setEnd(v)}/> */}
                         </Col>
                         {/* <button onClick={() => this.getTeamSchedule()}>Refresh</button> */}
+                    </Row>
+                    <Row className="px-3 my-4">
                         {this.state.teamSchedule}
                     </Row>
-                    <Row>
+                    <Row className="justify-content-end px-5">
                         <Button size="sm" variant="success"
                             onClick={() => this.setState({makingTeam: true})}>Create a Team</Button>
                     </Row>
@@ -272,7 +295,7 @@ class MainPageContent extends Component {
 ////// Extra Components //////
 
 // Form for adding Day to schedule
-class DayForm extends React.Component {
+class DayForm extends Component {
     render() {
         return (
             <Form onSubmit={this.props.submit}>
@@ -296,7 +319,7 @@ class DayForm extends React.Component {
     }
 }
 
-class TeamForm extends React.Component { //= ({ setField, submitForm, values, fields }) => {
+class TeamForm extends Component { //= ({ setField, submitForm, values, fields }) => {
     render() {
         return(
             <form key="teamform" onSubmit={this.props.submit} id="maketeamform">
@@ -311,14 +334,22 @@ class TeamForm extends React.Component { //= ({ setField, submitForm, values, fi
             </form>
         )
     }
-} 
+}
+
+// class TeamSelect extends Component {
+//     render() {
+//         return(
+//             <Select options={this.props.options} default={""} update={(v) => this.props.setTeamID(v)}/>
+//         )
+//     }
+
+// }
 
 // Select input that lifts selected value up
-class Select extends React.Component {
+class Select extends Component {
     constructor(props) {
         super(props)
         this.state = { selected: this.props.default }
-        
         this.props.update(this.state.selected)
     }
 
@@ -336,6 +367,32 @@ class Select extends React.Component {
             </Form.Control>
         );
     }
+}
+
+class TeamSelect extends Select {
+    constructor(props) {
+        super(props)
+        // this.setState({selected: this.props.default})
+    }
+
+    handleChange = (e) => {
+        console.log("teamSelect handle called")
+        e.preventDefault()
+
+        let index = e.nativeEvent.target.selectedIndex
+        let teamName = e.nativeEvent.target[index].text
+        let id = e.target.value
+
+        this.setState({ selected: id })
+        this.props.update({ id, teamName })
+    }
+
+    // render() {
+    //     return(
+    //         <Select options={this.props.options} default={""} update={(v) => this.props.setTeamID(v)}/>
+    //     )
+    // }
+
 }
  
 // Returns capitalized version of string
