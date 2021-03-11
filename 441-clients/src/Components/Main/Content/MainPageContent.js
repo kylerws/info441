@@ -13,7 +13,8 @@ class MainPageContent extends Component {
         this.state = {
             schedule: "",
             showPostSchedule: false,
-            teamID: "6048ee62bc524b5c2d58f9f4"
+            teamID: "6048ee62bc524b5c2d58f9f4",
+            teamList: []
         }
 
         this.getSchedule()
@@ -29,7 +30,7 @@ class MainPageContent extends Component {
             })
         })
 
-        if (resp.status != 200) {
+        if (resp.status !== 200) {
             return
         }
         
@@ -75,7 +76,7 @@ class MainPageContent extends Component {
             })
         })
 
-        if (resp.status != 201) {
+        if (resp.status !== 201) {
             alert("Failed to update schedule")
         }
 
@@ -83,23 +84,21 @@ class MainPageContent extends Component {
         this.setState({showPostSchedule: false})    // hide postSchedule form
     }
 
-    getTeamID() {
-        // get id
+    // getTeamID() {
+    //     // get id
         
-        getSpecificTeam(id)
-    }
+    //     getSpecificTeam(id)
+    // }
 
     postTeam = async (e) => {
         e.preventDefault()
 
         // this.setState({showPostSchedule: true})
 
-        console.log(this.props.user)
-        const { name, description } = 
-            {
-                name: "Client Created Team",
-                description: "Created by "
-            }
+        const { name, description } = {
+            name: this.state.teamname,
+            description: this.state.members
+        }
 
         const sendData = { name, description }
         const resp = await fetch(api.base + api.handlers.teams, {
@@ -111,7 +110,7 @@ class MainPageContent extends Component {
             })
         })
 
-        if (resp.status != 201) {
+        if (resp.status !== 201) {
             alert("Failed to create team")
         }
         // resp body will contain an id field, set this in the stat
@@ -131,12 +130,12 @@ class MainPageContent extends Component {
             })
         })
         
-        if (resp.status != 200) {
+        if (resp.status !== 200) {
             return
         }
         
         const teamArr = await resp.json()
-        if (teamArr.length == 0) {
+        if (teamArr.length === 0) {
             this.setState({team: ""})
             return
         }
@@ -144,11 +143,13 @@ class MainPageContent extends Component {
         console.log(teamArr)
         const teamScheduleElements = teamArr[0].schedule.map(d => {
             console.log(d)
-            return <div key={d.day}>
-                <h3>{toUpper(d.day)}</h3>
-                <h4>{toClientDate(d.startTime)}</h4>
-                <h4>{toClientDate(d.endTime)}</h4>
-            </div>
+            return <div class="container"><div class="row">
+                <div className="row" id="oneDayAvailability" key={d.day}>
+                    <div className="col-xl"><h3>{toUpper(d.day)}</h3></div>
+                    <div className="col-xl"><h4>{toClientDate(d.startTime)}</h4></div>
+                    <div className="col-xl"><h4>{toClientDate(d.endTime)}</h4></div>
+                </div>
+            </div></div>
         })
 
         // teamID hardcoded for now
@@ -177,6 +178,17 @@ class MainPageContent extends Component {
             </div>
         )
 
+        let makeTeamView = (
+            <div>
+                <TeamForm submit={e => this.postTeam(e)}
+                    setTeamName={(v) => this.setState({teamname: v})}
+                    setTeamMembers={(v) => this.setState({members: v})}
+                    setTeamPrivacy={(v) => this.setState({teampriv: v})}
+                />
+                <button onClick={() => this.setState({makingTeam: false})}>Cancel</button>
+            </div>
+        )
+
         return (
             <div>
                 <div>Welcome back, {this.props.user.firstName} {this.props.user.lastName}</div>
@@ -200,6 +212,12 @@ class MainPageContent extends Component {
                     <h2>Team {this.state.teamname}</h2>
                     {/* <button onClick={() => this.getTeamSchedule()}>Refresh</button> */}
                     {this.state.team}
+                </div>
+                <div>
+                    <button onClick={() => this.setState({makingTeam: true})}>Make a team</button>
+                </div>
+                <div>
+                    {this.state.makingTeam ? makeTeamView : ""}
                 </div>
             </div>
         );
@@ -227,6 +245,23 @@ class DayForm extends React.Component {
                 </Form.Row>
                 <Button type="submit" size="sm" variant="outline-success">Add to Schedule</Button>
             </Form>
+        )
+    }
+}
+
+class TeamForm extends React.Component { //= ({ setField, submitForm, values, fields }) => {
+    render() {
+        return(
+            <form key="teamform" onSubmit={this.props.submit} id="maketeamform">
+                <div>
+                    <label for="teamname">Team name: </label>
+                    <input type="text" onChange={(v) => this.props.setTeamName(v)}/>
+                    <label for="teammembers">Team members: </label>
+                    <input type="text" onChange={(v) => this.props.setTeamMembers(v)}/>
+                   
+                </div>
+                <input type="submit" value="Submit" />
+            </form>
         )
     }
 } 

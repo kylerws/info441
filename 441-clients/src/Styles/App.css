@@ -26,6 +26,14 @@ h2, h3 {
     font-weight: 500;
 }
 
+h3, h4{
+    padding: auto;
+}
+
 h4 {
     font-weight: 300;
+}
+
+#maketeamform {
+    padding: 15px;
 }
