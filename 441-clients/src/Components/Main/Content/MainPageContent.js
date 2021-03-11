@@ -191,7 +191,7 @@ class MainPageContent extends Component {
                 </Container>
                 <div>
                     <h1>Team Schedule</h1>
-                    <h2>Team {this.state.teamName}</h2>
+                    <h2>Team {this.state.teamname}</h2>
                     {/* <button onClick={() => this.getTeamSchedule()}>Refresh</button> */}
                     {this.state.team}
                 </div>
