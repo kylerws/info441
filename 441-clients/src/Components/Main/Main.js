@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Button } from 'react-bootstrap';
+import { Container, Row, Jumbotron, Button } from 'react-bootstrap';
 import PageTypes from '../../Constants/PageTypes/PageTypes';
 import MainPageContent from './Content/MainPageContent';
 import SignOutButton from './Components/SignOutButton/SignOutButton';
@@ -23,9 +23,9 @@ const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
     return (
         <>
             {content}
-            <footer>
+            <Jumbotron fluid={true} className="bg-info text-light mb-0 p-4">
                 <ProfileButtons setPage={setPage} setUser={setUser} setAuthToken={setAuthToken} />
-            </footer>
+            </Jumbotron>
         </>
     )
 }
@@ -35,7 +35,7 @@ class ProfileButtons extends Component {
         return(
             <Container fluid={true}>
                 <Row className="justify-content-end">
-                    <Button variant="light"
+                    <Button variant="dark" className="mx-3"
                         onClick={(e) => this.props.setPage(e, PageTypes.signedInUpdateName)}>Edit Profile</Button>
                     <SignOutButton setUser={this.props.setUser} setAuthToken={this.props.setAuthToken} />
                 </Row>

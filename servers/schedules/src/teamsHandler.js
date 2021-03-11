@@ -8,7 +8,8 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
         return;
     }
 
-    const userID = JSON.parse(req.get('X-User')).id;
+    const user = JSON.parse(req.get('X-User'));
+    // console.log(user)
     const { name, description } = req.body;
 
     if (!name) {
@@ -23,7 +24,7 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const createdAt = new Date();
-    const creatorSchedule = await UserSchedule.find({"userID": userID})
+    const creatorSchedule = await UserSchedule.find({"userID": user.id})
 
     if (creatorSchedule.length == 0) {
         res.status(401).send('Not authorized to create, please post availability first.')

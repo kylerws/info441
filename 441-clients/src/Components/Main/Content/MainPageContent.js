@@ -12,6 +12,7 @@ class MainPageContent extends Component {
         this.state = {
             schedule: "",
             showPostSchedule: false,
+            shotPostTeam: false,
             teamOptions: [defaultTeamOption],
             teamID: "",
             teamName: "" 
@@ -85,37 +86,7 @@ class MainPageContent extends Component {
         this.setState({showPostSchedule: false})    // hide postSchedule form
     }
 
-    postTeam = async (e) => {
-        e.preventDefault()
-
-        // this.setState({showPostSchedule: true})
-
-        const { name, description } = {
-            name: this.state.teamName,
-            description: this.state.members
-        }
-
-        const sendData = { name, description }
-        const resp = await fetch(api.base + api.handlers.teams, {
-            method: "POST",
-            body: JSON.stringify(sendData),
-            headers: new Headers({
-                "Authorization": this.props.auth,
-                "Content-Type": "application/json"
-            })
-        })
-
-        if (resp.status !== 201) {
-            alert("Failed to create team")
-            return
-        }
-        // resp body will contain an id field, set this in the stat
-        const teamID = resp.body.id
-        // this.setState({showPostSchedule: false})
-    }
-
-
-
+    
     ////// WORKING HERE //////
 
     // Gets all teams for user
@@ -139,17 +110,63 @@ class MainPageContent extends Component {
             return
         }
 
-        console.log(teams)
         const teamOptions = teams.map(d => {
             return { label: d.teamName, value: d.id }
         })
 
         teamOptions.unshift(defaultTeamOption)
-
         this.setState({teamOptions})
     }
 
-    // Get teams 
+    // Creates team for the current user
+    postTeam = async (e) => {
+        e.preventDefault()
+        console.log("POST /teams called")
+        // this.setState({showPostSchedule: true})
+
+        console.log(this.state.newTeamName)
+
+        const { name, description } = {
+            name: this.state.newTeamName,
+            description: this.state.newTeamDesc
+        }
+
+        console.log("reached sendData")
+        const sendData = { name, description }
+        console.log(sendData)
+        const resp = await fetch(api.base + api.handlers.teams, {
+            method: "POST",
+            body: JSON.stringify(sendData),
+            headers: new Headers({
+                "Authorization": this.props.auth,
+                "Content-Type": "application/json"
+            })
+        })
+
+        console.log(resp.status)
+        console.log(resp.body)
+
+        if (resp.status !== 201) {
+            alert("Failed to create team")
+            return
+        }
+
+        console.log("got response")
+        const createdTeam = await resp.json()
+        if (createdTeam === null) {
+            console.log("New team not returned by service")
+            alert("Unable to display team")
+            return
+        }
+
+        // Update teams
+        this.getTeams()
+        
+        // Hide form
+        this.setState({showPostTeam: false})
+    }
+
+    // Get selected team schedule
     getTeamSchedule = async (teamID) => {
         console.log("GET /teams/teamID")
         if (teamID === "") {
@@ -158,41 +175,37 @@ class MainPageContent extends Component {
         }
 
         const path = api.base + api.handlers.teams + "/" + teamID
-        console.log(this.state.teamID)
-        console.log(typeof teamID)
-        console.log(typeof path)
 
         const resp = await fetch(path, {
             headers: new Headers({
                 "Authorization": this.props.auth
             })
         })
-
-        console.log("resp recieved")
         
         if (resp.status !== 200) {
+            if (resp.status === 409) {
+                alert("Team name already in use, please try another")
+            }
             return
         }
         
         const teamSchedules = await resp.json()
         if (teamSchedules.length === 0) {
+            console.log("no team was added")
             this.setState({teamSchedule: ""})
             return
         }
 
-        console.log(teamSchedules)
         const teamScheduleElements = teamSchedules.map(d => {
             console.log(d)
             return (
-                <Row key={d.day}>
+                <div key={d.day}>
                     <div className="col-xl"><h3>{toUpper(d.day)}</h3></div>
                     <div className="col-xl"><h4>{toClientDate(d.startTime)}</h4></div>
                     <div className="col-xl"><h4>{toClientDate(d.endTime)}</h4></div>
-                </Row>
+                </div>
             )
         })
-
-        // teamID hardcoded for now
         
         this.setState({teamSchedule: teamScheduleElements})
     }
@@ -234,14 +247,13 @@ class MainPageContent extends Component {
         )
 
         // Form for creating team
-        let makeTeamView = (
+        let postTeamView = (
             <div>
                 <TeamForm submit={e => this.postTeam(e)}
-                    setTeamName={(v) => this.setState({teamName: v})}
-                    setTeamMembers={(v) => this.setState({members: v})}
-                    setTeamPrivacy={(v) => this.setState({teampriv: v})}
-                />
-                <button onClick={() => this.setState({makingTeam: false})}>Cancel</button>
+                    setName={(v) => this.setState({newTeamName: v})}
+                    setDesc={(v) => this.setState({newTeamDesc: v})} />
+                <Button variant="success" size="sm"
+                    onClick={() => this.setState({makingTeam: false})}>Cancel</Button>
             </div>
         )
 
@@ -250,7 +262,7 @@ class MainPageContent extends Component {
 
         return (
             <div>
-                <Jumbotron>
+                <Jumbotron fluid={true} className="mb-0">
                     <Container fluid={true} className="px-5">
                         <div>Welcome back, {welcomeName} </div>
                         <Row className="justify-content-between">
@@ -272,6 +284,7 @@ class MainPageContent extends Component {
                         </Row>
                     </Container>
                 </Jumbotron>
+                <Jumbotron fluid={true} className="bg-dark text-light mb-0">
                 <Container fluid={true} className="px-5">
                     <Row className="">
                         <Col>
@@ -285,19 +298,21 @@ class MainPageContent extends Component {
                         </Col>
                         {/* <button onClick={() => this.getTeamSchedule()}>Refresh</button> */}
                     </Row>
-                    <Row className="px-3 my-4">
+                    <Row className="px-3 my-4 justify-content-around">
                         {this.state.teamSchedule}
                     </Row>
-
-
-                    <Row className="justify-content-end px-5">
-                        <Button size="sm" variant="success"
-                            onClick={() => this.setState({makingTeam: true})}>Create a Team</Button>
-                    </Row>
-                    <Row>
-                        {this.state.makingTeam ? makeTeamView : ""}
+                    <Row className="justify-content-between">
+                        <Col xs={1} className="mt-2">
+                            {/* {this.state.showPostSchedule ? closePostScheduleBtn : openPostScheduleBtn} */}
+                            <Button size="sm" variant="success"
+                                onClick={() => this.setState({showPostTeam: true})}>Create a Team</Button>
+                        </Col>
+                        <Col>
+                            {this.state.showPostTeam ? postTeamView : ""}
+                        </Col>
                     </Row>
                 </Container>
+                </Jumbotron>
             </div>
         );
     }
@@ -334,15 +349,16 @@ class DayForm extends Component {
     }
 }
 
+//
 class TeamForm extends Component { //= ({ setField, submitForm, values, fields }) => {
     render() {
         return(
             <form key="teamform" onSubmit={this.props.submit} id="maketeamform">
                 <div>
-                    <label for="teamname">Team name: </label>
-                    <input type="text" onChange={(v) => this.props.setTeamName(v)}/>
-                    <label for="teammembers">Team members: </label>
-                    <input type="text" onChange={(v) => this.props.setTeamMembers(v)}/>
+                    <label>Team name: </label>
+                    <input type="text" onChange={(e) => this.props.setName(e.target.value)}/>
+                    <label>Team members: </label>
+                    <input type="text" onChange={(e) => this.props.setDesc(e.target.value)}/>
                    
                 </div>
                 <input type="submit" value="Submit" />
@@ -350,15 +366,6 @@ class TeamForm extends Component { //= ({ setField, submitForm, values, fields }
         )
     }
 }
-
-// class TeamSelect extends Component {
-//     render() {
-//         return(
-//             <Select options={this.props.options} default={""} update={(v) => this.props.setTeamID(v)}/>
-//         )
-//     }
-
-// }
 
 // Select input that lifts selected value up
 class Select extends Component {
@@ -384,11 +391,12 @@ class Select extends Component {
     }
 }
 
+// Custom Select for teams that overloads the handle method
 class TeamSelect extends Select {
-    constructor(props) {
-        super(props)
-        // this.setState({selected: this.props.default})
-    }
+    // constructor(props) {
+    //     super(props)
+    //     // this.setState({selected: this.props.default})
+    // }
 
     handleChange = (e) => {
         console.log("teamSelect handle called")
@@ -401,13 +409,6 @@ class TeamSelect extends Select {
         this.setState({ selected: id })
         this.props.update({ id, teamName })
     }
-
-    // render() {
-    //     return(
-    //         <Select options={this.props.options} default={""} update={(v) => this.props.setTeamID(v)}/>
-    //     )
-    // }
-
 }
  
 // Returns capitalized version of string

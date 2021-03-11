@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Button } from 'react-bootstrap'
 import api from '../../../../Constants/APIEndpoints/APIEndpoints';
 import Errors from '../../../Errors/Errors';
 
 const SignOutButton = ({ setAuthToken, setUser }) => {
     const [error, setError] = useState("");
 
-    return <><button onClick={async (e) => {
+    return <><Button variant="danger" onClick={async (e) => {
         e.preventDefault();
         const response = await fetch(api.base + api.handlers.sessionsMine, {
             method: "DELETE"
@@ -20,7 +21,7 @@ const SignOutButton = ({ setAuthToken, setUser }) => {
         setError("");
         setAuthToken("");
         setUser(null);
-    }}>Sign out</button>
+    }}>Sign out</Button>
         {error &&
             <div>
                 <Errors error={error} setError={setError} />
