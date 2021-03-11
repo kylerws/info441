@@ -9,7 +9,7 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const user = JSON.parse(req.get('X-User'));
-    // const user = {id: 1, email: 'mackenzie@msn.com'}
+    // const user = {id: 1, email: 'user1'}
     const userID = user['id']
     const{ name, description } = req.body;
 
@@ -34,15 +34,27 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const schedArray = creatorSchedule[0]['schedule']
+    const teamSchedule = []
+    for (i=0; i < schedArray.length; i++) {
+        curr = schedArray[i]
+        const specificDay = {
+            "day": curr['day'],
+            "startTime": curr['startTime'],
+            "endTime": curr['endTime'],
+            "hasAvailability": true
+        }
+        teamSchedule.push(specificDay)
+    }
+
     // res.send(schedArray)
     // return;
     const firstday = creatorSchedule[0]
     const team = {
         "name": name,
         "description": description,
-        "private": private,
+        // "private": private,
         "members": [user],
-        "schedule": schedArray,
+        "schedule": teamSchedule,
         "createdAt": createdAt,
         "creator": user
     };
@@ -68,14 +80,36 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     });
 };
 
-const getUserCred = async (req, res, {}) => {
+
+
+const getTeamIdByName = async (req, res, { Team }) => {
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
     }
 
     const user = JSON.parse(req.get('X-User'));
-    res.status(200).send(user)
+    // const user = {'id': 1, 'email': 'sdkjfh'}
+    const { name } = req.body;
+    const userID = user['id']
+    const team = await Team.findOne({'name': name})
+    console.log(!team)
+
+    if(!team) {
+        res.status(404).send('team not found with given name')
+        return
+    }
+
+    // check to see if the user is a member of the team
+
+    const isMember = await Team.findOne({'name': name, 'members.id': userID})
+    if(!isMember) {
+        res.status(404).send('You are not a member of this team')
+        return
+    }
+
+    res.setHeader("Content-Type", "application/json");
+    res.send(isMember._id)
 }
 
-module.exports = {postTeamHandler, getUserCred}
+module.exports = {postTeamHandler, getTeamIdByName}

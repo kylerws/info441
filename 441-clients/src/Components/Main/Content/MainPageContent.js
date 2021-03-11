@@ -2,10 +2,7 @@ import React, { Component } from 'react'
 import { Button, Col, Container, Row, Form } from 'react-bootstrap'
 import moment from 'moment'
 
-// import PageTypes from '../../../../Constants/PageTypes/PageTypes';
 import api from '../../../Constants/APIEndpoints/APIEndpoints';
-
-
 
 class MainPageContent extends Component {
     constructor(props) {
@@ -20,7 +17,6 @@ class MainPageContent extends Component {
         this.getSchedule()
         this.getTeamSchedule()
     }
-
 
     getSchedule = async () => {
         console.log("GET /schedule")

@@ -26,7 +26,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
   
     const user = JSON.parse(req.get('X-User'));
 
-    // const user = {id: 1, email: 'mackenzie@msn.com'}
+    // const user = {id: 1, email: 'user1'}
 
     const userID = user['id']
   
@@ -50,22 +50,34 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
         return;
     }
 
-    const { id, email } = req.body
+    const { email } = req.body
 
-    const addedMember = {
-      "id": id,
-      "email": email
-    }
 
     // try {
-    const currMember = await Team.find({_id : teamID, "members.id": addedMember['id']});
-    
+    const currMember = await Team.find({_id : teamID, "members.email": email});
+
+    // ---------------------------------------UNCOMMENT WHEN DONE TESTING-------------
     if (currMember.length > 0) {
         res.status(409).send('user is already a member of this channel')
         return;
     }
 
-    const addedMemberSched = await UserSchedule.find({"userID": addedMember['id']})
+    const addedMemberSched = await UserSchedule.findOne({"userEmail": email})
+    console.log('new member id:' + addedMemberSched['userID'])
+    // res.send(addedMemberSched)
+    // return;
+
+    if (addedMemberSched.length == 0) {
+        res.status(400).send('must add a valid user with a posted schedule')
+        return;
+    }
+
+    const addedUserID = addedMemberSched['userID']
+
+    const addedMember = {
+        "id": addedUserID,
+        "email": email
+    }
 
     if (addedMemberSched.length == 0) {
         res.status(401).send('Added members must have posted availability to be added to a team.')
@@ -73,7 +85,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const teamObj = await Team.find({_id : teamID})
-
     const updatedTeamSched = teamObj[0]['schedule']
 
     if (teamObj.length > 0) {
@@ -85,39 +96,50 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
             const curr = schedArray[i]
             const currDay = curr['day']
             const userSched = await UserSchedule.find({"userID" : addedMember['id'], "schedule.day": currDay})
+            var dayWasUpdated = false
 
             if (userSched.length > 0) {
                 const userSchedToCompare = userSched[0]['schedule']
                 const index = userSchedToCompare.findIndex(d => d.day == currDay)
                 const userDayEntry = userSchedToCompare[index]
-
                 const userStart = userDayEntry['startTime']
                 const teamStart = curr['startTime']
-
                 const userEnd = userDayEntry['endTime']
                 const teamEnd = curr['endTime']
 
+
                 if (needsUpdate(userStart, teamStart, true)) {
-                    console.log('update start needed')
-                    console.log(updatedTeamSched[index]['startTime'] + ' is the old start time, outside function for ' + currDay)
-                    updateTeamSched(updatedTeamSched, index, userStart, true)
-                    console.log(updatedTeamSched['startTime'] + ' is the new start time, outside function for ' + currDay)
+                    updateTeamSched(updatedTeamSched, i, userStart, true)
+                    dayWasUpdated = true
                 }
 
                 if (needsUpdate(userEnd, teamEnd, false)) {
-                    console.log('update end needed')
-                    console.log(updatedTeamSched[index]['endTime'] + ' is the old endTime, outside function for ' + currDay)
-                    updateTeamSched(updatedTeamSched, index, userEnd, false)
-                    console.log(updatedTeamSched[index]['endTime'] + ' is the new endTime, outside function for ' + currDay)
+                    updateTeamSched(updatedTeamSched, i, userEnd, false)
+                    dayWasUpdated = true
                 
                 }
 
+                // check the relationship between start time and end time
+                if (dayWasUpdated) {
+                    // get start da
+                    const currStart = updatedTeamSched[i]['startTime']
+                    const currEnd = updatedTeamSched[i]['endTime']
+                    if (currEnd <= currStart){
+                        updatedTeamSched[i]['hasAvailability'] = false
+                        // res.send('time was updated, and time window is invalid, hasAvailability=false')
+                        // return;
+                    } else {
+                        updatedTeamSched[i]['hasAvailability'] = true
+                        // res.send(updatedTeamSched[index]['hasAvailability'])
+                        // return;
+                    }
+                }
             } else {
                 console.log('there is NOT a schedule to compare for ' + currDay)
-                console.log('started resetting time')
-                const newTime = updatedTeamSched[i]['startTime']
-                console.log('got new time time')
-                updatedTeamSched[i]['endTime'] = newTime
+                // change the day start time to be the end time
+                const currStart = updatedTeamSched[i]['startTime']
+                updateTeamSched(updatedTeamSched, i, currStart, false)
+                updatedTeamSched[i]['hasAvailability'] = false
             }
 
         }
@@ -128,11 +150,12 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
                 res.status(400).send("Data: " + data + "\nError: " + err);
                 return;
             }
-            console.log("updated schedule for new emmeber")
-            res.status(201).send('Member added to channel, schedule updated');
+            // console.log("updated schedule for new emmeber")
+            // res.status(201).send('Member added to channel, schedule updated');
         });
     }
 
+    
     // Add members to team
     try {
         const newMembers = team[0]['members'];
@@ -153,11 +176,18 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
 
 const getMembersHandler = async (req, res, { Team }) => {
     console.log("REQUEST: getMembers called")
+    if (!req.get("X-User")) {
+        res.status(401).send('User not authorized');
+        return;
+    }
+
+    const user = JSON.parse(req.get('X-User'));
+    const userID = user['id']
     const teamID = req.params.teamID
-    const team = await Team.findOne({_id: teamID});
+    const team = await Team.findOne({_id: teamID, "members.id": userID});
 
     if (team == null ) {
-        res.status(404).send('team not found')
+        res.status(404).send('we did not find a team you are a part of with the given credentials')
         return;
     }
 

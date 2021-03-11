@@ -4,7 +4,6 @@ import PageTypes from '../../Constants/PageTypes/PageTypes';
 import MainPageContent from './Content/MainPageContent';
 import SignOutButton from './Components/SignOutButton/SignOutButton';
 import UpdateName from './Components/UpdateName/UpdateName';
-// import UpdateAvatar from './Components/UpdateAvatar/UpdateAvatar';
 
 const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
     let content = <></>

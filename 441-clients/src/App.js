@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-// import { Container, Row } from 'react-bootstrap';
 import Auth from './Components/Auth/Auth';
 import PageTypes from './Constants/PageTypes/PageTypes';
 import Main from './Components/Main/Main';
 import api from './Constants/APIEndpoints/APIEndpoints';
-// import { SignOutButton } from './Components/Main/Components/SignOutButton/SignOutButton';
 
 import './Styles/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
