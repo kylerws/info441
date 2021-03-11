@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const express = require('express')
 const {teamSchema, userScheduleSchema} = require('./schemas')
 
-const { postTeamHandler, getTeamIdByName } = require("./teamsHandler")
+const { postTeamHandler, getTeamsHandler } = require("./teamsHandler")
 const { postMembersHandler, getMembersHandler } = require("./teamMembersHandler")
 const { postUserScheduleHandler, getUserScheduleHandler } = require("./scheduleHandler")
 const { getSpecificTeamHandler } = require("./specificTeamHandler")
@@ -43,17 +43,16 @@ mongoose.connection.on('error', console.error)
     .on('disconnected', connect)
     .once('open', main);
 
+// Teams endpoint
 app.route("/v1/teams")
     .post(RequestWrapper(postTeamHandler, { Team, UserSchedule }))
-    .get(RequestWrapper(getTeamIdByName, { Team, UserSchedule }))
+    .get(RequestWrapper(getTeamsHandler, { Team, UserSchedule }))
 
 app.post("/v1/teams/:teamID/members", RequestWrapper(postMembersHandler, { Team, UserSchedule }));
 app.get("/v1/teams/:teamID/members", RequestWrapper(getMembersHandler, { Team }));
 app.post("/v1/schedule", RequestWrapper(postUserScheduleHandler, { UserSchedule }));
 app.get("/v1/schedule", RequestWrapper(getUserScheduleHandler, { UserSchedule }));
 app.get("/v1/teams/:teamID", RequestWrapper(getSpecificTeamHandler, { Team }));
-
-// app.get("/v1/teams/:name", RequestWrapper(getTeamIdByName, { Team }))
 
 async function main() {
     app.listen(port, () => {
