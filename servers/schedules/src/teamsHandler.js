@@ -83,33 +83,65 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
 
 
 const getTeamIdByName = async (req, res, { Team }) => {
+    console.log("REQUEST: getTeamIdByName")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
     }
 
-    const user = JSON.parse(req.get('X-User'));
-    // const user = {'id': 1, 'email': 'sdkjfh'}
-    const { name } = req.body;
-    const userID = user['id']
-    const team = await Team.findOne({'name': name})
-    console.log(!team)
-
-    if(!team) {
-        res.status(404).send('team not found with given name')
-        return
-    }
+    const userID = JSON.parse(req.get('X-User')).id
+    // console.log(userID)
 
     // check to see if the user is a member of the team
-
-    const isMember = await Team.findOne({'name': name, 'members.id': userID})
-    if(!isMember) {
-        res.status(404).send('You are not a member of this team')
+    const teams = await Team.find({'members.id': userID})
+    if(teams.length == 0) {
+        res.status(404).send('User is not member of any team')
         return
     }
 
-    res.setHeader("Content-Type", "application/json");
-    res.send(isMember._id)
+    // console.log(teams)
+    var teamData = teams.map(team => {
+        return { id: team._id, teamName: team.name }
+    })
+    // console.log(teamData)
+
+    res.setHeader("Content-Type", "application/json")
+    res.status(200).json(teamData)
 }
 
 module.exports = {postTeamHandler, getTeamIdByName}
+
+
+//// OLD GET ////
+
+// console.log("REQUEST: getTeamIdByName")
+//     if (!req.get("X-User")) {
+//         res.status(401).send('User not authorized');
+//         return;
+//     }
+
+//     const user = JSON.parse(req.get('X-User'));
+//     const userID = user['id']
+
+//     const name = req.params.name
+//     console.log(name)
+//     if (!name) {
+//         res.status(400).send("No team name given")
+//         return
+//     }
+
+//     const team = await Team.findOne({'name': name})
+//     if (!team) {
+//         res.status(404).send('team not found with given name')
+//         return
+//     }
+
+//     // check to see if the user is a member of the team
+//     const isMember = await Team.findOne({'name': name, 'members.id': userID})
+//     if(!isMember) {
+//         res.status(403).send('You are not a member of this team')
+//         return
+//     }
+
+//     res.setHeader("Content-Type", "application/json")
+//     res.status(200).send(isMember._id)

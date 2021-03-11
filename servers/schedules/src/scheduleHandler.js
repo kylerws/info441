@@ -68,16 +68,9 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
 
             res.setHeader("Content-Type", "application/json");
             res.status(201).json(userSchedulePosted);
-            // res.status(201).json(userSchedulePosted[0]['schedule']);
             return;
           });
-        // res.send('ok')
     }
-
-
-    // res.send(scheduleExists)
-
-
 }
 
     // patch user's schedule
@@ -88,10 +81,13 @@ const getUserScheduleHandler = async (req, res, { UserSchedule }) => {
     }
 
     const user = JSON.parse(req.get('X-User'));
-    // const user = {id: 2, email: 'user2'}
-    const userID = user['id']
+    // const userID = user['id']
     const userEmail = user['email']
     const userSchedule = await UserSchedule.findOne({"userEmail": userEmail})
+    if (!userSchedule) {
+        res.status(404).send("Schedule not found for user")
+        return
+    }
 
     res.setHeader("Content-Type", "application/json");
     res.status(200).send(userSchedule['schedule'])

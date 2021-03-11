@@ -11,6 +11,7 @@ class MainPageContent extends Component {
             schedule: "",
             showPostSchedule: false,
             teamID: "6048ee62bc524b5c2d58f9f4",
+            teamName: 
             teamList: []
         }
 
@@ -74,6 +75,7 @@ class MainPageContent extends Component {
 
         if (resp.status !== 201) {
             alert("Failed to update schedule")
+            return
         }
 
         this.getSchedule()  // update displayed schedule
@@ -108,11 +110,16 @@ class MainPageContent extends Component {
 
         if (resp.status !== 201) {
             alert("Failed to create team")
+            return
         }
         // resp body will contain an id field, set this in the stat
         const teamID = resp.body.id
         // this.setState({showPostSchedule: false})
     }
+
+
+
+    ////// WORKING HERE //////
 
     // Get teamID by team name
     getTeamIDByName = async () => {
@@ -121,10 +128,31 @@ class MainPageContent extends Component {
         const resp = await fetch(api.base + api.handlers.teams, {
             headers: new Headers({
                 "Authorization": this.props.auth
-            })
+            }),
+            param: JSON.stringify({name: this.state.teamName})
         })
 
-        this.setState({teamID})
+        // if (resp.status !== 200) {
+        //     alert("Failed to get team with that name")
+                // return
+        // }
+
+        const parsed = await resp.json()
+        if (parsed.length == 0) {
+            this.setState({schedule: (<h3>When are you free?</h3>)})
+            return
+        }
+
+        console.log(parsed)
+        // const scheduleElements = scheduleArr[0].schedule.map(d => {
+        //     return <div key={d.day}>
+        //         <h3>{toUpper(d.day)}</h3>
+        //         <h4>{toClientDate(d.startTime)}</h4>
+        //         <h4>{toClientDate(d.endTime)}</h4>
+        //     </div>
+        // })
+
+        // this.setState({teamID})
     }
 
     // Get teams 
