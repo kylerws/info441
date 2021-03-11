@@ -129,7 +129,7 @@ class MainPageContent extends Component {
         })
 
         if (resp.status !== 200) {
-            alert("No teams found for user")
+            // alert("No teams found for user")
             return
         }
 
@@ -225,12 +225,12 @@ class MainPageContent extends Component {
 
         // Form for updating user own schedule
         let postScheduleView = (
-            <div>
+            <Container fluid={true}>
                 <DayForm submit={e => this.postSchedule(e)}
                     setDay={(v) => this.setState({day: v})}
                     setStart={(v) => this.setState({startTime: v})}
                     setEnd={(v) => this.setState({endTime: v})} />
-            </div>
+            </Container>
         )
 
         // Form for creating team
@@ -245,22 +245,35 @@ class MainPageContent extends Component {
             </div>
         )
 
+        let welcomeName = this.props.user.firstName && this.props.user.lastName ?
+            this.props.user.firstName + " " + this.props.user.lastName : this.props.user.userName
+
         return (
             <div>
                 <Container fluid={true} className="px-5">
-                    <div>Welcome back, {this.props.user.firstName} {this.props.user.lastName}</div>
-                    <h1>Your Schedule</h1>
+                    <div>Welcome back, {welcomeName} </div>
+                    <Row className="justify-content-between">
+                    <Col xs={3}><h1>Your Schedule</h1></Col>
+                    <Col xs={1} className="mt-2">
+                    
+                    {this.state.showPostSchedule ?
+                            closePostScheduleBtn : openPostScheduleBtn}
+                            </Col>
+                            <Col>
+                            {this.state.showPostSchedule ? postScheduleView : ""}
+                            </Col>
+                    </Row>
                     {/* <button onClick={() => this.getSchedule()}>Refresh</button> */}
-                    <Row className="px-3 my-4">
+                    <Row className="px-3 my-4 justify-content-around">
                         {this.state.schedule}
                     </Row>
-                    <Row className="justify-content-end px-5">
+                    {/* <Row className="justify-content-end px-5">
                         {this.state.showPostSchedule ?
                             closePostScheduleBtn : openPostScheduleBtn}
                     </Row>
-                    <Row className="justify-content-center px-5 pb-5">
+                    <Row className="justify-content-center pb-5">
                         {this.state.showPostSchedule ? postScheduleView : ""}
-                    </Row>
+                    </Row> */}
                 </Container>
                 <Container fluid={true} className="px-5">
                     <Row className="">
@@ -299,21 +312,24 @@ class DayForm extends Component {
     render() {
         return (
             <Form onSubmit={this.props.submit}>
-                <Form.Row>
-                    <Form.Group as={Col}>
+                <Form.Row className="justify-content-end">
+                    <Form.Group as={Col} xs={3}>
                         <Form.Label>Day to set availability</Form.Label>
                         <Select options={dayOptions} default={"sunday"} update={(v) => this.props.setDay(v)}/>
                     </Form.Group>
-                    <Form.Group as={Col} xs={3}>
+                    <Form.Group as={Col} xs={2}>
                         <Form.Label>Start Time</Form.Label>
-                    <Select options={hourOptions} default={"1"} update={(v) => this.props.setStart(v)}/>
+                    <Select options={hourOptions} default={9} update={(v) => this.props.setStart(v)}/>
                     </Form.Group>
-                    <Form.Group as={Col} xs={3}>
+                    <Form.Group as={Col} xs={2}>
                         <Form.Label>End Time</Form.Label>
-                        <Select options={hourOptions} default={"2"} update={(v) => this.props.setEnd(v)}/>
+                        <Select options={hourOptions} default={5} update={(v) => this.props.setEnd(v)}/>
                     </Form.Group>
+                    
                 </Form.Row>
-                <Button type="submit" size="sm" variant="outline-success">Add to Schedule</Button>
+                <Form.Row className="justify-content-end">
+                    <Button type="submit" size="sm" variant="outline-success">Add to Schedule</Button>
+                </Form.Row>
             </Form>
         )
     }
@@ -433,7 +449,24 @@ const hourOptions = [
     { label: "4 AM", value: 4 },
     { label: "5 AM", value: 5 },
     { label: "6 AM", value: 6 },
-    { label: "11:59 pm", value: 24 }
+    { label: "7 AM", value: 7 },
+    { label: "8 AM", value: 8 },
+    { label: "9 AM", value: 9 },
+    { label: "10 AM", value: 10 },
+    { label: "11 AM", value: 11 },
+    { label: "12 PM", value: 12 },
+    { label: "1 PM", value: 13 },
+    { label: "2 PM", value: 14 },
+    { label: "3 PM", value: 15 },
+    { label: "4 PM", value: 16 },
+    { label: "5 PM", value: 17 },
+    { label: "6 PM", value: 18 },
+    { label: "7 PM", value: 19 },
+    { label: "8 PM", value: 20 },
+    { label: "9 PM", value: 21 },
+    { label: "10 PM", value: 22 },
+    { label: "11 PM", value: 23 },
+    { label: "End of Day", value: 24 }
   ];
 
 export default MainPageContent;
