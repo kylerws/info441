@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
-import{NavLink} from 'react-router-dom';
-import PageTypes from '../../../../Constants/PageTypes/PageTypes';
-import './Styles/MainPageContent.css';
-import api from '../../../../Constants/APIEndpoints/APIEndpoints';
+import React, { Component } from 'react'
+import { Button, Col, Container, Row, Form } from 'react-bootstrap'
 import moment from 'moment'
+
+// import PageTypes from '../../../../Constants/PageTypes/PageTypes';
+import api from '../../../Constants/APIEndpoints/APIEndpoints';
+
 
 
 class MainPageContent extends Component {
@@ -34,10 +35,11 @@ class MainPageContent extends Component {
         
         const scheduleArr = await resp.json()
         if (scheduleArr.length == 0) {
-            this.setState({schedule: "You haven't add your schedule yet"})
+            this.setState({schedule: (<h3>When are you free?</h3>)})
             return
         }
 
+        console.log("User schedule: " + scheduleArr[0].schedule)
         const scheduleElements = scheduleArr[0].schedule.map(d => {
             return <div key={d.day}>
                 <h3>{toUpper(d.day)}</h3>
@@ -56,26 +58,14 @@ class MainPageContent extends Component {
         // Get form values from state
         const { day, startTime, endTime } = {
             day: this.state.day,
-            startTime: this.state.startTime,
-            endTime: this.state.endTime
+            startTime: toMongoDate(this.state.startTime),
+            endTime: toMongoDate(this.state.endTime)
         }
 
-        // TODO: handle changing time format for mongoDB
-        // (hh:mm) => full UTC datetime
+        // Arrange into object to be JSON parsed
+        const sendData = { day, startTime, endTime }
 
-        // startTime = normalizeDate(new Date(startTime))
-        // endTime = normalizeDate(new Date(endTime))
-        // let d = new Date(startTime)
-        // d.setFullYear(1998)
-        // d.setMonth(1)
-        // d.setDate(1)
-
-        const sendData = {
-            day,
-            startTime,
-            endTime 
-        }
-
+        // POST to /v1/schedule
         const resp = await fetch(api.base + api.handlers.schedule, {
             method: "POST",
             body: JSON.stringify(sendData),
@@ -98,13 +88,14 @@ class MainPageContent extends Component {
 
         // this.setState({showPostSchedule: true})
 
-        const { name, description, private } = 
-            {name: "New Team",
-            description: "description",
-            private: true
-        }
+        console.log(this.props.user)
+        const { name, description } = 
+            {
+                name: "Client Created Team",
+                description: "Created by "
+            }
 
-        const sendData = { name, description, private }
+        const sendData = { name, description }
         const resp = await fetch(api.base + api.handlers.teams, {
             method: "POST",
             body: JSON.stringify(sendData),
@@ -161,40 +152,48 @@ class MainPageContent extends Component {
 
 
     render() {
+        let openPostScheduleBtn = <Button size="sm" variant="success"
+            onClick={() => this.setState({showPostSchedule: true})}>Add availability</Button>
+
+        let closePostScheduleBtn = <Button size="sm" variant="dark"
+            onClick={() => this.setState({showPostSchedule: false})}>Hide</Button>
+
         // Contains form for updating user own schedule
         let postScheduleView = (
             <div>
+                
                 <DayForm submit={e => this.postSchedule(e)}
                     setDay={(v) => this.setState({day: v})}
                     setStart={(v) => this.setState({startTime: v})}
                     setEnd={(v) => this.setState({endTime: v})} />
-                <button onClick={() => this.setState({showPostSchedule: false})}>Cancel</button>
-                <button onClick={e => this.postSchedule(e)}>Post Schedules</button>
+                
+                {/* <button onClick={e => this.postSchedule(e)}>Post Schedules</button> */}
             </div>
         )
 
         return (
             <div>
                 <div>Welcome back, {this.props.user.firstName} {this.props.user.lastName}</div>
+                <Container fluid={true}>
+                    <h1>Your Schedule</h1>
+                    {/* <button onClick={() => this.getSchedule()}>Refresh</button> */}
+                    <Row>
+                    {this.state.schedule}
+                    </Row>
+                </Container>
+                <Container fluid={true}>
+                    <Row className="">
+                        {this.state.showPostSchedule ? closePostScheduleBtn : openPostScheduleBtn}
+                    </Row>
+                    <Row className="p-5">
+                        {this.state.showPostSchedule ? postScheduleView : ""}
+                    </Row>
+                </Container>
                 <div>
                     <h1>Team Schedule</h1>
                     <h2>Team {this.state.teamName}</h2>
                     {/* <button onClick={() => this.getTeamSchedule()}>Refresh</button> */}
                     {this.state.team}
-                </div>
-                <div>
-                    <h1>Your Schedule</h1>
-                    {/* <button onClick={() => this.getSchedule()}>Refresh</button> */}
-                </div>
-                <div>
-                    {this.state.schedule}
-                </div>
-                <div>
-                    <button onClick={() => this.setState({showPostSchedule: true})}>Add availability</button>
-                </div>
-
-                <div>
-                    {this.state.showPostSchedule ? postScheduleView : ""}
                 </div>
             </div>
         );
@@ -205,12 +204,23 @@ class MainPageContent extends Component {
 class DayForm extends React.Component {
     render() {
         return (
-            <form onSubmit={this.props.submit}>
-                <Select options={dayOptions} default={"monday"} onChange={(v) => this.props.setDay(v)}/>
-                <Select options={hourOptions} default={"00:00"} onChange={(v) => this.props.setStart(v)}/>
-                <Select options={hourOptions} default={"00:00"} onChange={(v) => this.props.setEnd(v)}/>
-                <input type="submit" value="Submit" />
-            </form>
+            <Form onSubmit={this.props.submit}>
+                <Form.Row>
+                    <Form.Group as={Col}>
+                        <Form.Label>Day to set availability</Form.Label>
+                        <Select options={dayOptions} default={"sunday"} update={(v) => this.props.setDay(v)}/>
+                    </Form.Group>
+                    <Form.Group as={Col} xs={3}>
+                        <Form.Label>Start Time</Form.Label>
+                    <Select options={hourOptions} default={"1"} update={(v) => this.props.setStart(v)}/>
+                    </Form.Group>
+                    <Form.Group as={Col} xs={3}>
+                        <Form.Label>End Time</Form.Label>
+                        <Select options={hourOptions} default={"2"} update={(v) => this.props.setEnd(v)}/>
+                    </Form.Group>
+                </Form.Row>
+                <Button type="submit" size="sm" variant="outline-success">Add to Schedule</Button>
+            </Form>
         )
     }
 } 
@@ -220,20 +230,22 @@ class Select extends React.Component {
     constructor(props) {
         super(props)
         this.state = { selected: this.props.default }
+        
+        this.props.update(this.state.selected)
     }
 
     handleChange = (e) => {
         this.setState({selected: e.target.value})
-        this.props.onChange(e.target.value)
+        this.props.update(e.target.value)
     }
 
     render() {
         let options = this.props.options.map(o => (
             <option key={o.value} value={o.value}>{o.label}</option>))
         return (
-            <select value={this.state.selected} onChange={(e) => this.handleChange(e)}>
+            <Form.Control as="select" value={this.state.selected} onChange={(e) => this.handleChange(e)}>
                 {options}
-            </select>
+            </Form.Control>
         );
     }
 }
@@ -248,47 +260,35 @@ function toClientDate(datetime) {
     return moment(datetime).local().format('h:mm a')
 }
 
-// 
-function normalizeDate(d) {
-    console.log(d)
-    d.setFullYear(1998)
-    console.log(d)
-    d.setMonth(1)
-    console.log(d)
-    d.setDate(1)
-    console.log(d)
-    return d
+// Takes hour as int and convert to ISO UTC format for mongoDB
+function toMongoDate(hour) {
+    var test = moment({'year': 1998, 'month': 0, 'date': 1, 'hour': hour, 'minute': 0}).toISOString()
+    console.log(test)
+    return test
 }
 
+// Options for day select in postScheduleView
 const dayOptions = [
-    {
-        label: "Monday",
-        value: "monday",
-    },
-    {
-    label: "Tuesday",
-    value: "tuesday",
-    },
-    {
-    label: "Wednesday",
-    value: "wednesday",
-    },
-    {
-    label: "Thursday",
-    value: "thursday",
-    },
-    {
-        label: "Friday",
-        value: "friday",
-    },
+    { label: "Sunday", value: "sunday" },
+    { label: "Monday", value: "monday" },
+    { label: "Tuesday", value: "tuesday"},
+    { label: "Wednesday", value: "wednesday"},
+    { label: "Thursday", value: "thursday"},
+    { label: "Friday", value: "friday", },
+    { label: "Saturday", value: "saturday" },
 ]
 
+
+// OPtions for hour select in postScheduleView
 const hourOptions = [
-    { label: "12", value: "00:00" },
-    { label: "1", value: "01:00" },
-    { label: "2", value: "02:00" },
-    { label: "3", value: "03:00" },
-    { label: "4", value: "04:00" },
+    { label: "12 AM", value: 0 },
+    { label: "1 AM", value: 1 },
+    { label: "2 AM", value: 2 },
+    { label: "3 AM", value: 3 },
+    { label: "4 AM", value: 4 },
+    { label: "5 AM", value: 5 },
+    { label: "6 AM", value: 6 },
+    { label: "11:59 pm", value: 24 }
   ];
 
 export default MainPageContent;

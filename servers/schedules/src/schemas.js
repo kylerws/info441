@@ -4,7 +4,6 @@ const teamSchema = new Schema({
     // id: {type: Schema.Types.ObjectId, required: true, unique: true, auto = true},
     name: {type: String, required: true, unique: true},
     description: String,
-    private: {type: Boolean, required: true, unique: false},
     members: {type: [{id: Number, email: String}]},
     schedule: {type: [{day: String, startTime: Date, endTime: Date}]},
     createdAt: {type: Date, required: true, unique: false},

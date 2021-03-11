@@ -11,7 +11,7 @@ const postUserScheduleHandler = async (req, res, { UserSchedule }) => {
     const userID = user['id']
     const{ day, startTime, endTime } = req.body;
 
-    if (!startTime || !endTime) {
+    if (!startTime || !endTime || !day) {
         res.status(400).send("Must provide start and end time");
         return;
     }

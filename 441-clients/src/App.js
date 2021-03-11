@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import Auth from './Components/Auth/Auth';
 import PageTypes from './Constants/PageTypes/PageTypes';
 import Main from './Components/Main/Main';
-import './Styles/App.css';
 import api from './Constants/APIEndpoints/APIEndpoints';
+
+import './Styles/App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends Component {
     constructor() {

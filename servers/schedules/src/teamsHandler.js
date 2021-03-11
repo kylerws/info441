@@ -11,7 +11,7 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     const user = JSON.parse(req.get('X-User'));
     // const user = {id: 1, email: 'mackenzie@msn.com'}
     const userID = user['id']
-    const{ name, description, private } = req.body;
+    const{ name, description } = req.body;
 
     if (!name) {
         res.status(400).send("Must provide team name");

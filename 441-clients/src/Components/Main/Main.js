@@ -1,9 +1,9 @@
 import React from 'react';
 import PageTypes from '../../Constants/PageTypes/PageTypes';
-import MainPageContent from './Content/MainPageContent/MainPageContent';
+import MainPageContent from './Content/MainPageContent';
 import SignOutButton from './Components/SignOutButton/SignOutButton';
 import UpdateName from './Components/UpdateName/UpdateName';
-import UpdateAvatar from './Components/UpdateAvatar/UpdateAvatar';
+// import UpdateAvatar from './Components/UpdateAvatar/UpdateAvatar';
 
 const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
     let content = <></>
@@ -15,11 +15,8 @@ const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
         case PageTypes.signedInUpdateName:
             content = <UpdateName user={user} setUser={setUser} setPage={setPage}/>;
             break;
-        // case PageTypes.signedInUpdateAvatar:
-        //     content = <UpdateAvatar user={user} setUser={setUser} />;
-        //     break;
         default:
-            content = <>Error, invalid path reached</>;
+            content = <><button onclick={(e) => setPage(e, PageTypes.signedInMain)}>Main</button></>;
             contentPage = false;
             break;
     }
