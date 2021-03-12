@@ -2,14 +2,14 @@
 
 // ALSO INITIALIZE TEAM SCHEDULE TO BE EQUAL TO CREATOR SCHEDULE
 const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
-    console.log("REQUEST: postTeam called")
+    // console.log("REQUEST: postTeam called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
     }
 
     const user = JSON.parse(req.get('X-User'));
-    // const user = {id: 1, email: 'user1'}
+    // const user = {id: 3, email: 'user3'}
     const userID = user['id']
     const{ name, description } = req.body;
 

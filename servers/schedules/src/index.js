@@ -48,7 +48,7 @@ app.get("/v1/teams", RequestWrapper(getTeamIdByName, { Team }))
 
 app.post("/v1/teams/:teamID/members", RequestWrapper(postMembersHandler, { Team, UserSchedule }));
 app.get("/v1/teams/:teamID/members", RequestWrapper(getMembersHandler, { Team }));
-app.post("/v1/schedule", RequestWrapper(postUserScheduleHandler, { UserSchedule }));
+app.post("/v1/schedule", RequestWrapper(postUserScheduleHandler, { UserSchedule, Team }));
 app.get("/v1/schedule", RequestWrapper(getUserScheduleHandler, { UserSchedule }));
 app.get("/v1/teams/:teamID", RequestWrapper(getSpecificTeamHandler, { Team }));
 
