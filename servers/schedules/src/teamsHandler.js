@@ -12,8 +12,8 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     // console.log(user)
     const { name, description } = req.body;
 
-    if (!name) {
-        res.status(400).send("Must provide team name");
+    if (!name || !description) {
+        res.status(400).send("Must provide team name and description");
         return;
     }
 

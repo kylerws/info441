@@ -49,6 +49,11 @@ const postUserScheduleHandler = async (req, res, { UserSchedule, Team }) => {
     const userEmail = user['email']
 
     const{ day, startTime, endTime } = req.body;
+
+    if ( !day || !startTime || !endTime) {
+        res.status(400).send('must include day, start time, and end time')
+        return;
+    }
         // check if the time at that day needs to be adjusted for the team
     const dayExists = await UserSchedule.find({"schedule.day": day, "userID": userID})
     if (dayExists.length > 0) {
