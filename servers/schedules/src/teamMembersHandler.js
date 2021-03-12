@@ -48,7 +48,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
 
-    // try {
     const currMember = await Team.find({_id : teamID, "members.email": email});
 
     // ---------------------------------------UNCOMMENT WHEN DONE TESTING-------------

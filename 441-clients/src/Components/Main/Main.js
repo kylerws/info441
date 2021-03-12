@@ -20,6 +20,7 @@ const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
             contentPage = false;
             break;
     }
+    
     return (
         <>
             {content}

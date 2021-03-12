@@ -542,11 +542,6 @@ class Select extends Component {
 
 // Custom Select for teams that overloads the handle method
 class TeamSelect extends Select {
-    // constructor(props) {
-    //     super(props)
-    //     // this.setState({selected: this.props.default})
-    // }
-
     handleChange = (e) => {
         console.log("teamSelect handle called")
         e.preventDefault()

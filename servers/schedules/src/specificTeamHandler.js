@@ -15,10 +15,6 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
     // const user = JSON.parse(req.get('X-User'));
     const userID = user['id']
     const teamID = req.params.teamID
-    
-
-    // res.status(200).send("Test passed")
-    // return
 
     if(!teamID || teamID === '') {
         res.setHeader("Content-Type", "text/plain")
@@ -41,12 +37,10 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
         return;
     }
     const schedule = team['schedule']
-    // const availableDays = schedule.filter(d => d.hasAvailability == true)
+    const availableDays = schedule.filter(d => d.hasAvailability == true)
 
     res.setHeader("Content-Type", "application/json");
-    // res.status(200).send(availableDays)
-    res.status(200).send(schedule)
-
+    res.status(200).send(availableDays)
 }
 
 
