@@ -10,7 +10,8 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const user = JSON.parse(req.get('X-User'));
-    // console.log(user)
+    console.log(user)
+
     const { name, description } = req.body;
 
     if (!name || !description) {
@@ -74,9 +75,8 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     });
 };
 
+// GET: handle getting teams that the curren user is a part of
 
-// Returns all teams that user is member of
-// Endpoint: GET /v1/teams
 const getTeamsHandler = async (req, res, { Team }) => {
     console.log("REQUEST: getTeamsHandler called")
     if (!req.get("X-User")) {
@@ -84,11 +84,8 @@ const getTeamsHandler = async (req, res, { Team }) => {
         res.status(401).send('User not authorized');
         return;
     }
-
-    // Get userID
     const userID = JSON.parse(req.get('X-User')).id
 
-    // Check for all teams that user is member
     const teams = await Team.find({'members.id': userID})
     if(teams.length == 0) {
         res.setHeader("Content-Type", "text/plain")
@@ -96,7 +93,6 @@ const getTeamsHandler = async (req, res, { Team }) => {
         return
     }
 
-    // Grab only id and name fields
     var teamData = teams.map(team => {
         return { id: team._id, teamName: team.name, desc: team.description }
     })

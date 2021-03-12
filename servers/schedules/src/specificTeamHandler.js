@@ -10,9 +10,7 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
     }
 
     const user = JSON.parse(req.get('X-User'));
-    // const user = {id: 3, email: 'user3'}
 
-    // const user = JSON.parse(req.get('X-User'));
     const userID = user['id']
     const teamID = req.params.teamID
 
@@ -40,7 +38,8 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
     const availableDays = schedule.filter(d => d.hasAvailability == true)
 
     res.setHeader("Content-Type", "application/json");
-    res.status(200).send(availableDays)
+    res.status(200).send(schedule)
+    // res.status(200).send(availableDays)
 }
 
 
