@@ -37,6 +37,8 @@ function windowIsValid(daySchedule) {
 const postUserScheduleHandler = async (req, res, { UserSchedule, Team }) => {
     console.log("REQUEST: postUserScheduleHandlers called")
     if (!req.get("X-User")) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(401).send('User not authorized');
         return;
     }
@@ -51,22 +53,30 @@ const postUserScheduleHandler = async (req, res, { UserSchedule, Team }) => {
     const{ day, startTime, endTime } = req.body;
 
     if ( !day || !startTime || !endTime) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(400).send('must include day, start time, and end time')
         return;
     }
         // check if the time at that day needs to be adjusted for the team
     const dayExists = await UserSchedule.find({"schedule.day": day, "userID": userID})
     if (dayExists.length > 0) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(409).send('availability already created for this day / user')
         return;
     }
 
     if (!startTime || !endTime || !day) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(400).send("Must provide start and end time");
         return;
     }
 
     if (startTime >= endTime) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(400).send('start time must be before end time')
         return;
     }
@@ -83,6 +93,8 @@ const postUserScheduleHandler = async (req, res, { UserSchedule, Team }) => {
         const query = new UserSchedule(userSchedule);
         query.save((err, userSchedule) => {
             if (err) {
+                res.setHeader("Content-Type", "text/plain")
+
                 res.status(500).send('unable to create schedule' + err);
                 return;
             }
@@ -167,6 +179,8 @@ const postUserScheduleHandler = async (req, res, { UserSchedule, Team }) => {
 const getUserScheduleHandler = async (req, res, { UserSchedule }) => { 
     console.log("REQUEST: getUserSchedule called") 
     if (!req.get("X-User")) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(401).send('User not authorized');
         return;
     }
@@ -176,6 +190,8 @@ const getUserScheduleHandler = async (req, res, { UserSchedule }) => {
     const userEmail = user['email']
     const userSchedule = await UserSchedule.findOne({"userEmail": userEmail})
     if (!userSchedule) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(404).send("Schedule not found for user")
         return
     }
