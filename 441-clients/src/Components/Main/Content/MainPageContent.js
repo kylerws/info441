@@ -15,7 +15,10 @@ class MainPageContent extends Component {
             shotPostTeam: false,
             teamOptions: [defaultTeamOption],
             teamID: "",
-            teamName: "" 
+            teamName: "",
+            day: "sunday",
+            startTime: 9,
+            endTime: 5
         }
 
         this.getSchedule()
@@ -54,7 +57,7 @@ class MainPageContent extends Component {
     }
 
     postSchedule = async (e) => {
-        e.preventDefault()
+        
         console.log("POST /schedule")
         
         // Get form values from state
@@ -226,6 +229,18 @@ class MainPageContent extends Component {
         this.getTeamSchedule(team.id)
     }
 
+    devSetupDemo = () => {
+        console.log("Demo setup started")
+        dayOptions.forEach((d) => {
+            this.setState({
+                day: d.value,
+                startTime: 9,
+                endTime: 12
+            })
+            this.postSchedule()
+            console.log(d.value)
+        })
+    }
 
     render() {
         // Expand button for postScheduleView
@@ -239,7 +254,7 @@ class MainPageContent extends Component {
         // Form for updating user own schedule
         let postScheduleView = (
             <Container fluid={true}>
-                <DayForm submit={e => this.postSchedule(e)}
+                <DayForm submit={() => this.postSchedule()}
                     setDay={(v) => this.setState({day: v})}
                     setStart={(v) => this.setState({startTime: v})}
                     setEnd={(v) => this.setState({endTime: v})} />
@@ -260,6 +275,9 @@ class MainPageContent extends Component {
         let welcomeName = this.props.user.firstName && this.props.user.lastName ?
             this.props.user.firstName + " " + this.props.user.lastName : this.props.user.userName
 
+        let devKey = "dev"
+        let devBtn = <Button variant="warning" onClick={() => this.devSetupDemo()}>SET UP DEMO</Button>
+
         return (
             <div>
                 <Jumbotron fluid={true} className="mb-0">
@@ -267,6 +285,7 @@ class MainPageContent extends Component {
                         <div>Welcome back, {welcomeName} </div>
                         <Row className="justify-content-between">
                             <Col xs={3}><h1>Your Schedule</h1></Col>
+                            <Col>{this.props.user.userName === devKey && this.props.user.firstName == devKey ? devBtn : ""}</Col>
                             {/* <button onClick={() => this.getSchedule()}>Refresh</button> */}
                         </Row>
                         <Row className="px-3 my-4 justify-content-around">
@@ -376,6 +395,7 @@ class Select extends Component {
     }
 
     handleChange = (e) => {
+        e.preventDefault()
         this.setState({selected: e.target.value})
         this.props.update(e.target.value)
     }
@@ -423,8 +443,9 @@ function toClientDate(datetime) {
 
 // Takes hour as int and convert to ISO UTC format for mongoDB
 function toMongoDate(hour) {
+    console.log("Got: " + hour)
     var test = moment({'year': 1998, 'month': 0, 'date': 1, 'hour': hour, 'minute': 0}).toISOString()
-    console.log(test)
+    console.log("Converted to: " + test)
     return test
 }
 
