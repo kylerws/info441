@@ -47,12 +47,17 @@ mongoose.connection.on('error', console.error)
 app.route("/v1/teams")
     .post(RequestWrapper(postTeamHandler, { Team, UserSchedule }))
     .get(RequestWrapper(getTeamsHandler, { Team, UserSchedule }))
+app.all("/v1/teams", methodNotAllowed);
 
 app.post("/v1/teams/:teamID/members", RequestWrapper(postMembersHandler, { Team, UserSchedule }));
 app.get("/v1/teams/:teamID/members", RequestWrapper(getMembersHandler, { Team }));
+app.all("/v1/teams/:teamID/members", methodNotAllowed);
 app.post("/v1/schedule", RequestWrapper(postUserScheduleHandler, { UserSchedule, Team }));
 app.get("/v1/schedule", RequestWrapper(getUserScheduleHandler, { UserSchedule }));
+app.all("/v1/schedule", methodNotAllowed);
+
 app.get("/v1/teams/:teamID", RequestWrapper(getSpecificTeamHandler, { Team }));
+app.all("/v1/teams/:teamID", methodNotAllowed);
 
 async function main() {
     app.listen(port, () => {
