@@ -29,7 +29,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     if (team[0]['creator']['id'] != userID) {
-        res.status(401).send('not channel creator')
+        res.status(403).send('not channel creator')
         return;
     }
 
@@ -67,7 +67,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     if (addedMemberSched.length == 0) {
-        res.status(401).send('Added members must have posted availability to be added to a team.')
+        res.status(403).send('Added members must have posted availability to be added to a team.')
         return;
     }
 
