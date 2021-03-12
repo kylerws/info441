@@ -232,6 +232,10 @@ class MainPageContent extends Component {
     }
 
     getTeamMembers = async (teamID) => {
+        if (teamID == "") {
+            return
+        }
+        
         const resp = await fetch(api.base + api.handlers.teams + "/" + teamID + "/members", {
             headers: new Headers({
                 "Authorization": this.props.auth
@@ -261,18 +265,57 @@ class MainPageContent extends Component {
         this.setState({teamMembers: teamMembersElements})
     }
 
-    devSetupDemo = () => {
-        console.log("Demo setup started")
-        dayOptions.forEach((d) => {
-            this.setState({
-                day: d.value,
-                startTime: 9,
-                endTime: 12
+    //get team members from tea with teamID in url
+    postTeamMembers = async (e) => {
+        e.preventDefault()
+        console.log("POST /teamID/members called")
+        if (this.state.email == "") {
+            return
+        }
+
+        const { email } = { email: this.state.newMember }
+        console.log(email)
+
+        const sendData = { email }
+        const resp = await fetch(api.base + api.handlers.teams + "/" + this.state.teamID + "/members", {
+            method: "POST",
+            body: JSON.stringify(sendData),
+            headers: new Headers({
+                "Authorization": this.props.auth,
+                "Content-Type": "application/json"
             })
-            this.postSchedule()
-            console.log(d.value)
         })
+
+        if (resp.status !== 201) {
+            alert("Failed to post member")
+        }
+
+        const createdTeam = await resp.json()
+        if (createdTeam === null) {
+            console.log("New team not returned by service")
+            alert("Unable to display team")
+            return
+        }
+
+        // Update teams
+        this.getTeamMembers(this.state.teamID)
+        
+        // Hide form
+        this.setState({showPostMembers: false})
     }
+
+    // devSetupDemo = () => {
+    //     console.log("Demo setup started")
+    //     dayOptions.forEach((d) => {
+    //         this.setState({
+    //             day: d.value,
+    //             startTime: 9,
+    //             endTime: 12
+    //         })
+    //         this.postSchedule()
+    //         console.log(d.value)
+    //     })
+    // }
 
     render() {
         // Expand button for postScheduleView
@@ -301,6 +344,16 @@ class MainPageContent extends Component {
                     setDesc={(v) => this.setState({newTeamDesc: v})} />
                 <Button variant="success" size="sm"
                     onClick={() => this.setState({makingTeam: false})}>Cancel</Button>
+            </div>
+        )
+
+        // Form to add member
+        let postMemberView = (
+            <div>
+                <AddMemberForm submit={e => this.postTeamMembers(e)}
+                    setMember={(v) => this.setState({newMember: v})} />
+                {/* <Button variant="success" size="sm"
+                    onClick={() => this.setState({showPostMembers: false})}>Cancel</Button> */}
             </div>
         )
 
@@ -352,12 +405,6 @@ class MainPageContent extends Component {
                     <Row className="px-3 my-4 justify-content-around">
                         {this.state.teamSchedule}
                     </Row>
-                    <Row className="">
-                        <Col><h1>Team Members</h1></Col>
-                    </Row>
-                    <Row>
-                        <Col>{this.state.teamMembers}</Col>
-                    </Row>
                     <Row className="justify-content-between">
                         <Col xs={1} className="mt-2">
                             {/* {this.state.showPostSchedule ? closePostScheduleBtn : openPostScheduleBtn} */}
@@ -368,6 +415,16 @@ class MainPageContent extends Component {
                             {this.state.showPostTeam ? postTeamView : ""}
                         </Col>
                     </Row>
+
+                    <Row className="">
+                        <Col><h1>Team Members</h1></Col>
+                    </Row>
+                    <Row>
+                        <Col>{this.state.teamMembers}</Col>
+                    </Row>
+                    <Row>
+                        {postMemberView}
+                    </Row>
                 </Container>
                 </Jumbotron>
             </div>
@@ -377,6 +434,20 @@ class MainPageContent extends Component {
 
 
 ////// Extra Components //////
+
+class AddMemberForm extends Component {
+    render() {
+        return(
+            <form key="addmemberform" onSubmit={this.props.submit} id="addmemberform">
+                <div>
+                    <label>New member email: </label>
+                    <input type="text" onChange={(e) => this.props.setMember(e.target.value)}/>                   
+                </div>
+                <input type="submit" value="Add" />
+            </form>
+        )
+    }
+}
 
 // Form for adding Day to schedule
 class DayForm extends Component {

@@ -29,7 +29,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     if (team[0]['creator']['id'] != userID) {
-        res.status(401).send('not channel creator')
+        res.status(403).send('not channel creator')
         return;
     }
 
@@ -50,9 +50,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const addedMemberSched = await UserSchedule.findOne({"userEmail": email})
-    console.log('new member id:' + addedMemberSched['userID'])
-    // res.send(addedMemberSched)
-    // return;
 
     if (addedMemberSched.length == 0) {
         res.status(400).send('must add a valid user with a posted schedule')
