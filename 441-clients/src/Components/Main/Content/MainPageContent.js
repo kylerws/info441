@@ -284,7 +284,7 @@ class MainPageContent extends Component {
                     <Container fluid={true} className="px-5">
                         <div>Welcome back, {welcomeName} </div>
                         <Row className="justify-content-between">
-                            <Col xs={3}><h1>Your Schedule</h1></Col>
+                            <Col xs={9}><h1>Your Schedule</h1></Col>
                             <Col>{this.props.user.userName === devKey && this.props.user.firstName == devKey ? devBtn : ""}</Col>
                             {/* <button onClick={() => this.getSchedule()}>Refresh</button> */}
                         </Row>
@@ -356,7 +356,7 @@ class DayForm extends Component {
                     </Form.Group>
                     <Form.Group as={Col} xs={2}>
                         <Form.Label>End Time</Form.Label>
-                        <Select options={hourOptions} default={5} update={(v) => this.props.setEnd(v)}/>
+                        <Select options={hourOptions} default={12} update={(v) => this.props.setEnd(v)}/>
                     </Form.Group>
                     
                 </Form.Row>
