@@ -60,8 +60,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const addedMemberSched = await UserSchedule.findOne({"userEmail": email})
-    // res.send(addedMemberSched)
-    // return;
 
     if (addedMemberSched.length == 0) {
         res.setHeader("Content-Type", "text/plain")
