@@ -3,6 +3,8 @@ var mongoose = require('mongoose');
 const getSpecificTeamHandler = async (req, res, { Team }) => {
     console.log("REQUEST: getSpecificTeam called")
     if (!req.get("X-User")) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(401).send('User not authorized');
         return;
     }
@@ -19,6 +21,8 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
     // return
 
     if(!teamID || teamID === '') {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(400).send("Must send a team id")
         return
     }
@@ -31,6 +35,8 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
 
     // res.send(team)
     if (team == null ) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(404).send('We did not find a team with provided name that you are a part of')
         return;
     }

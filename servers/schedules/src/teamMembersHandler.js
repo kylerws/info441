@@ -4,6 +4,7 @@ const { updateTeamSched, needsUpdate, windowIsValid } = require("./scheduleHandl
 const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     console.log("REQUEST: postMembers called")
     if (!req.get("X-User")) {
+        res.setHeader("Content-Type", "text/plain")
         res.status(401).send('User not authorized');
         return;
     }
@@ -18,23 +19,30 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     const team = await Team.find({_id: teamID});
 
     if (team == null ) {
+        res.setHeader("Content-Type", "text/plain")
         res.status(404).send('team not found')
         return;
     }
 
     const creator = team[0]['creator']
     if (creator == null) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(404).send('creator not found')
         return;
     }
 
     if (team[0]['creator']['id'] != userID) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(403).send('not channel creator')
         return;
     }
 
     const { email } = req.body
     if (!email) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(404).send("Must provide an email to add")
         return
     }
@@ -45,12 +53,17 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
 
     // ---------------------------------------UNCOMMENT WHEN DONE TESTING-------------
     if (currMember.length > 0) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(409).send('user is already a member of this channel')
         return;
     }
 
     const addedMemberSched = await UserSchedule.findOne({"userEmail": email})
+
     if (!addedMemberSched) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(400).send('must add a valid user with a posted schedule')
         return;
     }
@@ -61,6 +74,13 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
         "id": addedUserID,
         "email": email
     }
+
+    // if (addedMemberSched.length == 0) {
+    //     res.setHeader("Content-Type", "text/plain")
+
+    //     res.status(403).send('Added members must have posted availability to be added to a team.')
+    //     return;
+    // }
 
     const teamObj = await Team.find({_id : teamID})
     const updatedTeamSched = teamObj[0]['schedule']
@@ -155,6 +175,8 @@ const getMembersHandler = async (req, res, { Team }) => {
     const team = await Team.findOne({_id: teamID, "members.id": userID});
 
     if (team == null ) {
+        res.setHeader("Content-Type", "text/plain")
+
         res.status(404).send('we did not find a team you are a part of with the given credentials')
         return;
     }

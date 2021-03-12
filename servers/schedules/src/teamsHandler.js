@@ -4,6 +4,7 @@
 const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     console.log("REQUEST: postTeamHandler called")
     if (!req.get("X-User")) {
+        res.setHeader("Content-Type", "text/plain")
         res.status(401).send('User not authorized');
         return;
     }
@@ -13,12 +14,14 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     const { name, description } = req.body;
 
     if (!name || !description) {
+        res.setHeader("Content-Type", "text/plain")
         res.status(400).send("Must provide team name and description");
         return;
     }
 
     const teamExists = await Team.find({"name": name})
     if (teamExists.length > 0) {
+        res.setHeader("Content-Type", "text/plain")
         res.status(409).send('team already created with that name')
         return;
     }
@@ -27,6 +30,7 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     const creatorSchedule = await UserSchedule.find({"userID": user.id})
 
     if (creatorSchedule.length == 0) {
+        res.setHeader("Content-Type", "text/plain")
         res.status(401).send('Not authorized to create, please post availability first.')
         return;
     }
@@ -59,6 +63,7 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     const query = new Team(team);
     query.save((err, newTeam) => {
         if (err) {
+            res.setHeader("Content-Type", "text/plain")
             res.status(500).send('unable to create channel' + err);
             return;
         }
@@ -75,6 +80,7 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
 const getTeamsHandler = async (req, res, { Team }) => {
     console.log("REQUEST: getTeamsHandler called")
     if (!req.get("X-User")) {
+        res.setHeader("Content-Type", "text/plain")
         res.status(401).send('User not authorized');
         return;
     }
@@ -85,6 +91,7 @@ const getTeamsHandler = async (req, res, { Team }) => {
     // Check for all teams that user is member
     const teams = await Team.find({'members.id': userID})
     if(teams.length == 0) {
+        res.setHeader("Content-Type", "text/plain")
         res.status(404).send('User is not member of any team')
         return
     }
