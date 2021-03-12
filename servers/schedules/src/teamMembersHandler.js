@@ -50,7 +50,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const addedMemberSched = await UserSchedule.findOne({"userEmail": email})
-    console.log('new member id:' + addedMemberSched['userID'])
     // res.send(addedMemberSched)
     // return;
 
@@ -77,7 +76,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     if (teamObj.length > 0) {
 
         const schedArray = teamObj[0]['schedule']
-        console.log('loop entered, num iters: ' + schedArray.length)
 
         for (i = 0; i < schedArray.length; i++) {
             const curr = schedArray[i]
