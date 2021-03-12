@@ -35,7 +35,7 @@ function windowIsValid(daySchedule) {
 // needsUpdate(userTime, teamTime, startTime)
 
 const postUserScheduleHandler = async (req, res, { UserSchedule, Team }) => {
-    console.log("REQUEST: postTeam called")
+    console.log("REQUEST: postUserScheduleHandlers called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
@@ -159,7 +159,8 @@ const postUserScheduleHandler = async (req, res, { UserSchedule, Team }) => {
 }
 
     // patch user's schedule
-const getUserScheduleHandler = async (req, res, { UserSchedule }) => {    
+const getUserScheduleHandler = async (req, res, { UserSchedule }) => { 
+    console.log("REQUEST: getUserSchedule called") 
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;

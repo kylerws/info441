@@ -91,7 +91,7 @@ const getTeamsHandler = async (req, res, { Team }) => {
 
     // Grab only id and name fields
     var teamData = teams.map(team => {
-        return { id: team._id, teamName: team.name }
+        return { id: team._id, teamName: team.name, desc: team.description }
     })
 
     res.setHeader("Content-Type", "application/json")

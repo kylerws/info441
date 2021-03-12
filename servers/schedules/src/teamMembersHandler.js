@@ -2,7 +2,7 @@ const { updateTeamSched, needsUpdate, windowIsValid } = require("./scheduleHandl
 
 
 const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
-    console.log("REQUEST: postTeam called")
+    console.log("REQUEST: postMembers called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
@@ -34,6 +34,10 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const { email } = req.body
+    if (!email) {
+        res.status(404).send("Must provide an email to add")
+        return
+    }
 
 
     // try {
@@ -148,7 +152,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
 }
 
 const getMembersHandler = async (req, res, { Team }) => {
-    // console.log("REQUEST: postTeam called")
+    console.log("REQUEST: getMembers called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;

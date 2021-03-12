@@ -1,6 +1,7 @@
-// get specific team
+var mongoose = require('mongoose');
 
 const getSpecificTeamHandler = async (req, res, { Team }) => {
+    console.log("REQUEST: getSpecificTeam called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
@@ -12,9 +13,10 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
     // const user = JSON.parse(req.get('X-User'));
     const userID = user['id']
     const teamID = req.params.teamID
-    // console.log(userID)
-    // console.log(teamID)
-    // console.log(!teamID)
+    console.log(userID)
+    console.log(teamID)
+    console.log(!teamID)
+    console.log(mongoose.Types.ObjectId(teamID))
 
     // res.status(200).send("Test passed")
     // return
@@ -24,7 +26,7 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
         return
     }
 
-    const team = await Team.findOne({_id: teamID, "members.id": userID});
+    const team = await Team.findOne({_id: mongoose.Types.ObjectId(teamID), "members.id": userID});
 
     // res.send(team)
     if (team == null ) {

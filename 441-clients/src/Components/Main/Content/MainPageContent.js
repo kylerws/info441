@@ -37,7 +37,7 @@ class MainPageContent extends Component {
         if (resp.status !== 200) {
             return
         }
-        
+    
         const schedules = await resp.json()
         if (schedules.length == 0) {
             this.setState({schedule: (<h3>When are you free?</h3>)})
@@ -114,7 +114,7 @@ class MainPageContent extends Component {
         }
 
         const teamOptions = teams.map(d => {
-            return { label: d.teamName, value: d.id }
+            return { label: d.teamName, value: d.id, desc: d.desc }
         })
 
         teamOptions.unshift(defaultTeamOption)
@@ -226,6 +226,7 @@ class MainPageContent extends Component {
 
         this.setState({teamID: team.id})
         this.setState({teamName: team.teamName})
+        // this.setState({teamDesc: team.desc})
         this.getTeamSchedule(team.id)
         this.getTeamMembers(team.id)
     }
