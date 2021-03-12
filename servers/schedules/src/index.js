@@ -38,6 +38,8 @@ const RequestWrapper = (handler, SchemeAndDbForwarder) => {
 // Open connection
 connect();
 
+const methodNotAllowed = (req, res, next) => res.status(405).send()
+
 // On first connect, main will be called and the app will start
 mongoose.connection.on('error', console.error)
     .on('disconnected', connect)
@@ -52,6 +54,7 @@ app.all("/v1/teams", methodNotAllowed);
 app.post("/v1/teams/:teamID/members", RequestWrapper(postMembersHandler, { Team, UserSchedule }));
 app.get("/v1/teams/:teamID/members", RequestWrapper(getMembersHandler, { Team }));
 app.all("/v1/teams/:teamID/members", methodNotAllowed);
+
 app.post("/v1/schedule", RequestWrapper(postUserScheduleHandler, { UserSchedule, Team }));
 app.get("/v1/schedule", RequestWrapper(getUserScheduleHandler, { UserSchedule }));
 app.all("/v1/schedule", methodNotAllowed);

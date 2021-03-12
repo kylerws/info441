@@ -50,8 +50,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const addedMemberSched = await UserSchedule.findOne({"userEmail": email})
-
-    if (addedMemberSched.length == 0) {
+    if (!addedMemberSched) {
         res.status(400).send('must add a valid user with a posted schedule')
         return;
     }
@@ -61,11 +60,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     const addedMember = {
         "id": addedUserID,
         "email": email
-    }
-
-    if (addedMemberSched.length == 0) {
-        res.status(403).send('Added members must have posted availability to be added to a team.')
-        return;
     }
 
     const teamObj = await Team.find({_id : teamID})

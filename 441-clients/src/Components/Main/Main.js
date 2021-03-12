@@ -16,7 +16,7 @@ const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
             content = <UpdateName user={user} setUser={setUser} setPage={setPage}/>;
             break;
         default:
-            content = <><button onclick={(e) => setPage(e, PageTypes.signedInMain)}>Main</button></>;
+            content = <><Button onClick={(e) => setPage(e, PageTypes.signedInMain)}>Main</Button></>;
             contentPage = false;
             break;
     }
