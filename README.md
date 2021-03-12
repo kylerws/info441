@@ -17,7 +17,7 @@ We want to develop a platform for securely authenticated users to post a schedul
 
 ## Technical Description
 ### Architecture Diagram
-![Architecture Diagram](./img/Blank diagram.jpeg "Project ERD")
+![Architecture Diagram](./img/archDiagram.jpeg "Project ERD")
 ### User Stories
 | Story # | Priority  | User      | Description                                                                                                        |
 |---------|-----------|-----------|--------------------------------------------------------------------------------------------------------------------|
