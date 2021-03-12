@@ -80,8 +80,10 @@ class MainPageContent extends Component {
         })
 
         if (resp.status !== 201) {
-            alert(resp.body)
-            // return
+            console.log(resp.status)
+            console.log(sendData)
+            alert("Unable to add to schedule")
+            
         }
 
         this.getSchedule()  // update displayed schedule
