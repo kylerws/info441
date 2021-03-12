@@ -237,9 +237,9 @@ class MainPageContent extends Component {
 
         // this.setState({showPostSchedule: true})
 
-        const email = this.state.member
+        const { email } = { email: this.state.newMember }
 
-        const sendData = { "email": email }
+        const sendData = { email }
         const resp = await fetch(api.base + api.handlers.teams + "/" + this.state.teamID + "/members", {
             method: "POST",
             body: JSON.stringify(sendData),
@@ -344,8 +344,8 @@ class MainPageContent extends Component {
         // Form to add member
         let postMemberView = (
             <div>
-                {/*<AddMemberForm submit={e => this.postTeamMembers(e)}
-                    setMember={(v) => this.setState({newMember: v})} />*/}
+                <AddMemberForm submit={e => this.postTeamMembers(e)}
+                    setMember={(v) => this.setState({newMember: v})} />
                 <Button variant="success" size="sm"
                     onClick={() => this.setState({showPostMembers: false})}>Cancel</Button>
             </div>
