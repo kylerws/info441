@@ -64,7 +64,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     if (addedMemberSched.length == 0) {
-        res.status(401).send('Added members must have posted availability to be added to a team.')
+        res.status(403).send('Added members must have posted availability to be added to a team.')
         return;
     }
 
@@ -74,7 +74,6 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
     if (teamObj.length > 0) {
 
         const schedArray = teamObj[0]['schedule']
-        console.log('loop entered, num iters: ' + schedArray.length)
 
         for (i = 0; i < schedArray.length; i++) {
             const curr = schedArray[i]
