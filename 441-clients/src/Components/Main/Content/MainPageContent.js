@@ -224,6 +224,37 @@ class MainPageContent extends Component {
         this.setState({teamID: team.id})
         this.setState({teamName: team.teamName})
         this.getTeamSchedule(team.id)
+        this.getTeamMembers(team.id)
+    }
+
+    getTeamMembers = async (teamID) => {
+        const resp = await fetch(api.base + api.handlers.teams + "/" + teamID + "/members", {
+            headers: new Headers({
+                "Authorization": this.props.auth
+            })
+        })
+
+        if (resp.status !== 200) {
+            return
+        }
+
+        const teamMembers = await resp.json()
+        if (teamMembers.length === 0) {
+            this.setState({members: ""})
+            return
+        }
+
+        const teamMembersElements = teamMembers.map(t => {
+            console.log(t)
+            return (
+                <Row>
+                    <Col><h3>ID: {t.id}</h3></Col>
+                    <Col><h4>Email: {t.email}</h4></Col>
+                </Row>
+            )
+        })
+
+        this.setState({teamMembers: teamMembersElements})
     }
 
 
@@ -300,6 +331,12 @@ class MainPageContent extends Component {
                     </Row>
                     <Row className="px-3 my-4 justify-content-around">
                         {this.state.teamSchedule}
+                    </Row>
+                    <Row className="">
+                        <Col><h1>Team Members</h1></Col>
+                    </Row>
+                    <Row>
+                        <Col>{this.state.teamMembers}</Col>
                     </Row>
                     <Row className="justify-content-between">
                         <Col xs={1} className="mt-2">
