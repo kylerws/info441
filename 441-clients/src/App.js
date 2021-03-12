@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import Auth from './Components/Auth/Auth';
 import PageTypes from './Constants/PageTypes/PageTypes';
 import Main from './Components/Main/Main';
-import './Styles/App.css';
 import api from './Constants/APIEndpoints/APIEndpoints';
+
+import './Styles/App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container, Jumbotron } from 'react-bootstrap';
 
 class App extends Component {
     constructor() {
@@ -41,7 +44,6 @@ class App extends Component {
         }
         const user = await response.json()
         this.setUser(user);
-
     }
 
     /**
@@ -83,14 +85,14 @@ class App extends Component {
         const { page, user } = this.state;
         return (
             <div>
-                <header className="jumbotron jumbotron-fluid bg-dark text-white" aria-label="fall leaves trail image">
-                    <div className="container">
-                        <h1>Schedule Up</h1>
-                        <p className="lead">Use our website
-                            to conveniently schedule meetings with your teams!
-                        </p>
-                    </div>
-                </header>
+                <Jumbotron fluid={true} className="bg-dark text-white mb-0" aria-label="fall leaves trail image"
+                    id="header">
+                    <Container fluid={true} className="px-5">
+                        <h1>ScheduleUp</h1>
+                        <h2 className="">Our scheduling, your team
+                        </h2>
+                    </Container>
+                </Jumbotron>
                 {user ?
                     <Main 
                         auth={this.state.authToken}

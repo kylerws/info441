@@ -2,16 +2,15 @@
 
 // ALSO INITIALIZE TEAM SCHEDULE TO BE EQUAL TO CREATOR SCHEDULE
 const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
-    // console.log("REQUEST: postTeam called")
+    console.log("REQUEST: postTeamHandler called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
     }
 
     const user = JSON.parse(req.get('X-User'));
-    // const user = {id: 3, email: 'user3'}
-    const userID = user['id']
-    const{ name, description } = req.body;
+    // console.log(user)
+    const { name, description } = req.body;
 
     if (!name) {
         res.status(400).send("Must provide team name");
@@ -19,14 +18,13 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
     }
 
     const teamExists = await Team.find({"name": name})
-
     if (teamExists.length > 0) {
         res.status(409).send('team already created with that name')
         return;
     }
 
     const createdAt = new Date();
-    const creatorSchedule = await UserSchedule.find({"userID": userID})
+    const creatorSchedule = await UserSchedule.find({"userID": user.id})
 
     if (creatorSchedule.length == 0) {
         res.status(401).send('Not authorized to create, please post availability first.')
@@ -46,13 +44,10 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
         teamSchedule.push(specificDay)
     }
 
-    // res.send(schedArray)
-    // return;
     const firstday = creatorSchedule[0]
     const team = {
         "name": name,
         "description": description,
-        // "private": private,
         "members": [user],
         "schedule": teamSchedule,
         "createdAt": createdAt,
@@ -63,16 +58,10 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
 
     const query = new Team(team);
     query.save((err, newTeam) => {
-
         if (err) {
             res.status(500).send('unable to create channel' + err);
             return;
         }
-
-
-        // newTeam['id'] == newTeam._id
-
-        // res.send(newChannel._id)
 
         res.setHeader("Content-Type", "application/json");
         res.status(201).json(newTeam);
@@ -81,35 +70,32 @@ const postTeamHandler = async (req, res, { Team, UserSchedule }) => {
 };
 
 
-
-const getTeamIdByName = async (req, res, { Team }) => {
+// Returns all teams that user is member of
+// Endpoint: GET /v1/teams
+const getTeamsHandler = async (req, res, { Team }) => {
+    console.log("REQUEST: getTeamsHandler called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
     }
 
-    const user = JSON.parse(req.get('X-User'));
-    // const user = {'id': 1, 'email': 'sdkjfh'}
-    const { name } = req.body;
-    const userID = user['id']
-    const team = await Team.findOne({'name': name})
-    console.log(!team)
+    // Get userID
+    const userID = JSON.parse(req.get('X-User')).id
 
-    if(!team) {
-        res.status(404).send('team not found with given name')
+    // Check for all teams that user is member
+    const teams = await Team.find({'members.id': userID})
+    if(teams.length == 0) {
+        res.status(404).send('User is not member of any team')
         return
     }
 
-    // check to see if the user is a member of the team
+    // Grab only id and name fields
+    var teamData = teams.map(team => {
+        return { id: team._id, teamName: team.name }
+    })
 
-    const isMember = await Team.findOne({'name': name, 'members.id': userID})
-    if(!isMember) {
-        res.status(404).send('You are not a member of this team')
-        return
-    }
-
-    res.setHeader("Content-Type", "application/json");
-    res.send(isMember._id)
+    res.setHeader("Content-Type", "application/json")
+    res.status(200).json(teamData)
 }
 
-module.exports = {postTeamHandler, getTeamIdByName}
+module.exports = { postTeamHandler, getTeamsHandler }

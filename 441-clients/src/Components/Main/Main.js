@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { Container, Row, Jumbotron, Button } from 'react-bootstrap';
 import PageTypes from '../../Constants/PageTypes/PageTypes';
-import MainPageContent from './Content/MainPageContent/MainPageContent';
+import MainPageContent from './Content/MainPageContent';
 import SignOutButton from './Components/SignOutButton/SignOutButton';
 import UpdateName from './Components/UpdateName/UpdateName';
-import UpdateAvatar from './Components/UpdateAvatar/UpdateAvatar';
 
 const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
     let content = <></>
@@ -15,20 +15,33 @@ const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
         case PageTypes.signedInUpdateName:
             content = <UpdateName user={user} setUser={setUser} setPage={setPage}/>;
             break;
-        // case PageTypes.signedInUpdateAvatar:
-        //     content = <UpdateAvatar user={user} setUser={setUser} />;
-        //     break;
         default:
-            content = <>Error, invalid path reached</>;
+            content = <><button onclick={(e) => setPage(e, PageTypes.signedInMain)}>Main</button></>;
             contentPage = false;
             break;
     }
-    return <>
-        {content}
-        {/* {contentPage && <button onClick={(e) => setPage(e, PageTypes.signedInMain)}>Back to main</button>} */}
-        <button onClick={(e) => setPage(e, PageTypes.signedInUpdateName)}>Edit Profile</button>
-        <SignOutButton setUser={setUser} setAuthToken={setAuthToken} />
-    </>
+    return (
+        <>
+            {content}
+            <Jumbotron fluid={true} className="bg-info text-light mb-0 p-4">
+                <ProfileButtons setPage={setPage} setUser={setUser} setAuthToken={setAuthToken} />
+            </Jumbotron>
+        </>
+    )
+}
+
+class ProfileButtons extends Component {
+    render() {
+        return(
+            <Container fluid={true}>
+                <Row className="justify-content-end">
+                    <Button variant="dark" className="mx-3"
+                        onClick={(e) => this.props.setPage(e, PageTypes.signedInUpdateName)}>Edit Profile</Button>
+                    <SignOutButton setUser={this.props.setUser} setAuthToken={this.props.setAuthToken} />
+                </Row>
+            </Container>
+        )
+    }
 }
 
 export default Main;
