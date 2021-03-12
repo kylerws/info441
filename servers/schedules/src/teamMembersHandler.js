@@ -1,32 +1,15 @@
-function needsUpdate(userTime, teamTime, startTime) {
-    if (startTime) {
-        return teamTime < userTime;
-    }
-    return teamTime > userTime;
-}
-
-function updateTeamSched(currentSched, dayIndex, newTime, startTime) {
-    if (startTime) {
-        currentSched[dayIndex]['startTime'] = newTime
-    }
-
-    currentSched[dayIndex]['endTime'] = newTime
-    // return currentSched
-    // return newSched;
-}
-
+const { updateTeamSched, needsUpdate, windowIsValid } = require("./scheduleHandler")
 
 
 const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
-    console.log("REQUEST: postMembers called")
+    console.log("REQUEST: postTeam called")
     if (!req.get("X-User")) {
-      res.status(401).send('User not authorized');
-      return;
+        res.status(401).send('User not authorized');
+        return;
     }
-  
-    const user = JSON.parse(req.get('X-User'));
 
-    // const user = {id: 1, email: 'user1'}
+    const user = JSON.parse(req.get('X-User'));
+    // const user = {id: 3, email: 'user3'}
 
     const userID = user['id']
   
@@ -122,17 +105,7 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
                 // check the relationship between start time and end time
                 if (dayWasUpdated) {
                     // get start da
-                    const currStart = updatedTeamSched[i]['startTime']
-                    const currEnd = updatedTeamSched[i]['endTime']
-                    if (currEnd <= currStart){
-                        updatedTeamSched[i]['hasAvailability'] = false
-                        // res.send('time was updated, and time window is invalid, hasAvailability=false')
-                        // return;
-                    } else {
-                        updatedTeamSched[i]['hasAvailability'] = true
-                        // res.send(updatedTeamSched[index]['hasAvailability'])
-                        // return;
-                    }
+                    windowIsValid(updatedTeamSched[i])
                 }
             } else {
                 console.log('there is NOT a schedule to compare for ' + currDay)
@@ -175,13 +148,14 @@ const postMembersHandler = async (req, res, { Team, UserSchedule }) => {
 }
 
 const getMembersHandler = async (req, res, { Team }) => {
-    console.log("REQUEST: getMembers called")
+    // console.log("REQUEST: postTeam called")
     if (!req.get("X-User")) {
         res.status(401).send('User not authorized');
         return;
     }
 
     const user = JSON.parse(req.get('X-User'));
+    // const user = {id: 1, email: 'user1'}
     const userID = user['id']
     const teamID = req.params.teamID
     const team = await Team.findOne({_id: teamID, "members.id": userID});
@@ -199,25 +173,25 @@ const getMembersHandler = async (req, res, { Team }) => {
 // delete members from team
 
 
-const deleteMembersHandler = async(req, res, {Team}) => {
-    console.log("REQUEST: deleteMembers called")
-    const teamID = req.params.teamID
-    const memberID = JSON.parse(req.body['id']);
+// const deleteMembersHandler = async(req, res, {Team}) => {
+//     console.log("REQUEST: deleteMembers called")
+//     const teamID = req.params.teamID
+//     const memberID = JSON.parse(req.body['id']);
 
-    const currteam = await Team.find({_id: teamID});
+//     const currteam = await Team.find({_id: teamID});
 
-    currteam['members'] = currteam['members'].filter(el => el['id'] != memberID);
+//     currteam['members'] = currteam['members'].filter(el => el['id'] != memberID);
 
-    Team.findOneAndUpdate(
-        {"id": teamID}, {$set:{"members": currteam['members']}},
-        { new: true },
-        function(err, data) {
-        if (err) {
-            res.status(400).send("message: " + data + " delete error: " + err);
-            return;
-        }
-        res.json(data);
-    });
-}
+//     Team.findOneAndUpdate(
+//         {"id": teamID}, {$set:{"members": currteam['members']}},
+//         { new: true },
+//         function(err, data) {
+//         if (err) {
+//             res.status(400).send("message: " + data + " delete error: " + err);
+//             return;
+//         }
+//         res.json(data);
+//     });
+// }
 
-module.exports = {postMembersHandler, getMembersHandler, deleteMembersHandler};
+module.exports = {postMembersHandler, getMembersHandler };
