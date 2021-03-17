@@ -97,12 +97,12 @@ const postUserScheduleHandler = async (req, res, { UserSchedule, Team }) => {
 
             if (teamsForUser[i]['members'].length > 1) {
                 if (teamDayIndex != -1) {
-                    if (needsUpdate(startTime, teamDay.startTime, true)) {
+                    if (needsUpdate(startTime, teamSchedule[teamDayIndex].startTime, true)) {
                         updateTeamSched(teamSchedule, teamDayIndex, startTime, true)
                         updated = true
                     }
 
-                    if (needsUpdate(endTime, teamDay.endTime, false)) {
+                    if (needsUpdate(endTime, teamSchedule[teamDayIndex].endTime, false)) {
                         updateTeamSched(teamSchedule, teamDayIndex, startTime, false)
                         updated = true
                     }

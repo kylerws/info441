@@ -38,8 +38,7 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
     const availableDays = schedule.filter(d => d.hasAvailability == true)
 
     res.setHeader("Content-Type", "application/json");
-    res.status(200).send(schedule)
-    // res.status(200).send(availableDays)
+    res.status(200).send(availableDays)
 }
 
 
