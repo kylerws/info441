@@ -35,7 +35,8 @@ class MainPageContent extends Component {
 
         if (resp.status !== 200) {
             if (resp.status === 404) return
-            alert(resp.body)
+            const msg = await resp.text()
+            alert(msg)
             return
         }
     
@@ -80,10 +81,9 @@ class MainPageContent extends Component {
         })
 
         if (resp.status !== 201) {
-            console.log(resp.status)
-            console.log(sendData)
-            alert("Unable to add to schedule")
-            
+            const msg = await resp.text()
+            alert(msg)
+            return
         }
 
         this.getSchedule()  // update displayed schedule
@@ -104,8 +104,11 @@ class MainPageContent extends Component {
         })
 
         if (resp.status !== 200) {
-            if (resp.status === 404) return
-            alert(resp.body)
+            if (resp.status === 404) {
+                return
+            }
+            const msg = await resp.text()
+            alert(msg)
             return
         }
 
@@ -152,7 +155,8 @@ class MainPageContent extends Component {
         console.log(resp.body)
 
         if (resp.status !== 201) {
-            alert(resp.body)
+            const msg = await resp.text()
+            alert(msg)
             return
         }
 
@@ -189,10 +193,12 @@ class MainPageContent extends Component {
         
         if (resp.status !== 200) {
             if (resp.status === 409) {
+                
                 alert("Team name already in use, please try another")
                 return
             }
-            alert(resp.body)
+            const msg = await resp.text()
+            alert(msg)
             return
         }
         
@@ -232,7 +238,8 @@ class MainPageContent extends Component {
             if (resp.status === 404) {
                 return
             }
-            alert(resp.body)
+            const msg = await resp.text()
+            alert(msg)
             return 
         }
 
@@ -275,7 +282,8 @@ class MainPageContent extends Component {
         })
 
         if (resp.status !== 201) {
-            alert(resp.body)
+            const msg = await resp.text()
+            alert(msg)
             return
         }
 
