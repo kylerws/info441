@@ -1,19 +1,20 @@
-# VS Code
+# VSCode
 .vscode
 .code-workspace
 .idea
 
-# Dependencies
+# npm dependencies
 node_modules
 npm-debug.log
 /.pnp
 .pnp.js
 
-# Certificates
+# Self-signed certs
 .pem
 
-# Dev
-./testing
+# Dev files
+dev
+./dev
 
 # misc
 .DS_Store
