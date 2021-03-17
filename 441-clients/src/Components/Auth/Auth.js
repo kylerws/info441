@@ -22,6 +22,7 @@ const Auth = ({ page, setPage, setAuthToken, setUser }) => {
             return <>
                 {/* <div class="error">Error, invalid path reached</div> */}
                 <SignIn setPage={setPage} setAuthToken={setAuthToken} setUser={setUser} />
+                <div>test</div>
             </>
     }
 }
