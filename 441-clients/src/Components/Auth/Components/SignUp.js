@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import SignForm from '../SignForm/SignForm';
-import api from '../../../../Constants/APIEndpoints/APIEndpoints';
-import Errors from '../../../Errors/Errors';
-import PageTypes from '../../../../Constants/PageTypes/PageTypes';
+import SignForm from './SignForm';
+import api from '../../../Constants/APIEndpoints/APIEndpoints';
+import Errors from '../../Errors/Errors';
+import PageTypes from '../../../Constants/PageTypes/PageTypes';
 
 /**
  * @class

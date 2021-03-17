@@ -12,7 +12,7 @@ class App extends Component {
     constructor() {
         super();
         this.state = {
-            page: localStorage.getItem("Authorization") ? PageTypes.signedInMain : PageTypes.signIn,
+            page: localStorage.getItem("Authorization") ? PageTypes.signedInMain : PageTypes.landing,
             authToken: localStorage.getItem("Authorization") || null,
             user: null
         }
@@ -36,7 +36,7 @@ class App extends Component {
             })
         });
         if (response.status >= 300) {
-            alert("Unable to verify login. Logging out...");
+            // alert("Unable to verify login. Logging out...");
             localStorage.setItem("Authorization", "");
             this.setAuthToken("");
             this.setUser(null)

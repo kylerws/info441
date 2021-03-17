@@ -5,4 +5,4 @@ echo Building [client] ...
 cd ~/go/src/info441/441-clients
 
 # Build docker image for kylerws
-docker build -t kylerws/441-client .
+docker build -t $IMAGE .

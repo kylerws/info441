@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import SignForm from '../SignForm/SignForm';
-import api from '../../../../Constants/APIEndpoints/APIEndpoints';
-import Errors from '../../../Errors/Errors';
-import PageTypes from '../../../../Constants/PageTypes/PageTypes';
+import { Button } from 'react-bootstrap';
+import SignForm from './SignForm';
+import api from '../../../Constants/APIEndpoints/APIEndpoints';
+import Errors from '../../Errors/Errors';
+import PageTypes from '../../../Constants/PageTypes/PageTypes';
 
 /**
  * @class
@@ -86,8 +87,8 @@ class SignIn extends Component {
                 submitForm={this.submitForm}
                 values={values}
                 fields={this.fields} />
-            <button onClick={(e) => this.props.setPage(e, PageTypes.signUp)}>Sign up instead</button>
-            <button onClick={(e) => this.props.setPage(e, PageTypes.forgotPassword)}>Forgot password</button>
+            <Button onClick={(e) => this.props.setPage(e, PageTypes.signUp)}>Sign up instead</Button>
+            <Button onClick={(e) => this.props.setPage(e, PageTypes.forgotPassword)}>Forgot password?</Button>
         </>
     }
 }

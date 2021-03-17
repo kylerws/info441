@@ -1,4 +1,5 @@
 export default {
+    landing: "LANDING",
     signIn: "SIGNIN",
     signUp: "SIGNUP",
     signedInMain: "SIGNEDIN_MAIN",

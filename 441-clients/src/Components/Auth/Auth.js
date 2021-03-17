@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+// import { Button, Container, Jumbotron, Row } from 'react-bootstrap'
 import PageTypes from '../../Constants/PageTypes/PageTypes';
-import SignUp from './Components/SignUp/SignUp';
-import SignIn from './Components/SignIn/SignIn';
-import ForgotPassword from './Components/ForgotPassword/ForgotPassword';
+import LandingPage from './Components/LandingPage';
+import SignUp from './Components/SignUp';
+import SignIn from './Components/SignIn';
+import ForgotPassword from './Components/ForgotPassword';
 
 /**
  * @class Auth
@@ -12,18 +14,16 @@ import ForgotPassword from './Components/ForgotPassword/ForgotPassword';
  */
 const Auth = ({ page, setPage, setAuthToken, setUser }) => {
     switch (page) {
+        case PageTypes.landing:
+            return <LandingPage setPage={setPage} />
         case PageTypes.signUp:
             return <SignUp setPage={setPage} setAuthToken={setAuthToken} setUser={setUser} />
         case PageTypes.signIn:
             return <SignIn setPage={setPage} setAuthToken={setAuthToken} setUser={setUser} />
         case PageTypes.forgotPassword:
-            return <ForgotPassword setPage={setPage} />;
+            return <ForgotPassword setPage={setPage} />
         default:
-            return <>
-                {/* <div class="error">Error, invalid path reached</div> */}
-                <SignIn setPage={setPage} setAuthToken={setAuthToken} setUser={setUser} />
-                <div>test</div>
-            </>
+            return <LandingPage setPage={setPage} />
     }
 }
 
