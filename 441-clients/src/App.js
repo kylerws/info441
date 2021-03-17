@@ -64,6 +64,7 @@ class App extends Component {
 
     setPage = (e, page) => {
         e.preventDefault();
+        console.log("clicked")
         this.setState({ page });
     }
 
@@ -84,7 +85,7 @@ class App extends Component {
     render() {
         const { page, user } = this.state;
         return (
-            <div>
+            <div id="custom">
                 <Jumbotron fluid={true} className="bg-dark text-white mb-0" aria-label="fall leaves trail image"
                     id="header">
                     <Container fluid={true} className="px-5">
@@ -102,8 +103,9 @@ class App extends Component {
                         user={user}
                         setUser={this.setUser} />
                     :
-                    <Auth page={page}
-                        setPage={this.setPage}
+                    <Auth 
+                    // page={page}
+                    //     setPage={this.setPage}
                         setAuthToken={this.setAuthToken}
                         setUser={this.setUser} />
                 }

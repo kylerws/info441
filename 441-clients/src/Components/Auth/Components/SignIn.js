@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'react-bootstrap';
+import { Button, Row } from 'react-bootstrap';
 import SignForm from './SignForm';
 import api from '../../../Constants/APIEndpoints/APIEndpoints';
 import Errors from '../../Errors/Errors';
@@ -82,13 +82,22 @@ class SignIn extends Component {
         const { error } = this.state;
         return <>
             <Errors error={error} setError={this.setError} />
+            
             <SignForm
                 setField={this.setField}
                 submitForm={this.submitForm}
                 values={values}
                 fields={this.fields} />
-            <Button onClick={(e) => this.props.setPage(e, PageTypes.signUp)}>Sign up instead</Button>
-            <Button onClick={(e) => this.props.setPage(e, PageTypes.forgotPassword)}>Forgot password?</Button>
+            <Row className="justify-content-center">
+                <p className="lead">Don't have an account with us?</p>
+            </Row>
+            <Row className="justify-content-center">
+                <Button onClick={() => this.props.setPage(PageTypes.signUp)}
+                    variant="warning" className="mr-3">Sign Up</Button>
+                <Button onClick={() => this.props.setPage(PageTypes.landing)}
+                    variant="dark">Back</Button>
+            </Row>
+            {/* <Button onClick={(e) => this.props.setPage(PageTypes.forgotPassword)}>Forgot password?</Button> */}
         </>
     }
 }

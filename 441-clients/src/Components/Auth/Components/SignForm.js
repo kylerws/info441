@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button, Form } from 'react-bootstrap'
 
 const SignForm = ({ setField, submitForm, values, fields }) => {
     return <>
-        <form onSubmit={submitForm}>
+        <Form onSubmit={submitForm}>
             {fields.map(d => {
                 const { key, name } = d;
                 return <div key={key}>
@@ -16,8 +17,8 @@ const SignForm = ({ setField, submitForm, values, fields }) => {
                     />
                 </div>
             })}
-            <input type="submit" value="Submit" />
-        </form>
+            <Button type="submit">Submit</Button>
+        </Form>
     </>
 }
 

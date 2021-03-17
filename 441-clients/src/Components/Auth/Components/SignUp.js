@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Button, Row } from 'react-bootstrap'
 import SignForm from './SignForm';
 import api from '../../../Constants/APIEndpoints/APIEndpoints';
 import Errors from '../../Errors/Errors';
@@ -118,7 +119,15 @@ class SignUp extends Component {
                 submitForm={this.submitForm}
                 values={values}
                 fields={this.fields} />
-            <button onClick={(e) => this.props.setPage(e, PageTypes.signIn)}>Sign in instead</button>
+            <Row className="justify-content-center">
+                <p className="lead">Have an account already?</p>
+            </Row>
+            <Row className="justify-content-center">
+                <Button onClick={() => this.props.setPage(PageTypes.signIn)}
+                    variant="success" className="mr-3">Sign In</Button>
+                <Button onClick={() => this.props.setPage(PageTypes.landing)}
+                    variant="dark">Back</Button>
+            </Row>
         </>
     }
 }

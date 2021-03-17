@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;500;700&display=swap');
 
-
-
 body {
     font-family: 'Roboto', sans-serif;
     background-color: white;
@@ -30,15 +28,15 @@ div {
     font-weight: 300;
 }
 
-h2, h3 {
+#custom h2, h3 {
     font-weight: 500;
 }
 
-h3, h4{
+#custom h3, h4{
     padding: auto;
 }
 
-h4 {
+#custom h4 {
     font-weight: 300;
 }
 

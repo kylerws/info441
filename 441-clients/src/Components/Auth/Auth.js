@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-// import { Button, Container, Jumbotron, Row } from 'react-bootstrap'
+import { Container, Jumbotron } from 'react-bootstrap'
 import PageTypes from '../../Constants/PageTypes/PageTypes';
 import LandingPage from './Components/LandingPage';
 import SignUp from './Components/SignUp';
@@ -12,19 +12,41 @@ import ForgotPassword from './Components/ForgotPassword';
  * @description This is an auth object that controls what page
  * is loaded based on sign up or sign in state
  */
-const Auth = ({ page, setPage, setAuthToken, setUser }) => {
+const Auth = ({ setAuthToken, setUser }) => {
+    // var content = <LandingPage setPage={setPage} />
+    const [page, setPage] = useState(PageTypes.landing)
+    // let content = :
+    // const setPage = (page) => {
+    //     e.preventDefault();
+    //     console.log("clicked")
+    //     this.setState({ page });
+    // }
+
+    var content = "";
+
     switch (page) {
         case PageTypes.landing:
-            return <LandingPage setPage={setPage} />
+           content = (<LandingPage setPage={setPage} />)
+           break
         case PageTypes.signUp:
-            return <SignUp setPage={setPage} setAuthToken={setAuthToken} setUser={setUser} />
+            content = <SignUp setPage={setPage} setAuthToken={setAuthToken} setUser={setUser} />
+            break
         case PageTypes.signIn:
-            return <SignIn setPage={setPage} setAuthToken={setAuthToken} setUser={setUser} />
-        case PageTypes.forgotPassword:
-            return <ForgotPassword setPage={setPage} />
+            content = <SignIn setPage={setPage} setAuthToken={setAuthToken} setUser={setUser} />
+            break
+        // case PageTypes.forgotPassword:
+        //     content = <ForgotPassword setPage={setPage} />
         default:
-            return <LandingPage setPage={setPage} />
+            content = (<LandingPage setPage={setPage} />)
+            break
     }
+
+    // return <>{content}</>
+    return (
+        <Jumbotron className="">
+            <Container fluid={true}>{content}</Container>
+        </Jumbotron>
+    )
 }
 
 Auth.propTypes = {
@@ -32,6 +54,14 @@ Auth.propTypes = {
     setPage: PropTypes.func.isRequired,
     setAuthToken: PropTypes.func.isRequired,
     setUser: PropTypes.func.isRequired
+}
+
+const AuthContentWrapper = ({ content }) => {
+    return (
+        <Jumbotron className="">
+            <Container fluid={true}>{content}</Container>
+        </Jumbotron>
+    )
 }
 
 export default Auth;
