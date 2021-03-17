@@ -10,49 +10,41 @@
 ### The Problem
 Finding times to meet is difficult, even on small teams. Now more than ever, in the world of zoom university and work from home, students and professionals need services to help them navigate the labyrinth of classes, appointments and meetings. We want to target this audience of students in remote teams and professionals working in teams with a range of timezones.
 
-In particular, finding time for teams to meet is a big challenge. People have conflicting schedules and finding times that work for everyone can be a task, even with the existing market of scheduling apps. One of the most prevalent, for instance, When2meet is designed specifically to address this issue. However, the app lacks functionality that is crucial to actually planning meetings, like handling different time zones. The UI is also unintuitive, making it difficult to quickly see who is available when, or even just finding a time slot that is available for everyone. 
+Determining schedule overlap between team members via text or verbal communication is very tedious and error prone. It is difficult to keep a log each member schedule, furthermore manually identify commonalities across schedules. 
 
 ### Our Solution
-We want to develop an app that will efficiently portray the current time for each member of the user’s team by the hour, so if the user would like to schedule a meeting or ping a member, they would know the current time of that member without having to look up their team members local time. The app will also list the availability of each member, and show available times for everyone to meet.
-
-As developers, we felt like a scheduling application that was easy and quick to use that also addressed teams with multiple time zones didn’t exist. That’s why we wanted to work on developing a solution that addressed all these issues and we felt like it would be interesting to work on from a technical standpoint.
+We want to develop a platform for securely authenticated users to post a schedule which represents their availability for each day of the week. Users can create teams, and add other members with posted schedules to the teams. Users can be a part of multiple teams, and will be able to access the times where every member of each time is available, in order to easily schedule a time for a group meeting.
 
 ## Technical Description
 ### Architecture Diagram
-![Architecture Diagram](./img/archdiagram.jpeg "Project ERD")
+![Architecture Diagram](./img/archDiagram.jpeg "Project ERD")
 ### User Stories
 | Story # | Priority  | User      | Description                                                                                                        |
 |---------|-----------|-----------|--------------------------------------------------------------------------------------------------------------------|
 | 1       | P0        | As a user | I want to create a user profile                                                                                    |
-| 2       | P0        | As a user | I want to be able to create teams                                                                                  |
-| 3       | P0        | As a user | I want to be able to view teams I am part of                                                                       |
-| 4       | P0        | As a user | I want to be able to view the other team members on a team (that I am also on)                                     |
-| 5       | P0        | As a user | I want to be able to view the timezones of other team members                                                      |
-| 6       | P1        | As a user | I want to set and update the time ranges that I am available for during a week, my timezone, and my password       |
-| 7       | P1        | As a user | I want to view the time ranges my teammates are available (adjusted to be their availabilities during my timezone) |
-| 8       | P0        | As a user | I want to view my user information                                                                                 |
-| 9       | P0        | As a user | I want to be able to remove myself from a given team                                                               |
-| 10      | P0        | As a user | I want to be able to join a given team                                                                             |
+| 2       | P0        | As a user | I want to be able to post and store my availability                                                                |
+| 3       | P0        | As a user | I want to be able to create teams                                                                                  |
+| 4       | P0        | As a user | I want to be able to add members to my teams                                                                       |
+| 5       | P1        | As a user | I want to be able to view teams I am part of                                                                       |
+| 6       | P1        | As a user | I want to be able to view the other team members on a team (that I am also on)                                     |
+| 7       | P1        | As a user | I want to be able to add days to my schedule after I have created a team                                           |
+| 8       | P1        | As a user | I want to view the time ranges my teammates are available (adjusted to be their availabilities during my timezone) |
 
-**Story 1:** After receiving a **POST** request to /users, the gateway will create a new user account and store it in the **MySQL** database 
+**Story 1:** After receiving a **POST** request to /users, the gateway will send a request to the nodejs server to create a new user account and store it in the **MySQL** database 
 
-**Story 2:** After receiving a **POST** request to /teams, gateway will create a new team and store it in **MySQL** database and update user table to include teamID 
+**Story 2:** After receiving a **POST** request to /v1/schedule, gateway will send a request to the nodejs server to post the availability for the given day to the given user schedule, and store it in **MongoDB**. This information will be stored as a converstion from the user's timezone to universal time zone.
 
-**Story 3:** After receiving a **GET** request to /teams/{team_id}, gateway will retrieve users on the team with teamid in url and display on webpage. 
+**Story 3:** After receiving a **POST** request to v1/teams/, gateway will send a request to the nodejs server to create a team with a default schedule reflecting the creator's schedule and a set of members including only the creator and store it in **MongoDB** 
 
-**Story 4:** After receiving a **GET** request to /teams/{teamid}, gateway will retrieve team and associated user information from the **MySQL database 
+**Story 4:** After receiving a **POST** request to v1/teams/{teamID}/members, gateway will send a request to the nodejs server add a new member to the team with the asspciated team ID, and update the team schedule to reflect the newly added availability of the most recently added user. This will be stored in **MongoDB** 
 
-**Story 5:** After receiving a **GET** request to /teams/{teamid}, gateway will retrieve the timezones of each member in team (with info in story 4) 
+**Story 5:** After receiving a **GET** request to v1/teams/, gateway gateway will send a request to the nodejs server to retrieve the teams the current user is a art of from **MongoDB**
 
-**Story 6:** After receiving a **GET** request to /timezone/{user_id}, gateway will retrieve the timezone of the user with user_id in url. Then when they set or update availability, a POST or PATCH request is sent to /timezone/{user_id} and the gateway will store this information in the MySQL database. 
+**Story 6:** After receiving a **GET** request to v1/teams/{teamID}/members, gateway gateway will send a request to the nodejs server to retrieve the members for the team associated with the teamID **MongoDB**
 
-**Story 7:** After receiving **GET** request to /users/me or /users/{user_id}, gateway will display the timezone and availability of the authenticated user 
+**Story 7:** After receiving a **POST** request to /v1/schedule, gateway will send a request to the nodejs server to post the availability for the given day to the given user schedule, and store it in **MongoDB**. This information will be stored as a converstion from the user's timezone to universal time zone.
 
-**Story 8:** After receiving **GET** request to /users/me or /users/{user_id}, gateway will display user profile information (including info in story 7) 
-
-**Story 9:** After receiving a **DELETE** request to /users/me with the parameter ?team=id, gateway will remove you from the team with given teamid 
-
-**Story 10:** After receiving a **POST** request to /users/me with the parameter ?team=id, gateway will add you to the team with given teamid
+**Story 8:** After receiving a **GET** request to v1/teams/{teamID}, gateway gateway will send a request to the nodejs server to retrieve the overlapping availablilty for all users, retrieved from **MongoDB**
 
 ### Endpoints
 
@@ -62,240 +54,15 @@ Use this for quick reference! Each endpoint here will have its own handler.
 
 | Endpoint | Methods | Notes |
 | -------- | ------- | ----------- |
-| [/teams](#/teams) | POST | Create a new team |
-| [/teams/{team_id}](#/teams{team_id}) | GET | Get team info, member ids of team |
-| [/users](#/users) | POST | Create new user |
-| [/users/{user_id}](#/users/{user_id}) | GET, PATCH, POST, DELETE | Get user info / update info|
-| [/sessions](#/sessions) | POST | Begin new session |
-| [/sessions/mine](#/sessions/mine) | DELETE | End the current session
+| [v1/schedules](#v1/schedules) | POST | Posts day availability for user to schedule |
+| [v1/schedules](#v1/schedules) | GET | Gets availability for user |
+| [v1/teams](#v1/teams) | POST | Create a new team |
+| [v1/teams](#v1/teams) | GET | Gets all teams curren user is a part of |
+| [v1/teams/{team_id}/members](#v1/teams{team_id}/members) | POST | Adds new user to team and updates full team availability |
+| [v1/teams/{team_id}/members](#v1/teams{team_id}/members) | GET | gets members of the team |
+| [v1/teams/{team_id}](#v1/teams{team_id}) | GET | Gets availability for the current team |
+| [v1/users](#v1/users) | POST | Create new user |
+| [v1/users/{user_id}](#v1/users/{user_id}) | GET, PATCH, POST, DELETE | Get user info / update info|
+| [v1/sessions](#v1/sessions) | POST | Begin new session |
+| [v1/sessions/mine](#v1/sessions/mine) | DELETE | End the current session
 
-Details on the exact request headers / body, response headers / body / status codes can be found below:
-
-#### /teams
-```POST /teams:``` creates a new team
-
-  * Request Header
-
-    * ```Authorization:``` bearer token with session ID
-    * ```Content-Type:``` application/json
-
-  * Request Body
-    ```json
-    {
-        "teamName": "Team Name",
-        "ownerID": 1,
-        "memberIDs": [1, 2, 3, 4]
-    }
-    ```
-    **Condition:** ownerID must match ID of the current session user
-    - If not, API will respond with 403 Unauthorized
-  
-  * Response Status
-    | Code | Description |
-    | ---- | ----------- |
-    | 201 | Successfully created team |
-    | 400 | Request badly formatted |
-    | 415 | Request body must be JSON |
-    | 401 | Must be logged in to create team |
-    | 403 | Cannot create team for another user |
-    | 405 | Method must be `POST` |
-    | 500 | Internal error creating team |
-
-  * Response Body
-    ```json
-    {
-        "teamID": 1,
-        "teamName": "Team Name",
-    }
-    ```
-
-#### /teams/{team_id}
-```GET /teams/{team_id}:``` returns the users associated with the requested team
-
-  * Request Header
-
-    * ```Authorization:``` bearer token with session ID
-
-      **Condition**: current user must be member of requested team
-  
-  * Response Status
-
-    | Code | Description |
-    | ---- | ----------- |
-    | 200 | Successfully returned team |
-    | 401 | Unauthorized, must be logged in |
-    | 403 | User must be member of team |
-    | 405 | Method must be `GET` or `DELETE` |
-    | 500 | Internal error retrieving team |
-
-  * Response Body
-    ```json
-    [
-      {
-          "teamID": 1,
-          "teamName": "Team Name",
-          "teamAvailability": [],
-          "members": [{}]
-      },
-    ]
-    ```
-    
-#### /users
-```POST /users:``` creates a new user
-  * Request Header
-    
-    * ```Content-Type:``` application/json
-
-  * Request Body
-    ```json
-    {
-        "email": "user1@test.com",
-        "password": "password",
-        "passwordConf": "password",
-        "userName": "the_legend",
-        "firstName": "Dr.",
-        "lastName": "Stearns"
-    }
-    ```
-  
-  * Response Header
-
-    * ```Authorization:``` bearer token with session ID for new user
-
-  * Response Status
-
-    | Code | Description |
-    | ---- | ----------- |
-    | 201 | Successfully created user |
-    | 400 | Request badly formatted |
-    | 415 | Request body must be JSON |
-    | 405 | Method must be `POST` |
-    | 500 | Internal error creating team |
-
-  * Response Body
-    ```json
-    {
-        "userID": 1,
-        "userName": "the_legend"
-    }
-    ```
-
-#### /users/{user_id}
-
-Handles `GET`, `PATCH`, `POST` and `DELETE`
-* `GET` / `PATCH` function similar to A4
-* `POST` / `DELETE` will handle joining and leaving a team
-
-**All requests to this endpoint must have an `Authorization` header**:
-
-  * Request Header
-
-    * ```Authorization:``` bearer token with session ID
-
-```GET /users/{user_id} /users/me:``` returns the profile of the requested user
-
-  * Response Status
-
-    | Code | Description |
-    | ---- | ----------- |
-    | 200 | Successfully returned user |
-    | 403 | Unauthorized, must be logged in |
-    | 404 | No user found for given ID |
-    | 405 | Method type not allowed |
-    | 500 | Internal error retrieving user |
-
-  * Response Body
-    ```json
-      {
-          "id": 2,
-          "userName": "the_goat",
-          "firstName": "William",
-          "lastName": "Kwok",
-          "timeZone": "PST",
-          "availability": []
-      }
-      ```
-
-```PATCH /users/me:``` updates the currently signed in user
-  * Request Header
-
-    * ```Content-Type:``` application/json
-
-  * Request Body
-  
-    ```json
-      {
-        "firstName": "",
-        "lastName": ""
-      }
-    ```
-  
-  * Response Status
-    | Code | Description |
-    | ---- | ----------- |
-    | 200 | Successfully returned user |
-    | 400 | Request badly formatted |
-    | 415 | Request body must be JSON |
-    | 403 | Unauthorized, not the current user |
-    | 405 | Method type not allowed |
-    | 500 | Internal error updating user |
-   
-   * Response Body
-   ```
-    Successfully updated user"
-   ```
-
-#### /v1/schedule
-```POST /v1/schedule:``` Adds availability for day to schedule for current user
-
-```GET /v1/schedule:``` Returns the availability of the current user
-
-
-
-#### /sessions
-  ```POST /sessions:``` begins a new session for the given user
-
-  * Request Header
-    * ```Content-Type:``` application/json
-
-  * Request Body
-    ```go
-      {
-        "email": "user1@test.com",
-        "password": "password"
-      }
-    ```
-
-  * Response Status
-    | Code | Description |
-    | ---- | ----------- |
-    | 201 | Successfully created session |
-    | 415 | Request body must be JSON |
-    | 403 | Unauthorized, incorrect user credentials |
-    | 404 | No team found for given ID |
-    | 405 | Method type must be POST |
-    | 500 | Internal error creating session |
-  
-  * Response Header
-    *  ```Content-Type:``` application/json
-
-  * Response Body
-    * JSON object of the user profile
-
-#### /sessions/mine
- ```DELETE /sessions/mine:``` ends the current session
-
-  * **Conditions**: request path must be `mine`
-
-  * Response Status
-    | Code | Description |
-    | ---- | ----------- |
-    | 204 | Successfully ended session |
-    | 403 | Unauthorized, incorrect user credentials |
-    | 405 | Method type must be DELETE |
-    | 500 | Internal error ending session |
-
-  * Response Body
-    * `"Signed out"`
-
-[Back to Top](#cheatsheet)
