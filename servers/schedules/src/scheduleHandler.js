@@ -10,11 +10,9 @@ function needsUpdate(userTime, teamTime, startTime) {
 function updateTeamSched(currentSched, dayIndex, newTime, startTime) {
     if (startTime) {
         currentSched[dayIndex]['startTime'] = newTime
+    } else {
+        currentSched[dayIndex]['endTime'] = newTime
     }
-
-    currentSched[dayIndex]['endTime'] = newTime
-    // return currentSched
-    // return newSched;
 }
 
 function windowIsValid(daySchedule) {
