@@ -1,23 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Form } from 'react-bootstrap'
+import { Button, Col, Form } from 'react-bootstrap'
 
 const SignForm = ({ setField, submitForm, values, fields }) => {
     return <>
         <Form onSubmit={submitForm}>
+            <Form.Row className="justify-content-center">
             {fields.map(d => {
                 const { key, name } = d;
-                return <div key={key}>
-                    <span>{name}: </span>
-                    <input
+                return <Form.Group as={Col} key={key}>
+                    <Form.Label>{name}: </Form.Label>
+                    <Form.Control
                         value={values[key]}
                         name={key}
                         onChange={setField}
-                        type={key === "password" || key === "passwordConf" ? "password" : ''}
+                        type={key === "password" || key === "passwordConf" ? "password" : 
+                            key === "email" ? "email" : "text"}
                     />
-                </div>
+                </Form.Group>
             })}
-            <Button type="submit">Submit</Button>
+            <Form.Group as={Col} className="d-flex align-items-end">
+                <Button type="submit" variant="light">Go</Button>
+            </Form.Group>
+
+            </Form.Row>
         </Form>
     </>
 }

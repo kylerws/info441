@@ -43,8 +43,9 @@ const Auth = ({ setAuthToken, setUser }) => {
 
     // return <>{content}</>
     return (
-        <Jumbotron className="">
-            <Container fluid={true}>{content}</Container>
+        <Jumbotron fluid={true} className="mh-100 h-100 mb-0 flex-grow-1">
+            <Container fluid={true} className="">{content}</Container>
+            {/* {content} */}
         </Jumbotron>
     )
 }

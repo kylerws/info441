@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Row } from 'react-bootstrap'
+import { Button, Col, Form, Row } from 'react-bootstrap'
 import SignForm from './SignForm';
 import api from '../../../Constants/APIEndpoints/APIEndpoints';
 import Errors from '../../Errors/Errors';
@@ -29,31 +29,6 @@ class SignUp extends Component {
             error: ""
         };
 
-        this.fields = [
-            {
-                name: "Email",
-                key: "email"
-            },
-            {
-                name: "Username",
-                key: "userName"
-            },
-            {
-                name: "First name",
-                key: "firstName"
-            },
-            {
-                name: "Last name",
-                key: "lastName"
-            },
-            {
-                name: "Password",
-                key: "password"
-            },
-            {
-                name: "Password Confirmation",
-                key: "passwordConf"
-            }];
     }
 
     /**
@@ -114,22 +89,64 @@ class SignUp extends Component {
         const { error } = this.state;
         return <>
             <Errors error={error} setError={this.setError} />
-            <SignForm
+            <SignUpForm
                 setField={this.setField}
                 submitForm={this.submitForm}
-                values={values}
-                fields={this.fields} />
-            <Row className="justify-content-center">
-                <p className="lead">Have an account already?</p>
-            </Row>
-            <Row className="justify-content-center">
-                <Button onClick={() => this.props.setPage(PageTypes.signIn)}
-                    variant="success" className="mr-3">Sign In</Button>
-                <Button onClick={() => this.props.setPage(PageTypes.landing)}
-                    variant="dark">Back</Button>
+                values={values} />
+            <Row className="justify-content-center align-items-baseline mt-2">
+                <Col xs={12} sm={6}>
+                    <p className="text-center text-sm-right">Have an account already?</p></Col>
+                <Col xs={12} sm={6}><Row className="justify-content-center justify-content-sm-start">
+                    <Button onClick={() => this.props.setPage(PageTypes.signIn)}
+                        variant="info" className="mr-3 mx-sm-3">Sign In</Button>
+                    <Button onClick={() => this.props.setPage(PageTypes.landing)}
+                        variant="dark">Cancel</Button></Row></Col>
             </Row>
         </>
     }
+}
+
+const SignUpForm = ({ setField, submitForm, values }) => {
+    return <>
+        <Form onSubmit={submitForm}>
+            <Form.Row className="justify-content-center">
+                <Form.Group as={Col} md={8} lg={6}>
+                    <Form.Label>Your Info</Form.Label>
+                        <Form.Row><Col>
+                            <Form.Control value={values["firstName"]} name="firstName" placeholder="First name"
+                                onChange={setField} type="text" />
+                            </Col><Col>
+                            <Form.Control value={values["lastName"]} name="lastName" placeholder="Last name"
+                                onChange={setField} type="text" />
+                        </Col></Form.Row>
+                </Form.Group>
+            </Form.Row><Form.Row className="justify-content-center">
+                <Form.Group as={Col} md={8} lg={6}>
+                    {/* <Form.Label>Email</Form.Label> */}
+                    <Form.Control value={values["email"]} name="email" placeholder="Email"
+                        onChange={setField} type="email" />
+                    {/* <Form.Label className="mt-2">Username</Form.Label> */}
+                    <Form.Control value={values["userName"]} name="userName" placeholder="Username"
+                        onChange={setField} type="text" className="mt-3" />
+                </Form.Group>
+            </Form.Row><Form.Row className="justify-content-center">
+                <Form.Group as={Col} md={8} lg={6}>
+                    <Form.Label>Password</Form.Label>
+                        <Form.Row><Col>
+                            <Form.Control value={values["password"]} name="password" placeholder="Enter password"
+                                onChange={setField} type="password" />
+                            </Col><Col>
+                            <Form.Control value={values["passwordConf"]} name="passwordConf" placeholder="Confirm password"
+                                onChange={setField} type="password" />
+                        </Col></Form.Row>
+                </Form.Group>
+            </Form.Row><Form.Row className="justify-content-center">
+                <Form.Group as={Col} md={8} lg={6}><Form.Row className="justify-content-center mx-1 d-flex">
+                    <Button type="submit" variant="light" className="w-100">Create account</Button>
+                </Form.Row></Form.Group>
+            </Form.Row>
+        </Form>
+    </>
 }
 
 export default SignUp;

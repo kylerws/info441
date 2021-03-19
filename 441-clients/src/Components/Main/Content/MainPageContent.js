@@ -384,7 +384,7 @@ class MainPageContent extends Component {
             <div>
                 <Jumbotron fluid={true} className="mb-0">
                     <Container fluid={true} className="px-5">
-                        <div>Welcome back, {welcomeName} </div>
+                        <div className="lead">Welcome back, {welcomeName} </div>
                         <h1>Your Schedule</h1>
                         <Row className="px-3 my-4 justify-content-around">
                             {this.state.schedule}

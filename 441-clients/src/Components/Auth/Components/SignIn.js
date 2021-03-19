@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Row } from 'react-bootstrap';
+import { Button, Col, Form, Row } from 'react-bootstrap';
 import SignForm from './SignForm';
 import api from '../../../Constants/APIEndpoints/APIEndpoints';
 import Errors from '../../Errors/Errors';
@@ -10,7 +10,7 @@ import PageTypes from '../../../Constants/PageTypes/PageTypes';
  * @class
  * @classdesc SignIn handles the sign in component
  */
-class SignIn extends Component {
+export default class SignIn extends Component {
     static propTypes = {
         setPage: PropTypes.func,
         setAuthToken: PropTypes.func
@@ -81,25 +81,44 @@ class SignIn extends Component {
         const values = this.state;
         const { error } = this.state;
         return <>
+            <h2 className="text-center mb-4">Welcome Back!</h2>
             <Errors error={error} setError={this.setError} />
-            
-            <SignForm
+            <SignInForm
                 setField={this.setField}
                 submitForm={this.submitForm}
-                values={values}
-                fields={this.fields} />
-            <Row className="justify-content-center">
-                <p className="lead">Don't have an account with us?</p>
+                values={values} />
+            <Row className="justify-content-center align-items-baseline mt-2">
+                <Col xs={12} sm={6}>
+                    <p className="text-center text-sm-right">Don't have an account with us?</p></Col>
+                <Col xs={12} sm={6}><Row className="justify-content-center justify-content-sm-start">
+                    <Button onClick={() => this.props.setPage(PageTypes.signIn)}
+                        variant="warning" className="mr-3 mx-sm-3">Sign Up</Button>
+                    <Button onClick={() => this.props.setPage(PageTypes.landing)}
+                        variant="dark">Cancel</Button></Row></Col>
             </Row>
-            <Row className="justify-content-center">
-                <Button onClick={() => this.props.setPage(PageTypes.signUp)}
-                    variant="warning" className="mr-3">Sign Up</Button>
-                <Button onClick={() => this.props.setPage(PageTypes.landing)}
-                    variant="dark">Back</Button>
-            </Row>
-            {/* <Button onClick={(e) => this.props.setPage(PageTypes.forgotPassword)}>Forgot password?</Button> */}
         </>
     }
 }
 
-export default SignIn;
+const SignInForm = ({ setField, submitForm, values }) => {
+    return <>
+        <Form onSubmit={submitForm}>
+            <Form.Row className="justify-content-center">
+                <Form.Group as={Col} md={8} lg={6}>
+                    <Form.Row><Col xs={12} sm={6}>
+                        <Form.Control value={values["email"]} name="email" placeholder="Email"
+                            onChange={setField} type="email" />
+                    </Col><Col xs={12} sm={6}>
+                        <Form.Control value={values["password"]} name="password" placeholder="Password"
+                            onChange={setField} type="password" />
+                    </Col></Form.Row>
+                    </Form.Group>
+                </Form.Row><Form.Row className="justify-content-center">
+                <Form.Group as={Col} md={8} lg={6}><Form.Row className="justify-content-center mx-1 d-flex">
+                    <Button type="submit" variant="light" className="w-100">Sign in</Button>
+                </Form.Row></Form.Group>
+            </Form.Row>
+           
+        </Form>
+    </>
+}

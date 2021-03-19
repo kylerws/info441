@@ -7,20 +7,30 @@ body {
 }
 
 #header {
-    background-image: url('/network.jpg');
+    background-image: url('./img/background.jpg');
+    color: white;
+}
+
+.bg-img-cover {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
     background-position: center;
     background-size: cover;
-    color: white;
-    font-family: Impact, Charcoal, sans-serif;
-    height: max-content;
+    background-repeat: no-repeat;
+}
+
+.min-h-100 {
+    min-height: 100%;
 }
 
 #header h1 {
     font-size: 3.5rem;
+    font-weight: 300;
 }
 
 #header h2 {
-    font-weight: 300;
+    font-weight: 100 !important;
 }
 
 div {
