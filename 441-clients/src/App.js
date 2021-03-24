@@ -87,7 +87,6 @@ class App extends Component {
         const { page, user } = this.state;
         return (
             <Container fluid={true} className="min-vh-100 h-100 p-0 d-flex flex-column" id="custom">
-                {/* <Row className="min-vh-100"><Col className="h-100"> */}
                 <Jumbotron fluid={true} className="bg-dark text-white mb-0 bg-img-cover" aria-label="fall leaves trail image"
                     id="header">
                     <Container fluid={true} className="px-5">
@@ -111,7 +110,6 @@ class App extends Component {
                         setAuthToken={this.setAuthToken}
                         setUser={this.setUser} />
                 }
-                {/* </Col></Row> */}
             </Container>
         );
     }

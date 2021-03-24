@@ -480,7 +480,7 @@ class DayForm extends Component {
                     </Form.Group>
                     <Form.Group as={Col} xs={2}>
                         <Form.Label>End Time</Form.Label>
-                        <Select options={hourOptions} default={12} update={(v) => this.props.setEnd(v)}/>
+                        <Select options={hourOptions} default={17} update={(v) => this.props.setEnd(v)}/>
                     </Form.Group>
                     
                 </Form.Row>

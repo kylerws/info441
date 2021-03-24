@@ -55,6 +55,7 @@ export default class SignIn extends Component {
      */
     submitForm = async (e) => {
         e.preventDefault();
+        console.log("sign in")
         const { email, password } = this.state;
         const sendData = { email, password };
         const response = await fetch(api.base + api.handlers.sessions, {
@@ -64,17 +65,22 @@ export default class SignIn extends Component {
                 "Content-Type": "application/json"
             })
         });
+        console.log("got something")
         if (response.status >= 300) {
             const error = await response.text();
             this.setError(error);
             return;
         }
+        console.log("but fucking didnt do anything with it ")
         const authToken = response.headers.get("Authorization")
         localStorage.setItem("Authorization", authToken);
         this.setError("");
         this.props.setAuthToken(authToken);
+        console.log("because")
+
         const user = await response.json();
         this.props.setUser(user);
+        console.log("react is trash")
     }
 
     render() {
@@ -85,13 +91,13 @@ export default class SignIn extends Component {
             <Errors error={error} setError={this.setError} />
             <SignInForm
                 setField={this.setField}
-                submitForm={this.submitForm}
+                submitForm={(e) => this.submitForm(e)}
                 values={values} />
             <Row className="justify-content-center align-items-baseline mt-2">
                 <Col xs={12} sm={6}>
                     <p className="text-center text-sm-right">Don't have an account with us?</p></Col>
                 <Col xs={12} sm={6}><Row className="justify-content-center justify-content-sm-start">
-                    <Button onClick={() => this.props.setPage(PageTypes.signIn)}
+                    <Button onClick={() => this.props.setPage(PageTypes.signUp)}
                         variant="warning" className="mr-3 mx-sm-3">Sign Up</Button>
                     <Button onClick={() => this.props.setPage(PageTypes.landing)}
                         variant="dark">Cancel</Button></Row></Col>
