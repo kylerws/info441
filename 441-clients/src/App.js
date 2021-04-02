@@ -2,14 +2,12 @@ import React from 'react'
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import { ProvideAuth, useAuth } from './hooks/useAuth'
 
-// import { Container, Jumbotron, Row, Col } from 'react-bootstrap'
-
-import Auth from './Components/Auth/Auth';
+import Auth from './Components/Auth/Auth'
 import Main from './Components/Main/Main'
 import Footer from './Components/Footer'
 
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default function App() {
   return(

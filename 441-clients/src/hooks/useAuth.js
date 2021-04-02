@@ -4,19 +4,18 @@ import api from '../constants/APIEndpoints'
 // Auth context
 const authContext = createContext();
 
-// Provider component that wraps app and makes auth object
+// Provider component that wraps app
 export function ProvideAuth({ children }) {
   const auth = useProvideAuth();
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 }
 
-// Hook for child components to get the auth object
+// Hook for child components
 export const useAuth = () => {
   return useContext(authContext);
 }
 
-// Provider hook that creates auth object and handles state
-// Wraps all auth methods
+// Provider hook that creates auth object, handles state, and wraps methods
 function useProvideAuth() {
   const [authToken, setAuthToken] = useState(localStorage.getItem("authToken") || null)
   const [user, setUser] = useState(null)
