@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Button, Col, Container, Row, Jumbotron, Form } from 'react-bootstrap'
 import moment from 'moment'
 
-import api from '../../../Constants/APIEndpoints/APIEndpoints';
+import api from '../../../Constants/APIEndpoints';
 
 const defaultTeamOption = { label: "Select a team", value: "" }
 
@@ -20,7 +20,9 @@ class MainPageContent extends Component {
             startTime: 9,
             endTime: 5
         }
+    }
 
+    componentDidMount() {
         this.getSchedule()
         this.getTeams()
     }
@@ -87,6 +89,7 @@ class MainPageContent extends Component {
         }
 
         this.getSchedule()  // update displayed schedule
+        // console.log("Testing, nothing done")
         this.setState({showPostSchedule: false})    // hide postSchedule form
     }
 
@@ -570,8 +573,14 @@ function toClientDate(datetime) {
 // Takes hour as int and convert to ISO UTC format for mongoDB
 function toMongoDate(hour) {
     console.log("Got: " + hour)
-    var test = moment({'year': 1998, 'month': 0, 'date': 1, 'hour': hour, 'minute': 0}).toISOString()
-    console.log("Converted to: " + test)
+    const local = moment({'year': 1998, 'month': 0, 'date': 1, 'hour': hour, 'minute': 0})
+    console.log(local)
+    var test = local.toISOString()
+    // var test = moment({'year': 1998, 'month': 0, 'date': 1, 'hour': hour, 'minute': 0}).toISOString()
+    // console.log("Tried to convert to: " + test)
+    console.log(test)
+    console.log(local.toISOString())
+    console.log(local.toString())
     return test
 }
 

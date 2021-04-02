@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import api from '../../../../Constants/APIEndpoints/APIEndpoints';
-import Errors from '../../../Errors/Errors';
-import PageTypes from '../../../../Constants/PageTypes/PageTypes';
+import api from '../../../constants/APIEndpoints';
+import Errors from '../../Errors/Errors';
+import PageTypes from '../../../constants/PageTypes';
 
 class UpdateName extends Component {
     constructor(props) {

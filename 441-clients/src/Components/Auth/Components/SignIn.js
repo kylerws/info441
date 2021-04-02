@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Col, Form, Row } from 'react-bootstrap';
-import SignForm from './SignForm';
-import api from '../../../Constants/APIEndpoints/APIEndpoints';
+import api from '../../../constants/APIEndpoints';
 import Errors from '../../Errors/Errors';
-import PageTypes from '../../../Constants/PageTypes/PageTypes';
+import PageTypes from '../../../constants/PageTypes';
 
 /**
  * @class
@@ -55,9 +54,10 @@ export default class SignIn extends Component {
      */
     submitForm = async (e) => {
         e.preventDefault();
-        console.log("sign in")
+        console.log("Submit init")
         const { email, password } = this.state;
         const sendData = { email, password };
+
         const response = await fetch(api.base + api.handlers.sessions, {
             method: "POST",
             body: JSON.stringify(sendData),
@@ -65,22 +65,26 @@ export default class SignIn extends Component {
                 "Content-Type": "application/json"
             })
         });
-        console.log("got something")
+        console.log("fetched")
+        
         if (response.status >= 300) {
             const error = await response.text();
             this.setError(error);
             return;
         }
-        console.log("but fucking didnt do anything with it ")
+
+        console.log("no error")
+        
+        // Store auth token in local storage and App state
         const authToken = response.headers.get("Authorization")
         localStorage.setItem("Authorization", authToken);
         this.setError("");
         this.props.setAuthToken(authToken);
-        console.log("because")
 
-        const user = await response.json();
-        this.props.setUser(user);
-        console.log("react is trash")
+        // Set user
+        const user = await response.json()
+        localStorage.setItem("user", user)
+        this.props.setUser(user)
     }
 
     render() {
@@ -106,6 +110,7 @@ export default class SignIn extends Component {
     }
 }
 
+// Form for sign in
 const SignInForm = ({ setField, submitForm, values }) => {
     return <>
         <Form onSubmit={submitForm}>

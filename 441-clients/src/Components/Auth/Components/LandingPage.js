@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Col, Row } from 'react-bootstrap'
-import PageTypes from '../../../Constants/PageTypes/PageTypes'
+import PageTypes from '../../../constants/PageTypes'
 
 export default class LandingPage extends Component {
   render() {

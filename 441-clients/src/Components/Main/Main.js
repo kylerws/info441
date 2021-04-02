@@ -1,48 +1,52 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Redirect, useLocation, useHistory } from 'react-router-dom'
+
 import { Container, Row, Jumbotron, Button } from 'react-bootstrap';
-import PageTypes from '../../Constants/PageTypes/PageTypes';
+import PageTypes from '../../Constants/PageTypes';
 import MainPageContent from './Content/MainPageContent';
 import SignOutButton from './Components/SignOutButton/SignOutButton';
-import UpdateName from './Components/UpdateName/UpdateName';
+import UpdateName from './Components/UpdateName';
 
-const Main = ({ auth, page, setPage, setAuthToken, setUser, user }) => {
-    let content = <></>
-    let contentPage = true;
-    switch (page) {
-        case PageTypes.signedInMain:
-            content = <MainPageContent auth={auth} user={user} setPage={setPage} />;
-            break;
-        case PageTypes.signedInUpdateName:
-            content = <UpdateName user={user} setUser={setUser} setPage={setPage}/>;
-            break;
-        default:
-            content = <><Button onClick={(e) => setPage(e, PageTypes.signedInMain)}>Main</Button></>;
-            contentPage = false;
-            break;
-    }
-    
+const Main = ({ auth, page, authed, setAuthToken, setUser, user }) => {
+    let location = useLocation();
+    let history = useHistory();
+
+    // return <div>Logged In!</div>
+    // if (!) {
+    //     return <Redirect to={'/'} from={location} />
+    // }
+
     return (
         <>
-            {content}
+            <MainPageContent auth={auth} user={user} />
             <Jumbotron fluid={true} className="bg-info text-light mb-0 p-4">
-                <ProfileButtons setPage={setPage} setUser={setUser} setAuthToken={setAuthToken} />
+                <ProfileButtons
+                    signOut={() => history.push("/")}
+                    setAuthToken={setAuthToken}
+                    setUser={setUser} />
             </Jumbotron>
         </>
     )
 }
 
-class ProfileButtons extends Component {
-    render() {
-        return(
-            <Container fluid={true}>
-                <Row className="justify-content-end">
-                    <Button variant="dark" className="mx-3"
-                        onClick={(e) => this.props.setPage(e, PageTypes.signedInUpdateName)}>Edit Profile</Button>
-                    <SignOutButton setUser={this.props.setUser} setAuthToken={this.props.setAuthToken} />
-                </Row>
-            </Container>
-        )
-    }
+Main.propTypes = {
+    setAuthToken: PropTypes.func.isRequired,
+    setUser: PropTypes.func.isRequired
 }
+
+const ProfileButtons = ({ setAuthToken, setUser, signOut }) => {
+    return(
+        <Container fluid={true}>
+            <Row className="justify-content-end">
+                <Button variant="dark" className="mx-3"
+                    onClick={(e) => console.log("clicked")}>Edit Profile</Button>
+                <SignOutButton setUser={setUser} setAuthToken={setAuthToken} signOut={signOut} />
+            </Row>
+        </Container>
+    )
+}
+
+    
 
 export default Main;
