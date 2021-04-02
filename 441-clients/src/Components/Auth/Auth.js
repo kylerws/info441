@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Redirect, useLocation } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
+
 import { Container, Jumbotron, Row, Col } from 'react-bootstrap'
 import PageTypes from '../../constants/PageTypes';
 import LandingPage from './Components/LandingPage';
@@ -13,34 +14,31 @@ import SignIn from './Components/SignIn';
  * @description This is an auth object that controls what page
  * is loaded based on sign up or sign in state
  */
-const Auth = ({ authed, setAuthToken, setUser }) => {
-    // var content = <LandingPage setPage={setPage} />
-    let location = useLocation()
+const Auth = ({ setAuthToken, setUser }) => {
+    let auth = useAuth()
     const [page, setPage] = useState(PageTypes.landing)
-    // const [authed, setAuthed] = useState(false)
+
+    if (auth.user) {
+        return <Redirect to={{pathname: "/dashboard"}} />
+    }
 
     var content = "";
-
     switch (page) {
-        case PageTypes.landing:
-           content = (<LandingPage setPage={setPage} />)
-           break
-        case PageTypes.signUp:
-            content = <SignUp setPage={setPage} setAuthToken={setAuthToken} setUser={setUser} />
-            break
-        case PageTypes.signIn:
-            content = <SignIn setPage={setPage} setAuthToken={setAuthToken} setUser={setUser} />
-            break
-        default:
-            content = (<LandingPage setPage={setPage} />)
-            break
+      case PageTypes.landing:
+        content = (<LandingPage setPage={setPage} />)
+        break
+      case PageTypes.signUp:
+        content = <SignUp setPage={setPage} signUp={auth.signup} />
+        break
+      case PageTypes.signIn:
+        content = <SignIn setPage={setPage} signIn={auth.signin} />
+        break
+      default:
+        content = (<LandingPage setPage={setPage} />)
+        break
     }
 
-    if (authed) {
-        return <Redirect to="/dashboard" from={location} />
-    }
-
-    return (<>
+    return <>
         <Jumbotron fluid={true} className="bg-dark text-white mb-0 bg-img-cover" id="header">
             <Container fluid={true} className="px-5">
                 <h1>ScheduleUp</h1>
@@ -50,12 +48,7 @@ const Auth = ({ authed, setAuthToken, setUser }) => {
         <Jumbotron fluid={true} className="mh-100 h-100 mb-0 flex-grow-1">
             <Container fluid={true} className="h-100">{content}</Container>
         </Jumbotron>
-    </>)
-}
-
-Auth.propTypes = {
-    setAuthToken: PropTypes.func.isRequired,
-    setUser: PropTypes.func.isRequired
+    </>
 }
 
 export default Auth;

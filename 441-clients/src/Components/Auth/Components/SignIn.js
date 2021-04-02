@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Col, Form, Row } from 'react-bootstrap';
-import api from '../../../constants/APIEndpoints';
 import Errors from '../../Errors/Errors';
 import PageTypes from '../../../constants/PageTypes';
 
@@ -55,36 +54,9 @@ export default class SignIn extends Component {
     submitForm = async (e) => {
         e.preventDefault();
         console.log("Submit init")
-        const { email, password } = this.state;
-        const sendData = { email, password };
-
-        const response = await fetch(api.base + api.handlers.sessions, {
-            method: "POST",
-            body: JSON.stringify(sendData),
-            headers: new Headers({
-                "Content-Type": "application/json"
-            })
-        });
-        console.log("fetched")
         
-        if (response.status >= 300) {
-            const error = await response.text();
-            this.setError(error);
-            return;
-        }
-
-        console.log("no error")
-        
-        // Store auth token in local storage and App state
-        const authToken = response.headers.get("Authorization")
-        localStorage.setItem("Authorization", authToken);
-        this.setError("");
-        this.props.setAuthToken(authToken);
-
-        // Set user
-        const user = await response.json()
-        localStorage.setItem("user", user)
-        this.props.setUser(user)
+        const { email, password } = this.state
+        this.props.signIn(email, password)
     }
 
     render() {
@@ -129,7 +101,6 @@ const SignInForm = ({ setField, submitForm, values }) => {
                     <Button type="submit" variant="light" className="w-100">Sign in</Button>
                 </Form.Row></Form.Group>
             </Form.Row>
-           
         </Form>
     </>
 }

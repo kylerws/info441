@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Button, Col, Container, Row, Jumbotron, Form } from 'react-bootstrap'
 import moment from 'moment'
 
-import api from '../../../Constants/APIEndpoints';
+import api from '../../../constants/APIEndpoints';
 
 const defaultTeamOption = { label: "Select a team", value: "" }
 

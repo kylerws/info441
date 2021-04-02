@@ -1,19 +1,6 @@
 import React, { useState, useEffect, useContext, createContext } from 'react'
 import api from '../constants/APIEndpoints'
 
-// creds
-// const auth = {
-//   isAuthenticated: false,
-//   signin(cb) {
-//     auth.isAuthenticated = true;
-//     setTimeout(cb, 100); // fake async
-//   },
-//   signout(cb) {
-//     auth.isAuthenticated = false;
-//     setTimeout(cb, 100);
-//   }
-// };
-
 // Auth context
 const authContext = createContext();
 
@@ -31,56 +18,113 @@ export const useAuth = () => {
 // Provider hook that creates auth object and handles state
 // Wraps all auth methods
 function useProvideAuth() {
-  const [authToken, setAuthToken] = useState(null)
+  const [authToken, setAuthToken] = useState(localStorage.getItem("authToken") || null)
   const [user, setUser] = useState(null)
   const [error, setError] = useState(null)
   
-  // Wrap auth methods
-  const signin = (email, password) => {
-    const sendData = { email, password }
-    let options = {
+  // Sign in user with credentials
+  const signin = async (email, password) => {
+    const options = {
       method: "POST",
-      body: JSON.stringify(sendData),
+      body: JSON.stringify({ email, password }),
       headers: new Headers({
           "Content-Type": "application/json"
       })
     }
 
-    // Start session
-    await fetch(api.base + api.handlers.sessions, options).then(resp => {
+    await fetch(api.base + api.handlers.sessions, options)
+      .then(resp => {
         if(resp.status >= 300) {
-          await resp.text()
-            .then(errorText => setError(errorText))
-            .then(errorText => {throw new Error("Bad response from server: " + errorText)})
+          const errorText = resp.text()
+          setError(errorText)
+          throw new Error("Bad response from server: " + errorText)
         }
         return resp
       }).then(resp => {
-        setAuthToken(resp.headers.get("Authorization"))
+        const authToken = resp.headers.get("Authorization") // get auth token
+        localStorage.setItem("authToken", authToken)        // save to local storage for page reload
+        setAuthToken(authToken)                             // update auth hook state
+        setError(null)                                      // clear errors
         return resp
       })
-      .then(resp => resp.json())            // get JSON object
-      .then(user => setUser(user))          // set user
-      .catch(error => console.log(error))   // catch errors
+      // .then(resp => resp.json())        // get JSON object
+      // .then(user => setUser(user))      // set user
+      // .then(console.log("Signed in, got user"))
+      .catch(e => console.log(e))       // catch errors
   };
 
-  const signup = (email, password) => {
-    // return firebase
-    //   .auth()
-    //   .createUserWithEmailAndPassword(email, password)
-    //   .then(response => {
-    //     setUser(response.user);
-    //     return response.user;
-    //   });
+  // Sign up new user
+  const signup = async (newUser) => {
+    const options = {
+      method: "POST",
+      body: JSON.stringify(newUser),
+      headers: new Headers({
+          "Content-Type": "application/json"
+      })
+    }
+
+    await fetch(api.base + api.handlers.users, options)
+      .then(resp => {
+        if(resp.status >= 300) {
+          const errorText = resp.text()
+          setError(errorText)
+          throw new Error("Bad response from server: " + errorText)
+        }
+        return resp 
+      }).then(resp => {
+        const authToken = resp.headers.get("Authorization") // get auth token
+        localStorage.setItem("authToken", authToken)        // save to local storage for page reload
+        setAuthToken(authToken)                             // update auth hook state
+        setError(null)                                      // clear errors
+        return resp 
+      }).catch(e => console.log(e))
   };
 
-  const signout = () => {
-    // return firebase
-    //   .auth()
-    //   .signOut()
-    //   .then(() => {
-    //     setUser(false);
-    //   });
+  // Sign out the current user
+  const signout = async () => {
+    await fetch(api.base + api.handlers.sessionsMine, {
+      method: "DELETE"
+    }).then(resp => {
+      if(resp.status >= 300) {
+        const errorText = resp.text()
+        setError(errorText)
+        throw new Error("Bad response from server: " + errorText)
+      }
+    })
+    .then(localStorage.removeItem("authToken"))
+    .then(setAuthToken(null))
+    .then(setUser(null))
+    .then(setError(null))
+    .catch(e => console.log(e))
   };
+
+  // Get current user on page reload or authToken change
+  useEffect(() => {(async () => {
+    // If no auth or we already have a user, do not run
+    if (!authToken || user !== null) {
+      console.log("No auth or we have user")
+      return
+    }
+
+    console.log("Fetching current user")
+    await fetch(api.base + api.handlers.myuser, {
+        headers: new Headers({
+            "Authorization": authToken
+        })
+    }).then(resp => {
+      if(resp.status >= 300) {
+        // If no user, remove auth and user
+        setAuthToken(null)
+        setUser(null)
+        throw new Error("Unable to verify login. Logging out...")
+      }
+      return resp
+    })
+    .then(resp => resp.json())
+    .then(user => setUser(user))
+    .catch(e => console.log(e))
+    console.log("Fetched!")
+  })() }, [authToken]);  // only run if authToken changes
 
   return {
     authToken,
