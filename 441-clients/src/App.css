@@ -62,6 +62,25 @@ html, body, #root {
     font-weight: 300;
 }
 
+#main h1 {
+    font-weight: 700;
+}
+
+#main h2 {
+    font-size: 1.6rem;
+    font-weight: 300;
+}
+
+#main h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+#main h4 {
+    font-size: 1.5rem;
+    font-weight: 300;
+}
+
 #custom h2, #custom h3, #custom h4 {
     font-weight: 300;
 }

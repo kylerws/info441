@@ -1,21 +1,20 @@
-import React from 'react';
-import { Container, Row, Button } from 'react-bootstrap';
+import React from 'react'
+import { useAuth } from '../../../hooks/useAuth'
+import { Row, Button } from 'react-bootstrap'
 
-const ProfileButtons = ({ signOut }) => {
+export default function ProfileButtons() {
+  let auth = useAuth()
+
   return(
-    <Container fluid={true}>
-      <Row className="justify-content-end">
-        <Button variant="dark" className="mx-3"
+      <Row className="justify-content-end mr-1">
+        <Button size="sm" variant="dark" className="mx-3"
           onClick={(e) => console.log("clicked")}>Edit Profile</Button>
-        <Button variant="danger"
+        <Button size="sm" variant="danger"
           onClick={async (e) => {
             e.preventDefault()
             console.log("sign out")
-            signOut()
+            auth.signout()
           }}>Sign Out</Button>
       </Row>
-    </Container>
   )
 }
-
-export default ProfileButtons

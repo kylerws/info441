@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Container, Jumbotron, Row, Col, Navbar } from 'react-bootstrap'
+import React from 'react';
+import { Row, Navbar } from 'react-bootstrap'
 import logo from '../img/calendar-gradient.svg'
 
 export default function Footer() {

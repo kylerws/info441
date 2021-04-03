@@ -49,11 +49,11 @@ class MainPageContent extends Component {
 
         console.log(schedules[0])
         const scheduleElements = schedules.map(d => {
-            return <div key={d.day}>
+            return <Col key={d.day} className="mx-5 mx-sm-3 mx-md-4 mx-lg-0 mx-xl-3">
                 <h3>{toUpper(d.day)}</h3>
                 <h4>{toClientDate(d.startTime)}</h4>
                 <h4>{toClientDate(d.endTime)}</h4>
-            </div>
+            </Col>
         })
 
         this.setState({schedule: scheduleElements})
@@ -384,16 +384,16 @@ class MainPageContent extends Component {
             this.props.user.firstName + " " + this.props.user.lastName : this.props.user.userName
 
         return (
-            <div>
-                <Jumbotron fluid={true} className="mb-0">
+            <Container fluid={true} className="p-0 h-100 d-flex flex-column" id="main">
+                <Jumbotron fluid={true} className="mb-0 mt-5">
                     <Container fluid={true} className="px-5">
-                        <div className="lead">Welcome back, {welcomeName} </div>
-                        <h1>Your Schedule</h1>
-                        <Row className="px-3 my-4 justify-content-around">
+                        <h1>Schedule</h1>
+                        <h2>When are you available?</h2>
+                        <Row className="my-4 justify-content-around">
                             {this.state.schedule}
                         </Row>
                         <Row className="justify-content-between">
-                            <Col xs={2} className="mt-2">
+                            <Col xs={12} lg={2} className="mt-2">
                                 {this.state.showPostSchedule ? closePostScheduleBtn : openPostScheduleBtn}
                             </Col>
                             <Col>
@@ -402,22 +402,22 @@ class MainPageContent extends Component {
                         </Row>
                     </Container>
                 </Jumbotron>
-                <Jumbotron fluid={true} className="bg-dark text-light mb-0">
+                <Jumbotron fluid={true} className="bg-secondary text-light mb-0 flex-grow-1">
                     <Container fluid={true} className="px-5">
                         <Row className="">
                             <Col>
-                                <h1>Team Schedule</h1>
+                                <h1>Your Teams</h1>
                             </Col>
                             <Col xs={3}>
                                 <TeamSelect options={this.state.teamOptions} default={""}
                                     update={(t) => this.onTeamChange(t)} />
                             </Col>
                         </Row>
-                        <Row className="px-3 my-4 justify-content-around">
+                        <Row className="px-3 mx-lg-5 my-4 justify-content-around">
                             {this.state.teamSchedule}
                         </Row>
                         <Row className="justify-content-between">
-                            <Col xs={1} className="mt-2">
+                            <Col xs={12} lg={2} className="mt-2">
                                 {this.state.showPostTeam ? closePostTeamBtn : openPostTeamBtn}
                             </Col>
                             <Col>
@@ -427,7 +427,6 @@ class MainPageContent extends Component {
 
                         <Row className="mt-5">
                             <Col>{this.state.teamID !== "" ? <h3>Members</h3> : ""}</Col>
-                            
                         </Row>
                         <Row>
                             <Col>{this.state.teamMembers}
@@ -441,7 +440,7 @@ class MainPageContent extends Component {
                         </Row>
                     </Container>
                 </Jumbotron>
-            </div>
+            </Container>
         );
     }
 }
