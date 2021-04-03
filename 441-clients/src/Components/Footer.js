@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { Container, Jumbotron, Row, Col } from 'react-bootstrap'
+import { Container, Jumbotron, Row, Col, Navbar } from 'react-bootstrap'
+import logo from '../img/calendar-gradient.svg'
 
 export default function Footer() {
   return (
-    <Jumbotron fluid={true} className="bg-info text-light mb-0 p-3">
-        <Row className="align-items-end">
-            <Col><p>Winter 2021</p></Col>
-            <Col><p className="text-center">Project developed for INFO 441</p></Col>
-            <Col>
-                <p className="text-right mb-1">Kyler Sakumoto</p>
-                <p className="text-right mb-0">Mackenzie Hutchison</p>
-            </Col>
+    <Navbar fixed="bottom" bg="dark" variant="dark" className="justify-content-center justify-content-md-between " id="footer">
+      <Navbar.Brand href="/" className="d-none d-sm-inline-block">
+        <Row className="align-items-center">
+          <img src={logo} width="25" height="25" alt="Brand Logo" className="mx-3 d-none d-sm-inline-block"/>
+          <div className="d-none d-md-inline-block">ScheduleUp</div>
         </Row>
-    </Jumbotron>
+        </Navbar.Brand>
+      <Navbar.Text className="">Developed by Mackenzie Hutchison and Kyler Sakumoto</Navbar.Text>
+      <Navbar.Text className="d-none d-md-inline-block">INFO 441, Winter 2021</Navbar.Text>
+    </Navbar>
   )
 }

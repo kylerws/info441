@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
-import { Container, Jumbotron } from 'react-bootstrap'
+import { Container, Jumbotron, Row, Col } from 'react-bootstrap'
 import PageTypes from '../../constants/PageTypes';
 import LandingPage from './Components/LandingPage';
 import SignUp from './Components/SignUp';
@@ -37,15 +37,17 @@ export default function Auth() {
       break
   }
 
-  return <>
-    <Jumbotron fluid={true} className="bg-dark text-white mb-0 bg-img-cover" id="header">
-      <Container fluid={true} className="px-5">
-        <h1>ScheduleUp</h1>
-        <h2 className="">Our scheduling, your team</h2>
-      </Container>
-    </Jumbotron>
-    <Jumbotron fluid={true} className="mh-100 h-100 mb-0 flex-grow-1">
-      <Container fluid={true} className="h-100">{content}</Container>
-    </Jumbotron>
-  </>
+  return (
+    <Container fluid={true} className="p-0 h-100 d-flex flex-column">
+      <Jumbotron fluid={true} className="bg-dark text-white mb-0 bg-img-cover" id="header">
+        <Container fluid={true} className="px-5">
+          <h1>ScheduleUp</h1>
+          <h2 className="">Our scheduling, your team</h2>
+        </Container>
+      </Jumbotron>
+      <Jumbotron id="auth" fluid={true} className="bg-landing flex-grow-1 pt-3 pt-sm-3 pt-md-5">
+        <Container fluid={true} className="h-100">{content}</Container>
+      </Jumbotron>
+    </Container>
+  )
 }
