@@ -4,6 +4,7 @@ html, body, #root {
     font-family: 'Roboto', sans-serif;
     background-color: white;
     height: 100vh;
+    /* overflow: scroll; */
 }
 
 #header {
@@ -29,6 +30,37 @@ html, body, #root {
 /* background: linear-gradient(135deg, rgba(196, 241, 255, 0.2) 0%, rgba(253,187,45, 0.2) 100%); */
     /* background: rgb(236,236,236); */
     background: linear-gradient(112deg, rgba(236,236,236,1) 0%, rgb(212, 212, 212) 50%, rgba(222,222,222,1) 100%);
+}
+
+#main {
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+.scheduleContainer {
+    overflow: hidden;
+}
+
+.scrollContainer {
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.scrollContainer::-webkit-scrollbar {
+    width: 4px;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+    background: #cfcfcf;
+    border-radius: 50px;
 }
 
 #header h1 {
@@ -64,10 +96,11 @@ html, body, #root {
 
 #main h1 {
     font-weight: 700;
+    font-size: 2rem;
 }
 
 #main h2 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 300;
 }
 
@@ -92,3 +125,68 @@ html, body, #root {
 #maketeamform {
     padding: 15px;
 }
+
+#profile img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+}
+
+#profile .img-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#profile h1 {
+    font-weight: 300;
+}
+
+#profile h2 {
+    font-size: 1.5rem;
+    font-weight: 100;
+}
+
+#schedule h3, #my-schedule h3 {
+    margin-bottom: 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+#schedule h4 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    /* text-transform: uppercase; */
+}
+
+@media screen and (max-width: 991px) {
+    #profile h1 {
+        font-size: 2rem;
+    }
+
+    #profile h2 {
+        font-size: 1.4rem;
+    }
+
+    #profile img {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    #profile h1 {
+        font-size: 1.6rem;
+    }
+
+    #profile h2 {
+        font-size: 1.2rem;
+    }
+
+    #profile img {
+        width: 60px;
+        height: 60px;
+    }
+}
+

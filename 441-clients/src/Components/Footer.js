@@ -4,7 +4,7 @@ import logo from '../img/calendar-gradient.svg'
 
 export default function Footer() {
   return (
-    <Navbar fixed="bottom" bg="dark" variant="dark" className="justify-content-center justify-content-md-between " id="footer">
+    <Navbar fixed="bottom" bg="light" variant="light" className="justify-content-center justify-content-md-between " id="footer">
       <Navbar.Brand href="/" className="d-none d-sm-inline-block">
         <Row className="align-items-center">
           <img src={logo} width="25" height="25" alt="Brand Logo" className="mx-3 d-none d-sm-inline-block"/>

@@ -32,9 +32,9 @@ function useProvideAuth() {
     }
 
     await fetch(api.base + api.handlers.sessions, options)
-      .then(resp => {
+      .then(async (resp) => {
         if(resp.status >= 300) {
-          const errorText = resp.text()
+          const errorText = await resp.text()
           setError(errorText)
           throw new Error("Bad response from server: " + errorText)
         }
@@ -97,6 +97,25 @@ function useProvideAuth() {
     .catch(e => console.log(e))
   };
 
+  const updateName = async (firstName, lastName) => {
+    const response = await fetch(api.base + api.handlers.myuser, {
+      method: "PATCH",
+      body: JSON.stringify({firstName, lastName}),
+      headers: new Headers({
+          "Authorization": authToken,
+          "Content-Type": "application/json"
+      })
+    });
+    if (response.status >= 300) {
+        const error = await response.text();
+        console.log(error);
+        return;
+    }
+    console.log("Name changed")
+    const user = await response.json();
+    setUser(user)
+  }
+
   // Get current user on page reload or authToken change
   useEffect(() => {(async () => {
     // If no auth or we already have a user, do not run
@@ -122,15 +141,10 @@ function useProvideAuth() {
     .then(resp => resp.json())
     .then(user => setUser(user))
     .catch(e => console.log(e))
-    console.log("Fetched!")
   })() }, [authToken]);  // only run if authToken changes
 
   return {
-    authToken,
-    user,
-    error,
-    signin,
-    signup,
-    signout
+    authToken, user, error,
+    signin, signup, signout, updateName
   }
 }

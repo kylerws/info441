@@ -34,35 +34,3 @@ function PrivateRoute ({component: Component, componentProps, ...rest}) {
     />
   )
 }
-
-// OLD RENDER METHOD
-// render() {
-//     return (
-//         <Container fluid={true} className="min-vh-100 h-100 p-0 d-flex flex-column" id="custom">
-//             <Jumbotron fluid={true} className="bg-dark text-white mb-0 bg-img-cover" aria-label="fall leaves trail image"
-//                 id="header">
-//                 <Container fluid={true} className="px-5">
-//                     <h1>ScheduleUp</h1>
-//                     <h2 className="">Our scheduling, your team</h2>
-//                 </Container>
-//             </Jumbotron>
-//             {user ?
-//                 <Main 
-//                     auth={this.state.authToken}
-//                     page={page}
-//                     setPage={this.setPage}
-//                     setAuthToken={this.setAuthToken}
-//                     user={user}
-//                     setUser={this.setUser} />
-//                 :
-//                 <Auth 
-//                 // page={page}
-//                 //     setPage={this.setPage}
-//                     className="h-100"
-//                     setAuthToken={this.setAuthToken}
-//                     setUser={this.setUser} />
-//             }
-//         </Container>
-//     );
-// }
-

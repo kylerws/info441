@@ -1,70 +1,51 @@
-import React, { Component } from 'react';
-import api from '../../../constants/APIEndpoints';
-import Errors from '../../Errors/Errors';
-import PageTypes from '../../../constants/PageTypes';
+import React, { useState } from 'react';
+import { useAuth } from '../../../hooks/useAuth'
 
-class UpdateName extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            firstName: '',
-            lastName: '',
-            error: ''
-        }
-    }
+import { Form, Button, Row, Col } from 'react-bootstrap'
 
-    sendRequest = async (e) => {
+const UpdateName = () => {
+    let auth = useAuth()
+    const [firstName, setFirstName] = useState(auth.user.firstName)
+    const [lastName, setLastName] = useState(auth.user.lastName)
+
+    const submit = (e) => {
         e.preventDefault();
-        const { firstName, lastName } = this.state;
-        const sendData = { firstName, lastName };
-        const response = await fetch(api.base + api.handlers.myuser, {
-            method: "PATCH",
-            body: JSON.stringify(sendData),
-            headers: new Headers({
-                "Authorization": localStorage.getItem("Authorization"),
-                "Content-Type": "application/json"
-            })
-        });
-        if (response.status >= 300) {
-            const error = await response.text();
-            console.log(error);
-            this.setError(error);
-            return;
-        }
-        alert("Name changed") // TODO make this better by refactoring errors
-        const user = await response.json();
-        this.props.setUser(user);
-        this.props.setPage(e, PageTypes.signedInMain)
+        auth.updateName(firstName, lastName)
     }
 
-    setValue = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
-    }
-
-    setError = (error) => {
-        this.setState({ error })
-    }
-
-    render() {
-        const { firstName, lastName, error } = this.state;
-        return <>
-            <Errors error={error} setError={this.setError} />
-            <h2>Profile</h2>
-            <h3>Edit name</h3>
-            <form onSubmit={this.sendRequest}>
-                <div>
-                    <span>First name: </span>
-                    <input name={"firstName"} value={firstName} onChange={this.setValue} />
-                </div>
-                <div>
-                    <span>Last name: </span>
-                    <input name={"lastName"} value={lastName} onChange={this.setValue} />
-                </div>
-                <input type="submit" value="Update" />
-            </form>
-        </>
-    }
-
+    return <>
+        <Row className="mb-3 mt-lg-3 mb-lg-4 align-items-center">
+            <Col xs={"auto"} sm={3} lg={3} className="d-flex justify-content-start justify-content-lg-center align-items-center">
+                    <img src={auth.user.photoURL} style={{}} alt="profile"/>
+            </Col>
+            <Col>
+                <h1>{auth.user.firstName + " " + auth.user.lastName}</h1>
+                <h2>{auth.user.userName}</h2>
+            </Col>
+        </Row>
+        <Form onSubmit={e => submit(e)}>
+            <Form.Row className="ml-lg-2">
+            <Form.Label column="lg">Edit Profile</Form.Label>
+            </Form.Row>
+            <Form.Group as={Row} className="ml-lg-3 mr-lg-5">
+                <Form.Label column sm={3}>First Name</Form.Label>
+                <Col>
+                    <Form.Control placeholder="Enter new first name" type="text"
+                        name={"firstName"} value={firstName} onChange={e => setFirstName(e.target.value)} />
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="ml-lg-3 mr-lg-5">
+                <Form.Label column sm={3}>Last Name</Form.Label>
+                <Col>
+                    <Form.Control placeholder="Enter new last name" type="text"
+                        name={"lastName"} value={lastName} onChange={e => setLastName(e.target.value)} />
+                </Col>
+            </Form.Group>
+            <Form.Row className="justify-content-end mr-lg-5">
+                <Button type="submit" size="sm" variant="success" className="mr-1 mr-lg-3">Save Changes</Button>
+            </Form.Row>
+        </Form>
+    </>
 }
 
 export default UpdateName;

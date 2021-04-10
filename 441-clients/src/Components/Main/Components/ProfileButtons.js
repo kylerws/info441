@@ -1,20 +1,19 @@
 import React from 'react'
 import { useAuth } from '../../../hooks/useAuth'
-import { Row, Button } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 
-export default function ProfileButtons() {
+export const ProfileButton = ({showUpdateName, ...props}) => {
+  return <Button {...props} size="sm" variant="secondary"
+    onClick={showUpdateName}>Profile</Button>
+}
+
+export const SignOutButton = ({...props}) => {
   let auth = useAuth()
 
-  return(
-      <Row className="justify-content-end mr-1">
-        <Button size="sm" variant="dark" className="mx-3"
-          onClick={(e) => console.log("clicked")}>Edit Profile</Button>
-        <Button size="sm" variant="danger"
-          onClick={async (e) => {
-            e.preventDefault()
-            console.log("sign out")
-            auth.signout()
-          }}>Sign Out</Button>
-      </Row>
-  )
+  return <Button {...props} size="sm" variant="danger"
+    onClick={async (e) => {
+      e.preventDefault()
+      console.log("sign out")
+      auth.signout()
+    }}>Sign Out</Button>
 }

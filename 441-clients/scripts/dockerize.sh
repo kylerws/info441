@@ -1,5 +1,5 @@
-# export IMAGE="kylerws/441-client"
-export IMAGE="mackenziehutchison/441-final-client"
+export IMAGE="kylerws/441-client"
+# export IMAGE="mackenziehutchison/441-final-client"
 
 docker pull $IMAGE
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
-import { Container, Jumbotron, Row, Col } from 'react-bootstrap'
+import { Container, Jumbotron } from 'react-bootstrap'
 import PageTypes from '../../constants/PageTypes';
 import LandingPage from './Components/LandingPage';
 import SignUp from './Components/SignUp';
