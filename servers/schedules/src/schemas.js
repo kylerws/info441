@@ -1,10 +1,8 @@
 const Schema = require('mongoose').Schema;
 
 const teamSchema = new Schema({
-    // id: {type: Schema.Types.ObjectId, required: true, unique: true, auto = true},
     name: {type: String, required: true, unique: true},
     description: String,
-    // private: {type: Boolean, required: true, unique: false},
     members: {type: [{id: Number, email: String}]},
     schedule: {type: [{day: String, startTime: Date, endTime: Date, hasAvailability: Boolean}]},
     createdAt: {type: Date, required: true, unique: false},
@@ -13,7 +11,6 @@ const teamSchema = new Schema({
 });
 
 const userScheduleSchema = new Schema({
-    // id: {type: Schema.Types.ObjectId, required: true, unique: true},
     userID: {type: Number, required: true, unique: true},
     userEmail: {type: String, required: true, unique: true},
     schedule: {type: [{day: String, startTime: Date, endTime: Date}]}

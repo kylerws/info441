@@ -8,12 +8,28 @@ const { postMembersHandler, getMembersHandler } = require("./teamMembersHandler"
 const { postUserScheduleHandler, getUserScheduleHandler } = require("./scheduleHandler")
 const { getSpecificTeamHandler } = require("./specificTeamHandler")
 
-// create mongo endpoint, it will make the test database
+// Local testing mongo endpoints
 // const mongoEndpoint = "mongodb://localhost:27017/test"
 // const port = 4000
 
+// Constants for mongo endpoint
 const mongoEndpoint = process.env.MONGOADDR
 const port = process.env.PORT
+
+// Function connect opens the connection to mongo
+const connect = () => {
+    mongoose.connect(mongoEndpoint);
+}
+
+// Function RequestWrapper wraps handler functions to accept requests
+const RequestWrapper = (handler, SchemeAndDbForwarder) => {
+    return (req, res) => {
+        handler(req, res, SchemeAndDbForwarder);
+    }
+};
+
+// Returns HTTP status 405 (method not allowed) for all requests
+const methodNotAllowed = (req, res, next) => res.status(405).send()
 
 // Create the model
 const Team = mongoose.model("Team", teamSchema)
@@ -23,24 +39,10 @@ const UserSchedule = mongoose.model("UserSchedule", userScheduleSchema)
 const app = express();
 app.use(express.json());
 
-// Connect to mongodb
-const connect = () => {
-    mongoose.connect(mongoEndpoint);
-}
-
-// Wraps handlers to accept requests
-const RequestWrapper = (handler, SchemeAndDbForwarder) => {
-    return (req, res) => {
-        handler(req, res, SchemeAndDbForwarder);
-    }
-};
-
-// Open connection
+// Open connection to mongo
 connect();
 
-const methodNotAllowed = (req, res, next) => res.status(405).send()
-
-// On first connect, main will be called and the app will start
+// On disconnect, try to reconnect to mongo
 mongoose.connection.on('error', console.error)
     .on('disconnected', connect)
     .once('open', main);
@@ -49,19 +51,26 @@ mongoose.connection.on('error', console.error)
 app.route("/v1/teams")
     .post(RequestWrapper(postTeamHandler, { Team, UserSchedule }))
     .get(RequestWrapper(getTeamsHandler, { Team, UserSchedule }))
-app.all("/v1/teams", methodNotAllowed);
+    .all(methodNotAllowed);
 
-app.post("/v1/teams/:teamID/members", RequestWrapper(postMembersHandler, { Team, UserSchedule }));
-app.get("/v1/teams/:teamID/members", RequestWrapper(getMembersHandler, { Team }));
-app.all("/v1/teams/:teamID/members", methodNotAllowed);
+// Members endpoint
+app.route("v1/teams/:teamID/members")
+    .post(RequestWrapper(postMembersHandler, { Team, UserSchedule }))
+    .get(RequestWrapper(getMembersHandler, { Team }))
+    .all(methodNotAllowed);
 
-app.post("/v1/schedule", RequestWrapper(postUserScheduleHandler, { UserSchedule, Team }));
-app.get("/v1/schedule", RequestWrapper(getUserScheduleHandler, { UserSchedule }));
-app.all("/v1/schedule", methodNotAllowed);
+// Schedule endpoint
+app.route("/v1/schedule")
+    .post(RequestWrapper(postUserScheduleHandler, { UserSchedule, Team }))
+    .get(RequestWrapper(getUserScheduleHandler, { UserSchedule }))
+    .all(methodNotAllowed);
 
-app.get("/v1/teams/:teamID", RequestWrapper(getSpecificTeamHandler, { Team }));
-app.all("/v1/teams/:teamID", methodNotAllowed);
+// Specific team endpoint
+app.route("/v1/teams/:teamID")
+    .get(RequestWrapper(getSpecificTeamHandler, { Team }))
+    .all(methodNotAllowed);
 
+// Entrypoint for server
 async function main() {
     app.listen(port, () => {
         console.log(`server listening ${port}`);
