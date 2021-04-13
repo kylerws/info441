@@ -29,7 +29,7 @@ export function toGridTime(datetime) {
  
 // Takes DateTime returned by mongoDB and parses to a readable format
 export function toDisplayTime(datetime) {
-  return moment(datetime).local().format('h:mm a')
+  return moment(datetime).local().format('h:mm A')
 }
 
 // Takes hour as int and convert to ISO UTC format for mongoDB

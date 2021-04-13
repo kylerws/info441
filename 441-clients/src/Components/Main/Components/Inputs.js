@@ -2,29 +2,26 @@ import React, { Component, useState, useEffect } from 'react'
 import { Form } from 'react-bootstrap'
 import { useTeam } from '../../../hooks/useTeam'
 
-export class CustomSelect extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { selected: this.props.default }
-    this.props.update(this.state.selected)
-  }
+export const CustomSelect = ({ defaultOption, options, update, ...rest }) => {
+  const [selected, setSelected] = useState(defaultOption)
 
-  handleChange = (e) => {
+  useEffect(() => {
+    update(selected)
+  }, [])
+
+  const handleChange = (e) => {
     e.preventDefault()
-    this.setState({selected: e.target.value})
-    this.props.update(e.target.value)
+    setSelected(e.target.value)
+    update(e.target.value)
   }
 
-  render() {
-    let options = this.props.options.map(o => (
-      <option key={o.value} value={o.value}>{o.label}</option>))
-
-    return (
-      <Form.Control as="select" value={this.state.selected} onChange={(e) => this.handleChange(e)}>
-        {options}
-      </Form.Control>
-    );
-  }
+  const optionDivs = options.map(o => (
+    <option key={o.value} value={o.value}>{o.label}</option>))
+  
+  return (
+    <Form.Control {...rest} as="select"
+      value={selected} onChange={e => handleChange(e)}>{optionDivs}</Form.Control>
+  )
 }
 
 // Default select options
@@ -32,7 +29,7 @@ const defaultTeamID = ""
 const defaultTeamOption = [{ label: "Select a team", value: defaultTeamID }]
 
 // Select input for teams
-export function TeamSelect() {
+export function TeamSelect({...rest}) {
   let teamCtx = useTeam()
   let [options, setOptions] = useState(defaultTeamOption)
 
@@ -52,8 +49,8 @@ export function TeamSelect() {
   }, [teams]) // run only if teams changes
 
   return (
-    <CustomSelect
-      default={defaultTeamID}
+    <CustomSelect {...rest}
+      defaultOption={defaultTeamID}
       options={options}
       update={setTeamID} />)
 }
