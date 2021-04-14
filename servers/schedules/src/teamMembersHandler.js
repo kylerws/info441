@@ -167,8 +167,8 @@ const getMembersHandler = async (req, res, { Team }) => {
     const team = await Team.findOne({_id: teamID, "members.id": userID});
 
     if (team == null ) {
+        console.log("No team members found for id " + teamID)
         res.setHeader("Content-Type", "text/plain")
-
         res.status(404).send('we did not find a team you are a part of with the given credentials')
         return;
     }

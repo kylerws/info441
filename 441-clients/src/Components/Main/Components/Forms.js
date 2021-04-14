@@ -1,6 +1,31 @@
 import React, { useState } from 'react'
 import { useTeam } from '../../../hooks/useTeam'
+// import { CustomSelect } from './Inputs'
 import { Form, Col, Button } from 'react-bootstrap'
+
+// export const DayForm = ({submit, setDay, setStart, setEnd}) => {
+//   return (
+//     <Form onSubmit={submit}>
+//       <Form.Row className="justify-content-center justify-content-lg-end">
+//         <Form.Group as={Col} xs={12} sm={5}>
+//           <Form.Label>Day to Add</Form.Label>
+//           <CustomSelect options={dayOptions} default={"sunday"} update={(v) => setDay(v)}/>
+//         </Form.Group>
+//         <Form.Group as={Col} xs={6} sm={2}>
+//           <Form.Label>Start Time</Form.Label>
+//         <CustomSelect options={hourOptions} default={9} update={(v) => setStart(v)}/>
+//         </Form.Group>
+//         <Form.Group as={Col} xs={6} sm={2}>
+//           <Form.Label>End Time</Form.Label>
+//           <CustomSelect options={hourOptions} default={17} update={(v) => setEnd(v)}/>
+//         </Form.Group>    
+//         <Form.Group as={Col} xs={12} sm={"auto"} className="align-self-end">
+//           <Button type="submit" variant="outline-success">Add</Button>
+//         </Form.Group>
+//         </Form.Row>
+//     </Form>
+//   )
+// }
 
 export const TeamForm = () => {
   let teamCtx = useTeam()
@@ -38,17 +63,18 @@ export const PostMemberForm = () => {
   const submit = e => {
     e.preventDefault()
     teamCtx.postTeamMember(member)
+    setMember("")
   }
 
   return (
     <Form onSubmit={submit}>
       <Form.Row>
-        <Form.Group as={Col} xs={12} sm={6} md={4}>
-          <Form.Control type="email" placeholder="name@example.com" size="sm"
+        <Form.Group as={Col} xs={12} md={"auto"}>
+          <Form.Control type="email" placeholder="name@example.com" size="sm" value={member}
             onChange={(e) => setMember(e.target.value)}/>
         </Form.Group>
         <Form.Group as={Col}>
-          <Button type="submit" size="sm" variant="outline-success">Add Member</Button>
+          <Button type="submit" size="sm" variant="success">Add Member</Button>
         </Form.Group>             
       </Form.Row>
     </Form>

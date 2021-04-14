@@ -25,10 +25,10 @@ const getSpecificTeamHandler = async (req, res, { Team }) => {
         res.status(404).send('We did not find a team with provided name that you are a part of')
         return;
     }
-    const schedule = team['schedule']
+    // const schedule = team['schedule']
 
     res.setHeader("Content-Type", "application/json");
-    res.status(200).send(schedule)
+    res.status(200).send(team)
 }
 
 

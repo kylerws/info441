@@ -19,7 +19,7 @@ export const CustomSelect = ({ defaultOption, options, update, ...rest }) => {
     <option key={o.value} value={o.value}>{o.label}</option>))
   
   return (
-    <Form.Control {...rest} as="select"
+    <Form.Control {...rest} as="select" default={defaultOption}
       value={selected} onChange={e => handleChange(e)}>{optionDivs}</Form.Control>
   )
 }

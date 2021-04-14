@@ -2,14 +2,24 @@
 import moment from 'moment'
 import { days, dayIDs } from '../constants/AvailabilityTypes'
 
+// Parses schedule for display
+//
+// schedule: array of schedule objects from server
+// fillEmpty: boolean to fill in unavailable days, default false
+// formatTime: callback function for formatting times
 export const parseSchedule = ({schedule, fillEmpty, formatTime}) => {
   if (!schedule)
     return
 
+  // Remove unavailable days
+  schedule = schedule.filter(d => d.hasAvailability)
+  
+  // Parse values
   schedule = schedule.map(d => {
     return {id: dayIDs[d.day], day: toUpper(d.day), start: formatTime(d.startTime), end: formatTime(d.endTime)}
   })
-
+  
+  // Fill empty days?
   if (fillEmpty) {
     days.forEach(d => {
       if (schedule.filter(e => e.id === d.id).length === 0) {
@@ -18,31 +28,28 @@ export const parseSchedule = ({schedule, fillEmpty, formatTime}) => {
     })
   }
 
+  // Sort Sunday to Saturday
   schedule.sort((a, b) => a.id - b.id)
 
   return schedule
 }
 
+// Takes DateTime and returns 24 hour as int
 export function toGridTime(datetime) {
   return parseInt(moment(datetime).local().format('H'))
 }
  
-// Takes DateTime returned by mongoDB and parses to a readable format
+// Takes DateTime and parses to readable AM/PM format
 export function toDisplayTime(datetime) {
-  return moment(datetime).local().format('h:mm A')
+  return moment(datetime).local().format('h A')
 }
 
 // Takes hour as int and convert to ISO UTC format for mongoDB
 function toMongoDate(hour) {
-  console.log("Got: " + hour)
   const local = moment({'year': 1998, 'month': 0, 'date': 1, 'hour': hour, 'minute': 0})
-  console.log(local)
   var test = local.toISOString()
   // var test = moment({'year': 1998, 'month': 0, 'date': 1, 'hour': hour, 'minute': 0}).toISOString()
   // console.log("Tried to convert to: " + test)
-  console.log(test)
-  console.log(local.toISOString())
-  console.log(local.toString())
   return test
 }
 

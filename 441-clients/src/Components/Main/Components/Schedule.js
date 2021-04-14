@@ -15,7 +15,7 @@ const Schedule = ({schedule, height }) => {
   }
 
   let scrollContainerStyle={
-    height: height ? height : '25rem',
+    height: height ? height : '40vh',
     paddingLeft: '1rem',
     paddingRight: '4px',
     paddingTop: '1.5rem',
@@ -61,7 +61,6 @@ const Schedule = ({schedule, height }) => {
 }
 
 const TimeSlotGrid = ({ schedule, height, timeOffset, cellHeight }) => {
-  console.log(schedule)
   const style = {
     height: height + 'rem',
     flexBasis: '1',
@@ -110,12 +109,17 @@ const ScheduleHeader = ({days, height, timeColWidth}) => {
   }
 
   const dayLabels = days.map(d => {
-    return <Col style={dayStyle} key={d}>{d}</Col>
+    return <Col style={dayStyle} key={d} className="d-none d-sm-flex">{d}</Col>
+  })
+
+  const mobileLabels = days.map(d => {
+    return <Col style={dayStyle} key={d + ' mobile'} className="d-sm-none p-0">{d.charAt(0)}</Col>
   })
 
   return (
     <Row className="w-100 mx-0 bg-dark text-light">
       <div style={{width: timeColWidth + 'rem'}} />
+      {mobileLabels}
       {dayLabels}
       <div style={{width: `12px`}} />
     </Row>

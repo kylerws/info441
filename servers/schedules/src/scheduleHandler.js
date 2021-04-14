@@ -20,7 +20,7 @@ function updateTeamSched(currentSched, dayIndex, newTime, startTime) {
 function windowIsValid(daySchedule) {
     const currStart = daySchedule['startTime']
     const currEnd = daySchedule['endTime']
-    if (currEnd <= currStart){
+    if (currEnd <= currStart) {
         daySchedule['hasAvailability'] = false
         // res.send('time was updated, and time window is invalid, hasAvailability=false')
         // return;
@@ -38,52 +38,52 @@ const postUserScheduleHandler = async (req, res, { UserSchedule, Team }) => {
     console.log("REQUEST: postUserScheduleHandlers called")
     if (!req.get("X-User")) {
         res.setHeader("Content-Type", "text/plain")
-
-        res.status(401).send('User not authorized');
+        res.status(401).send('User not authorized')
         return;
     }
 
-    const user = JSON.parse(req.get('X-User'));
-
-    // const user = {id: 4, email: 'user4'}
-
+    // Get user
+    const user = JSON.parse(req.get('X-User'))
     const userID = user['id']
     const userEmail = user['email']
 
-    const{ day, startTime, endTime } = req.body;
-
-    if ( !day || !startTime || !endTime) {
+    // Get params
+    const { day, startTime, endTime } = req.body;
+    if ( !day || !startTime || !endTime ) {
         res.setHeader("Content-Type", "text/plain")
-
         res.status(400).send('must include day, start time, and end time')
-        return;
+        return
     }
-        // check if the time at that day needs to be adjusted for the team
+
+    // Check if schedule already exists for day
     const dayExists = await UserSchedule.find({"schedule.day": day, "userID": userID})
     if (dayExists.length > 0) {
         res.setHeader("Content-Type", "text/plain")
-
-        res.status(409).send('availability already created for this day / user')
+        res.status(409).send('availability already exists for this day')
         return;
     }
 
-    if (!startTime || !endTime || !day) {
-        res.setHeader("Content-Type", "text/plain")
+    // Already checked for above?
+    //
+    // if (!startTime || !endTime || !day) {
+    //     res.setHeader("Content-Type", "text/plain")
+    //     res.status(400).send("Must provide start and end time");
+    //     return;
+    // }
 
-        res.status(400).send("Must provide start and end time");
-        return;
-    }
-
+    // Check that start and end are valid
     if (startTime >= endTime) {
         res.setHeader("Content-Type", "text/plain")
-
         res.status(400).send('start time must be before end time')
         return;
     }
 
+    // Get the users schedule
     const userSchedulePosted = await UserSchedule.find({"userID": userID})
-    console.log(userSchedulePosted.length)
+    
+    // If no schedule posted
     if (userSchedulePosted.length == 0) {
+        // Initialize new user schedule
         const userSchedule = {
             "userID": userID,
             "userEmail": userEmail,
@@ -94,15 +94,12 @@ const postUserScheduleHandler = async (req, res, { UserSchedule, Team }) => {
         query.save((err, userSchedule) => {
             if (err) {
                 res.setHeader("Content-Type", "text/plain")
-
-                res.status(500).send('unable to create schedule' + err);
+                res.status(500).send('unable to create schedule: ' + err);
                 return;
             }
             
-            // res.send(newChannel._id)
-            res.setHeader("Content-Type", "application/json");
+            res.setHeader("Content-Type", "application/json")
             res.status(201).json(userSchedule)
-            // res.status(201).json(userSchedule['schedule']);
             return;
         });
     } else {

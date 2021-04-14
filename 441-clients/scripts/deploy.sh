@@ -11,4 +11,4 @@ echo Deploy [client] ...
 docker push $IMAGE
 
 # SSH into AWS
-ssh -tt ec2-user@ec2-44-239-123-86.us-west-2.compute.amazonaws.com < ./scripts/dockerize.sh 
+ssh -tt kylerws@ec2-44-239-123-86.us-west-2.compute.amazonaws.com < ./scripts/dockerize.sh 

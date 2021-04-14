@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import moment from 'moment'
-import { Button, Col, Container, Collapse, Row, Jumbotron, Card } from 'react-bootstrap'
+import { Button, Col, Container, Collapse, Row, Jumbotron, Card, CardDeck } from 'react-bootstrap'
 // import { useAuth } from '../../../hooks/useAuth'
 import { useTeam } from '../../../hooks/useTeam'
 import { useFlag } from '../../../hooks/helpers'
@@ -53,22 +53,22 @@ const TeamView = () => {
               <TeamSelect className="d-sm-none mb-3" />
           </Row>
           {/* <Jumbotron className="bg-dark py-5 mt-3"> */}
-          <Collapse in={!view.showTeamView}>
+          {/* <Collapse in={!view.showTeamView}>
             <Row className="justify-content-center text-center mt-5"><Col>
 
-            <h2>Please select a team or create one</h2></Col></Row>
-          </Collapse>
+            <h2></h2></Col></Row>
+          </Collapse> */}
           <Collapse in={view.showTeamView}>
-            <div>
-              <h2>Available Times</h2>
-              <Row className="mx-lg-0 my-4 justify-content-around">
+            <Row className="justify-content-around mt-3 mt-lg-4">
+              <Col xs={12} sm={6} md={5} lg={4} xl={3}>
+                <h2>Available Times</h2>
                 <TeamScheduleView />
-              </Row>
-              <Row>
-                <Col><h3>Members</h3></Col>
-              </Row>
-              <TeamMembersView />
-              </div>
+              </Col>
+              <Col sm={6} md={5} lg={4} xl={3}>
+                <h2>Members</h2>
+                <TeamMembersView />
+              </Col>
+            </Row>
           </Collapse>
           {/* </Jumbotron> */}
           </Col></Row>
@@ -98,16 +98,32 @@ function useTeamView() {
 function TeamScheduleView() {
   let teamCtx = useTeam()
   const { teamSchedule } = teamCtx
-  return !teamSchedule ? "" : parseSchedule({ schedule: teamSchedule, formatTime: toDisplayTime }).map(d => {
+  const content = !teamSchedule ? "" : parseSchedule({ schedule: teamSchedule, formatTime: toDisplayTime }).map(d => {
     return (
-      <Card key={d.day} bg="info" className="mx-1"style={{width: '10rem', marginBottom: '1rem'}} id="schedule">
-        <Card.Header className="text-center"><h3>{d.day}</h3></Card.Header>
-        <Card.Body variant="flush">
-        <h4 className="mb-3">{d.start + "-" + d.end}</h4>
-        </Card.Body>
-      </Card>
+      // <Card key={d.day} bg="info" className="mx-sm-3 flex-grow-1 mw-100 flex-sm-grow-0 mw-sm-auto"
+      //   style={{minWidth: '7.5rem', marginBottom: '1rem'}}>
+      //   <Card.Header className="text-center"><h1 className="mb-0">{d.day.substring(0, 3)}</h1></Card.Header>
+      //   <Card.Body variant="flush">
+      //     <h4 className="mb-0 text-center">{d.start + " - "}</h4>
+      //     <h4 className="mb-0 text-center">{d.end}</h4>
+      //   </Card.Body>
+      // </Card>
+      <Col xs={12} className="px-0 mb-2 mr-1 flex-grow-1 flex-sm-grow-0 bg-info timeCard">
+        <Row className="px-3 py-2 align-items-center">
+          <Col className="flex-grow-1">
+            <h3 className="mb-0">{d.day.substring(0,3)}</h3></Col>
+          {/* <Col className="flex-grow-0"><h2 className="mb-0">{d.start + " - " + d.end}</h2></Col> */}
+          <Col className="flex-grow-0"><h4 className="mb-0">{d.start}</h4></Col>
+          <Col className="flex-grow-1 p-0 text-center"><h2 className="mb-0">{" - "}</h2></Col>
+          <Col className="flex-grow-0"><h4 className="mb-0">{d.end}</h4></Col>
+        </Row>
+      </Col>
     )
   })
+
+  return <Row className="mx-0 my-4" id="teamSchedule">
+    {content}
+  </Row>
 }
 
 function TeamMembersView() {
@@ -118,9 +134,9 @@ function TeamMembersView() {
     {m.email}</Col>
   )})
 
-  return <Row>
+  return <Row className="mt-3">
     <Col>
-      <Row className="mb-3">
+      <Row className=" mb-3">
       {content}
       </Row>
       <PostMemberForm />

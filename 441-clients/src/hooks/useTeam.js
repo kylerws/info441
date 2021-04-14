@@ -21,8 +21,9 @@ export const useTeam = () => {
 function useProvideTeam() {
   let auth = useAuth()
   
-  const [teams, setTeams] = useState(null)
+  const [teams, setTeams] = useState()
   const [teamID, setTeamID] = useState("")
+  const [team, setTeam] = useState()
   const [teamSchedule, setTeamSchedule] = useState([])
   const [teamMembers, setTeamMembers] = useState([])
 
@@ -65,7 +66,7 @@ function useProvideTeam() {
     getTeams()
   }
 
-  const getSchedule = async () => {
+  const getSelectedTeam = async () => {
     console.log("GET /teams/teamID")
     if (teamID === "") {
       setTeamSchedule([])
@@ -84,37 +85,48 @@ function useProvideTeam() {
         return
     }
     
-    const schedule = await resp.json()
-    if (schedule.length === 0) {
+    const team = await resp.json()
+    if (!team) return
+    if (team.schedule.length === 0) {
         console.log("No availablity for team")
         setTeamSchedule([])
         return
     }
 
-    setTeamSchedule(schedule)
+    console.log(team)
+    setTeam(team)
+    setTeamSchedule(team.schedule)
+    setTeamMembers(team.members)
   }
 
-  const getMembers = async () => {
-    console.log("Get members called")
-    if (teamID === "") {
-      setTeamMembers([])
-      return
-    }
+  // const getMembers = async () => {
+  //   console.log("Get members called")
+  //   if (teamID === "") {
+  //     setTeamMembers([])
+  //     console.log("team ID null")
+  //     return
+  //   }
+
+  //   const path = api.base + api.handlers.teams + "/" + teamID + "/members"
+  //   console.log(path)
     
-    const resp = await fetch(api.base + api.handlers.teams + "/" + teamID + "/members", {
-        headers: new Headers({ "Authorization": auth.authToken }) })
+  //   const resp = await fetch(path, {
+  //       headers: new Headers({ "Authorization": auth.authToken }) })
 
-    if (resp.status !== 200) {
-        if (resp.status === 404) {
-            return
-        }
-        console.log(resp.body)
-        return 
-    }
 
-    const members = await resp.json()
-    setTeamMembers(members)
-  }
+  //   console.log(teamID)
+  //   if (resp.status !== 200) {
+  //       if (resp.status === 404) {
+  //           console.log("No members found for teamID")
+  //           return
+  //       }
+  //       console.log(resp.body)
+  //       return 
+  //   }
+
+  //   const members = await resp.json()
+  //   setTeamMembers(members)
+  // }
 
   const postTeamMember = async (email) => {
     console.log("POST new member called")
@@ -122,7 +134,7 @@ function useProvideTeam() {
       return
     }
 
-    const resp = await fetch(api.base + api.handlers.teams + "/" + teamID + "/members", {
+    const resp = await fetch(api.base + api.handlers.teams + "/" + teamID, {
         method: "POST",
         body: JSON.stringify({email}),
         headers: new Headers({
@@ -136,14 +148,13 @@ function useProvideTeam() {
         return
     }
 
-    getMembers()
-    getSchedule()
+    getSelectedTeam()
   }
 
   useEffect(() => {(async () => {
-    getSchedule()
-    getMembers()
+    getSelectedTeam()
   })() }, [teamID])
 
-  return { teams, teamID, teamSchedule, teamMembers, getTeams, postTeam, postTeamMember, setTeamID }
+  return { teams, teamID, team, teamSchedule, teamMembers,
+    getTeams, postTeam, postTeamMember, setTeamID }
 }

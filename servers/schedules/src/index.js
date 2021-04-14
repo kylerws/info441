@@ -54,10 +54,8 @@ app.route("/v1/teams")
     .all(methodNotAllowed);
 
 // Members endpoint
-app.route("v1/teams/:teamID/members")
-    .post(RequestWrapper(postMembersHandler, { Team, UserSchedule }))
-    .get(RequestWrapper(getMembersHandler, { Team }))
-    .all(methodNotAllowed);
+
+    // .all(methodNotAllowed);
 
 // Schedule endpoint
 app.route("/v1/schedule")
@@ -68,6 +66,7 @@ app.route("/v1/schedule")
 // Specific team endpoint
 app.route("/v1/teams/:teamID")
     .get(RequestWrapper(getSpecificTeamHandler, { Team }))
+    .post(RequestWrapper(postMembersHandler, { Team, UserSchedule }))
     .all(methodNotAllowed);
 
 // Entrypoint for server

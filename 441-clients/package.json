@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.6.0",
+    "luxon": "^1.26.0",
     "moment": "^2.29.1",
     "prop-types": "^15.6.2",
     "react": "^16.8.0-alpha.1",

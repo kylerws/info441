@@ -10,7 +10,7 @@ const NavTop = ({showUpdateName}) => {
     user.userName
   return (
     <Navbar collapseOnSelect expand="sm"
-      fixed="top" bg="dark" variant="dark" className="justify-content-center justify-content-md-between " id="footer">
+      fixed="top" bg="dark" variant="dark" className="justify-content-center justify-content-md-between" id="navtop">
       <Navbar.Brand href="/" className="">
           <div className="">Dashboard</div>
         </Navbar.Brand>
@@ -18,7 +18,7 @@ const NavTop = ({showUpdateName}) => {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" className="ml-auto"/>
       <Navbar.Collapse className="">
         <Nav className="ml-auto d-flex align-items-center">
-          <Navbar.Text className="mx-auto my-3 my-sm-0">Welcome back, {name}</Navbar.Text>
+          <Navbar.Text className="mx-auto my-2 my-sm-0">Welcome back, {name}</Navbar.Text>
             <Col xs={12} sm={"auto"} className="d-flex d-sm-none px-0 pb-2">
               <ProfileButton showUpdateName={showUpdateName} className="flex-grow-1 flex-sm-grow-0" /> </Col>
             <Col xs={12} sm={"auto"} className="d-flex d-sm-none px-0 pb-2">

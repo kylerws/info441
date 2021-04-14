@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { Button, Col, Container, Row, Jumbotron, Form, Card, Collapse } from 'react-bootstrap'
 import moment from 'moment'
+import { DateTime } from 'luxon'
 
 import api from '../../../constants/APIEndpoints';
-import { CustomSelect as Select } from '../components/Inputs'
+import { CustomSelect } from '../components/Inputs'
 import Schedule from '../components/Schedule'
 
 import { days, times, dayIDs } from '../../../constants/AvailabilityTypes'
@@ -74,8 +75,11 @@ class MainPageContent extends Component {
         endTime: toMongoDate(this.state.endTime)
     }
 
+    toAPIFormat({ day, startTime: this.state.startTime, endTime: this.state.endTime })
+
     // Arrange into object to be JSON parsed
     const sendData = { day, startTime, endTime }
+    console.log(sendData)
 
     // POST to /v1/schedule
     const resp = await fetch(api.base + api.handlers.schedule, {
@@ -159,19 +163,19 @@ class DayForm extends Component {
         <Form.Row className="justify-content-center justify-content-lg-end">
           <Form.Group as={Col} xs={12} sm={5}>
             <Form.Label>Day to Add</Form.Label>
-            <Select options={dayOptions} default={"sunday"} update={(v) => this.props.setDay(v)}/>
+            <CustomSelect options={dayOptions} defaultOption={"sunday"} update={(v) => this.props.setDay(v)}/>
           </Form.Group>
           <Form.Group as={Col} xs={6} sm={2}>
             <Form.Label>Start Time</Form.Label>
-          <Select options={hourOptions} default={9} update={(v) => this.props.setStart(v)}/>
+            <CustomSelect options={hourOptions} defaultOption={9} update={(v) => this.props.setStart(v)}/>
           </Form.Group>
           <Form.Group as={Col} xs={6} sm={2}>
             <Form.Label>End Time</Form.Label>
-            <Select options={hourOptions} default={17} update={(v) => this.props.setEnd(v)}/>
+            <CustomSelect options={hourOptions} defaultOption={17} update={(v) => this.props.setEnd(v)}/>
           </Form.Group>    
           <Form.Group as={Col} xs={12} sm={"auto"} className="align-self-end">
         {/* <Form.Row className="justify-content-center justify-content-sm-end mx-0"> */}
-          <Button type="submit" variant="outline-success">Add</Button>
+          <Button type="submit" variant="success">Add</Button>
           </Form.Group>
           </Form.Row>
       </Form>
@@ -212,17 +216,24 @@ function toClientDate(datetime) {
   return moment(datetime).local().format('h:mm a')
 }
 
+function toAPIFormat({day, startTime, endTime}) {
+  const month = day === "sunday" ? 1 : 2
+  const dayID = day === "sunday" ? 31 : dayIDs[day]
+
+  const start = DateTime.fromObject({ year: 2021, month: month, day: dayID, hour: startTime })
+  const end = DateTime.fromObject({ year: 2021, month: month, day: dayID, hour: endTime })
+  console.log("Luxon:")
+  console.log(start)
+  console.log(end)
+  console.log(start.toUTC().toISO())
+  console.log(end.toUTC().toISO())
+  console.log(DateTime.fromISO(end.toUTC().toISO()).toLocaleString(DateTime.DATETIME_FULL))
+}
+
 // Takes hour as int and convert to ISO UTC format for mongoDB
 function toMongoDate(hour) {
-  console.log("Got: " + hour)
   const local = moment({'year': 1998, 'month': 0, 'date': 1, 'hour': hour, 'minute': 0})
-  console.log(local)
   var test = local.toISOString()
-  // var test = moment({'year': 1998, 'month': 0, 'date': 1, 'hour': hour, 'minute': 0}).toISOString()
-  // console.log("Tried to convert to: " + test)
-  console.log(test)
-  console.log(local.toISOString())
-  console.log(local.toString())
   return test
 }
 
