@@ -1,5 +1,7 @@
-# Project Proposal
+# ScheduleUp - Project Proposal
 **Final Project for INFO 441**
+
+**Check out the project here:** https://www.scheduleup.info
 
 **Team Members:** Kyler Sakumoto, Mackenzie Hutchison, Youssof Kowdan & Shruti Kompella
 
